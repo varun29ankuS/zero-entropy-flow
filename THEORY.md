@@ -63,9 +63,9 @@ norm is constant and $\sigma_{\text{num}}=0$ by Definition 2. $\square$
 
 *Remark.* The pseudo-spectral scheme in this repository realises Proposition 2 up to time-stepping error: the
 skew-symmetric form makes the semi-discrete transport exactly skew ($\langle \hat u, \hat T(\hat u)\rangle = 0$ on
-the dealiased modes), the viscous integrating factor $e^{-\nu k^2\Delta t}$ is an exact contraction per mode, and
+the dealiased modes), the viscous integrating factor exp(-\nu k^2\Delta t) is an exact contraction per mode, and
 RK4 adds an $O(\Delta t^4)$ deviation. Measured: $\sigma_{\text{num}} = -3\times10^{-15}$ (Burgers), energy conserved
-to $10^{-6}$ (3-D Euler).
+to 1e-6 (3-D Euler).
 
 **Proposition 3 (a frozen isometric memory carries a conserved quantity exactly; a dissipative one forgets at
 the entropy production rate). [proved here]**
@@ -139,9 +139,9 @@ equivalent in spirit to the Millennium problem, and Theorem 4 says it cannot be 
    an exact contraction, so numerical entropy production is zero up to RK4 error. **[proved here + measured]**
 2. On 1-D Burgers it reproduces the exact approach to the known singularity, $\max|u_x| = 1/(1-t)$, until the grid
    limit, which appears as a visible shortfall rather than as damping. **[measured]**
-3. On 2-D Navier-Stokes (Taylor-Green) it reproduces a closed-form solution to $10^{-14}$; its dissipation is exactly
+3. On 2-D Navier-Stokes (Taylor-Green) it reproduces a closed-form solution to 1e-14; its dissipation is exactly
    the physical $\nu\|\nabla u\|^2$. **[measured]**
-4. On 3-D Euler (Taylor-Green) energy is conserved to $10^{-6}$ at $32^3, 48^3, 64^3$, and enstrophy agrees across
+4. On 3-D Euler (Taylor-Green) energy is conserved to 1e-6 at $32^3, 48^3, 64^3$, and enstrophy agrees across
    resolutions until the cascade reaches the grid scale, after which the resolutions *disagree* rather than
    converge to a wrong value. **[measured]**
 5. None of 1-4 bears on the regularity question except as an instrument free of the artefact (numerical

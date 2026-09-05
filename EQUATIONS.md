@@ -30,9 +30,9 @@ Fourier modes with $|k_i|<N/3$ (2/3 dealiasing). Transport in **skew-symmetric f
 
 $$T_i(u)=-\tfrac12\big[(u\cdot\nabla)u_i+\nabla\cdot(u u_i)\big]\ (d=2,3),\qquad T(u)=-\tfrac13\big[u u_x+(u^2)_x\big]\ (d=1),$$
 
-then $\hat P_k$. Viscosity as the exact integrating factor $e^{-\nu|k|^2\Delta t}$ per mode (an exact contraction). RK4 in
+then $\hat P_k$. Viscosity as the exact integrating factor exp(-\nu|k|^2\Delta t) per mode (an exact contraction). RK4 in
 time for $T$. Numerical entropy production is therefore zero up to the $O(\Delta t^4)$ RK4 error: measured
-$10^{-15}$ (1-D), $10^{-14}$ against the 2-D closed form, $10^{-6}$ (3-D).
+1e-15 (1-D), 1e-14 against the 2-D closed form, 1e-6 (3-D).
 
 ## The budgets, one line in every dimension
 
@@ -42,7 +42,7 @@ $$\frac{dZ}{dt}=S-\nu\langle|\nabla\omega|^2\rangle,\qquad
 S=\begin{cases}-\tfrac12\langle u_x^3\rangle & d=1\ \ \text{(unsigned; drives the blow-up at }t^*=1)\ 0 & d=2\ \ \text{(identically: enstrophy is a second controlled norm, hence regularity)}\ \langle\omega\cdot(\omega\cdot\nabla)u\rangle & d=3\ \ \text{(vortex stretching; unsigned; the open question)}\end{cases}$$
 
 Measured: $S=+0.13,+0.47,+4.92$ approaching the 1-D singularity ($t=0.3,0.6,0.9$); $S\equiv0$ in 2-D with $Z$ falling
-monotonically; $S=+0.088,+0.238,+0.511,+1.502$ in 3-D at $t=1,2,3,4$ ($64^3$), budget residual $10^{-5}$, and the
+monotonically; $S=+0.088,+0.238,+0.511,+1.502$ in 3-D at $t=1,2,3,4$ ($64^3$), budget residual 1e-5, and the
 normalised rate $S/Z^{3/2}$ rising $0.33\to0.61$.
 
 ## The hierarchy of budgets, and where the dimension enters
@@ -65,9 +65,9 @@ sits at level 1 and level 0 does not control the gradient: open.
 
 Forcing adds an input $\langle u\cdot f\rangle$ at level 0 and $\langle\omega\cdot\nabla\times f\rangle$ at level 1.
 A learned closure projected to be skew (as in `kolmogorov_v2.py`) is energy-neutral **to first order in the step**:
-its component along the energy gradient is zero to machine precision ($10^{-12}$, `verify_skew_closure.py`, random
+its component along the energy gradient is zero to machine precision (1e-12, `verify_skew_closure.py`, random
 weights), but a finite step in an orthogonal direction still changes a quadratic energy at second order. Measured:
-$9	imes10^{-6}$ relative energy change per step against $3.5	imes10^{-4}$ for the unprojected correction - forty
+9e-6 relative energy change per step against 3.5e-4 for the unprojected correction - forty
 times less, not zero. Exact neutrality needs one more line, a rescaling of the state to the energy of the frozen step
 after the correction is added (v3).
 

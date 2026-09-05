@@ -90,14 +90,14 @@ Write the equation as **conservative transport + dissipation**:
 $$\partial_t \mathbf{u} = \underbrace{\mathcal{T}(\mathbf{u})}_{\text{conserves } E}  +  \underbrace{\nu \Delta\mathbf{u}}_{\text{dissipates}} .$$
 
 The transport term is discretised so that the semi-discrete system conserves energy **exactly**: in Fourier space each
-linear mode advances by an exact rotation (a unitary factor $e^{-i k c \Delta t}$, which is an isometry), and the
+linear mode advances by an exact rotation (a unitary factor exp(-i k c \Delta t), which is an isometry), and the
 nonlinearity is written in skew-symmetric form so that $\langle \mathbf{u}, \mathcal{T}(\mathbf{u})\rangle = 0$
 identically. For Burgers:
 
 $$u u_x  =  \tfrac{1}{3}\Big(u u_x + (u^2)_x\Big) ,$$
 
 which conserves $\langle u^2\rangle$ term by term on the dealiased grid (2/3 rule). Viscosity enters as an exact
-integrating factor $e^{-\nu k^2 \Delta t}$ per mode; time stepping of the nonlinear term is RK4.
+integrating factor exp(-\nu k^2 \Delta t) per mode; time stepping of the nonlinear term is RK4.
 
 For any integrator define the **numerical entropy production rate** as the drift of the energy the equation says must
 be conserved, per unit time:
@@ -126,13 +126,13 @@ The gradient provably blows up at $t^*=1$ with $\max|u_x| = 1/(1-t)$. Grid $N=51
 | 0.90 | 1.00000, 9.99, 0.0000 | 10.00 | 0.9941, 0.0097 |
 | 0.95 | 1.00000, 18.72, 0.0004 | 20.00 | 0.9934, 0.0116 |
 
-Numerical entropy production $\sigma_{	ext{num}}$ over $[0, 0.95]$: upwind $7	imes10^{-3}$ per unit time; frozen $-3	imes10^{-15}$ (zero to machine precision). The frozen scheme tracks the exact approach to the singularity until the 512-point grid can no longer
+Numerical entropy production $\sigma_{	ext{num}}$ over $[0, 0.95]$: upwind 7e-3 per unit time; frozen $-3	imes10^{-15}$ (zero to machine precision). The frozen scheme tracks the exact approach to the singularity until the 512-point grid can no longer
 resolve a gradient of 20 - a visible resolution limit, not hidden dissipation.
 
 ### 2-D viscous Taylor-Green, exact solution known (`taylor_green.py`, part A)
 $\nu = 0.02$, $128^2$ grid, $\Delta t = 2\times10^{-3}$, viscosity as an exact integrating factor per mode.
 
-| t | E/E_0 scheme | E/E_0 exact = e^(-4nu t) | L_2 error vs the exact field |
+| t | E/E_0 scheme | E/E_0 exact = exp(-4nu t) | L_2 error vs the exact field |
 |---|---|---|---|
 | 0.5 | 0.96078944 | 0.96078944 | 5e-15 |
 | 1.0 | 0.92311635 | 0.92311635 | 1e-14 |
@@ -163,8 +163,8 @@ uses far higher resolution beyond that.
 | exact solution | grid | error against the closed form |
 |---|---|---|
 | **1-D** viscous Burgers, u0 = sin x, nu = 0.02: Cole-Hopf, evaluated in heat-kernel form | 512 | 5e-14 (t=0.5), 6e-12 (t=1), 2e-6 through the shock (t=1.5-2, gradient 22 on dx = 0.012: the resolution floor) |
-| **2-D** a *random* vorticity field on the single shell k^2 = 25 (nonlinear term vanishes identically): u0 e^(-25 nu t) | 128^2 | 2e-14 to 3e-14 out to t = 4 |
-| **3-D** ABC flow with viscosity (Beltrami, curl u = u): u0 e^(-nu t) | 32^3 | 1e-15 to 7e-15 out to t = 8 |
+| **2-D** a *random* vorticity field on the single shell k^2 = 25 (nonlinear term vanishes identically): u0 exp(-25 nu t) | 128^2 | 2e-14 to 3e-14 out to t = 4 |
+| **3-D** ABC flow with viscosity (Beltrami, curl u = u): u0 exp(-nu t) | 32^3 | 1e-15 to 7e-15 out to t = 8 |
 
 ![Exact solutions in 1-D, 2-D, 3-D and the scheme's error against each](figures/exact_solutions.png)
 
@@ -173,7 +173,7 @@ property provides. The 1-D shock comparison is the demanding one, and its error 
 
 ### 3-D Euler: the vortex-stretching term measured, by resolution (`budgets3d.py`, run on GitHub's runners)
 $\dot Z = S$ with $S=\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ measured from the field; energy $E/E_0 = 1.000000$ at
-every grid and time; budget residual $10^{-5}$-$10^{-6}$.
+every grid and time; budget residual 1e-5-1e-6.
 
 | t | 64^3: Z / S | 96^3: Z / S | 128^3: Z / S | S/Z^3/2 at 128^3 |
 |---|---|---|---|---|
@@ -191,7 +191,7 @@ a resolution where its trend can be trusted, and nothing more.
 ### Mechanism, second invariant, and the BKM quantity (`mechanism3d.py`, $64^3$, from CI)
 | flow | helicity < u.w> | enstrophy Z | max\|w\| (BKM integrand) | alignment with the intermediate strain eigenvector |
 |---|---|---|---|---|
-| Taylor-Green | 10^-18 (zero by symmetry, preserved) | 0.375 → 1.823 | 2.0 → 13.7 | 0.356 at t=2 vs 0.317 / 0.327 (random 0.333) |
+| Taylor-Green | 1e18 (zero by symmetry, preserved) | 0.375 → 1.823 | 2.0 → 13.7 | 0.356 at t=2 vs 0.317 / 0.327 (random 0.333) |
 | perturbed ABC | **2.979345 → 2.979345** through t=3; 2.979187 at t=4 with energy 0.999979 | 1.58 → 11.3 | 3.1 → 47.5 | 0.339 vs 0.322 / 0.339 |
 
 Helicity is conserved to six digits under dynamics that amplify enstrophy seven-fold; at $t=4$ the two invariants drift
@@ -233,14 +233,14 @@ the field), including the **unsigned production terms** whose 3-D cousin is the 
 
 | case | budget | frozen scheme residual | upwind residual | what it shows |
 |---|---|---|---|---|
-| 1-D inviscid (H false) | gradient, -(1/2)<u_x^3> production | 10^-8 | 1-5 % | production +0.13, +0.47, +1.59 at t = 0.3, 0.6, 0.8: the blow-up, measured |
-| 1-D viscous (H true) | energy | 10^-9 | **10 %** | upwind's numerical dissipation is a tenth of the physical viscosity |
+| 1-D inviscid (H false) | gradient, -(1/2)<u_x^3> production | 1e8 | 1-5 % | production +0.13, +0.47, +1.59 at t = 0.3, 0.6, 0.8: the blow-up, measured |
+| 1-D viscous (H true) | energy | 1e9 | **10 %** | upwind's numerical dissipation is a tenth of the physical viscosity |
 | 1-D viscous | maximum principle max\|u\| | 0.994, 0.988, 0.984 | - | never increases: the controlled norm that gives 1-D regularity |
-| 2-D decaying (H true, M=Z) | energy / enstrophy / palinstrophy | 10^-8 / 10^-7 / 3-9e-6 | - | palinstrophy production **+1387, +2149, +1579, +576** (unsigned, large) while enstrophy falls 12.86 -> 6.09 |
+| 2-D decaying (H true, M=Z) | energy / enstrophy / palinstrophy | 1e8 / 1e7 / 3-9e-6 | - | palinstrophy production **+1387, +2149, +1579, +576** (unsigned, large) while enstrophy falls 12.86 -> 6.09 |
 
 The 2-D row is Theorem 5 of `THEORY.md` with its terms filled in: the dangerous unsigned term is present and large,
-and regularity holds because a norm one level below it is controlled. The registered residual bar of $10^{-6}$ is
-narrowly missed by the 2-D palinstrophy budget (terms of order $10^3$, RK4 error); halving the time step would
+and regularity holds because a norm one level below it is controlled. The registered residual bar of 1e-6 is
+narrowly missed by the 2-D palinstrophy budget (terms of order $1e3$, RK4 error); halving the time step would
 clear it, and the bar is left where it was.
 
 ## What this is and is not
