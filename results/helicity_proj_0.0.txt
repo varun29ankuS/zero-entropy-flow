@@ -1,0 +1,22 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective helicity (helicity target 0.00 of max)
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.685   Z(T)/Z0 = 1.012
+  iter   0   objective = 1.126   E0 = 0.0183   H/Hmax = -0.063   delta(T) on search grid = 0.430   (2s)
+  iter   5   objective = 1.187   E0 = 0.0186   H/Hmax = +0.000   delta(T) on search grid = 0.409   (8s)
+  iter  10   objective = 1.256   E0 = 0.0189   H/Hmax = +0.000   delta(T) on search grid = 0.386   (14s)
+  iter  15   objective = 1.329   E0 = 0.0196   H/Hmax = +0.000   delta(T) on search grid = 0.361   (21s)
+  iter  20   objective = 1.458   E0 = 0.0208   H/Hmax = +0.000   delta(T) on search grid = 0.318   (27s)
+  iter  25   objective = 1.688   E0 = 0.0217   H/Hmax = -0.000   delta(T) on search grid = 0.261   (33s)
+  iter  30   objective = 2.043   E0 = 0.0223   H/Hmax = -0.000   delta(T) on search grid = 0.213   (40s)
+  iter  35   objective = 2.514   E0 = 0.0230   H/Hmax = -0.000   delta(T) on search grid = 0.187   (46s)
+  iter  39   objective = 2.907   E0 = 0.0238   H/Hmax = -0.000   delta(T) on search grid = 0.174   (52s)
+best amplification on the search grid: 2.907
+
+verification at 96^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 96^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5570  (2dx = 0.1309)
+  kida-pelz      at 96^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3740  (2dx = 0.1309)
+  abc+10%        at 96^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.6681  (2dx = 0.1309)
+  FOUND          at 96^3:  Z(T)/Z0 = 5.036   E(T)/E0 = 0.999999   delta(T) = 0.0585  (2dx = 0.1309)   <-- unreliable
+
+REGISTERED  found Z(T)/Z0 = 5.036 (delta < 2dx) vs best RELIABLE classical 1.112 at 96^3 -> FAIL: outside the reliable window
