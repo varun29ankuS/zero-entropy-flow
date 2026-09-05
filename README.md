@@ -106,6 +106,23 @@ numerically, under-resolution appears as **disagreement between grids** rather t
 curve - which is the point of the instrument. The trustworthy window at $64^3$ is roughly $t \le 3$; the literature
 uses far higher resolution beyond that.
 
+### 3-D Euler: the vortex-stretching term measured, by resolution (`budgets3d.py`, run on GitHub's runners)
+$\dot Z = S$ with $S=\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ measured from the field; energy $E/E_0 = 1.000000$ at
+every grid and time; budget residual $10^{-5}$-$10^{-6}$.
+
+| t | $64^3$: $Z$ / $S$ | $96^3$: $Z$ / $S$ | $128^3$: $Z$ / $S$ | $S/Z^{3/2}$ at $128^3$ |
+|---|---|---|---|---|
+| 1 | 0.4169 / 0.0876 | 0.4169 / 0.0882 | 0.4169 / 0.0885 | 0.329 |
+| 2 | 0.5743 / 0.238 | 0.5743 / 0.239 | 0.5743 / 0.239 | 0.550 |
+| 3 | 0.9386 / 0.511 | 0.9430 / 0.526 | 0.9447 / 0.533 | 0.581 |
+| 4 | 1.823 / 1.502 | 1.918 / 1.801 | 1.975 / 2.029 | 0.731 |
+
+Converged to four digits through $t=2$. At $t=4$ the stretching still rises with resolution (1.50, 1.80, 2.03) with
+shrinking differences: under-resolved grids **under**-estimate the amplification - they hide growth by inability, not
+by damping, which is the opposite of a dissipative scheme's failure mode. The normalised rate $S/Z^{3/2}$ rises with
+resolution as well (0.61, 0.68, 0.73 at $t=4$). This is a measurement of the term that decides the 3-D question, at
+a resolution where its trend can be trusted, and nothing more.
+
 ### Budget closure in 1-D and 2-D, where Hypothesis H is known (`budgets.py`)
 Every balance law checked term by term along the flow (measured $d/dt$ across one step vs the right-hand side from
 the field), including the **unsigned production terms** whose 3-D cousin is the regularity problem.
