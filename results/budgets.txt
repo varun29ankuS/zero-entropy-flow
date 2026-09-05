@@ -1,0 +1,55 @@
+
+==== 1-D Burgers, nu = 0.00  (inviscid: H false, gradient production drives blow-up) ====
+  t    scheme   budget     measured d/dt    right-hand side   relative residual
+0.30   frozen   energy     -2.775558e-13   -0.000000e+00   1.0e+00
+0.30   frozen   gradient   +1.315792e-01   +1.315792e-01   5.3e-09
+0.30   upwind   energy     -1.364233e-03   -0.000000e+00   1.0e+00
+0.30   upwind   gradient   +1.350009e-01   +1.334148e-01   1.2e-02
+0.30   frozen   max|u|/max|u0| 0.999985
+0.60   frozen   energy     +0.000000e+00   -0.000000e+00   0.0e+00
+0.60   frozen   gradient   +4.700855e-01   +4.700854e-01   1.3e-08
+0.60   upwind   energy     -1.655188e-03   -0.000000e+00   1.0e+00
+0.60   upwind   gradient   +5.551682e-01   +5.396322e-01   2.8e-02
+0.60   frozen   max|u|/max|u0| 0.999999
+0.80   frozen   energy     +0.000000e+00   -0.000000e+00   0.0e+00
+0.80   frozen   gradient   +1.590769e+00   +1.590769e+00   4.5e-08
+0.80   upwind   energy     -2.223520e-03   -0.000000e+00   1.0e+00
+0.80   upwind   gradient   +2.995212e+00   +3.149907e+00   4.9e-02
+0.80   frozen   max|u|/max|u0| 0.999997
+
+==== 1-D Burgers, nu = 0.02  (viscous: H true via the maximum principle) ====
+  t    scheme   budget     measured d/dt    right-hand side   relative residual
+0.30   frozen   energy     -1.057928e-02   -1.057928e-02   7.7e-10
+0.30   frozen   gradient   +1.130700e-01   +1.130700e-01   4.4e-09
+0.30   upwind   energy     -1.190423e-02   -1.056573e-02   1.1e-01
+0.30   upwind   gradient   +1.122874e-01   +1.132739e-01   8.7e-03
+0.30   frozen   max|u|/max|u0| 0.994015
+0.60   frozen   energy     -1.320163e-02   -1.320163e-02   1.8e-09
+0.60   frozen   gradient   +3.687441e-01   +3.687441e-01   7.5e-09
+0.60   upwind   energy     -1.477462e-02   -1.319851e-02   1.1e-01
+0.60   upwind   gradient   +3.728899e-01   +3.712231e-01   4.5e-03
+0.60   frozen   max|u|/max|u0| 0.988041
+0.80   frozen   energy     -1.781033e-02   -1.781033e-02   3.8e-09
+0.80   frozen   gradient   +8.694028e-01   +8.694028e-01   1.1e-08
+0.80   upwind   energy     -1.986969e-02   -1.787783e-02   1.0e-01
+0.80   upwind   gradient   +8.820558e-01   +8.658738e-01   1.8e-02
+0.80   frozen   max|u|/max|u0| 0.984048
+
+==== 2-D decaying turbulence, nu = 1e-03, 128^2, random initial vorticity in 3 <= |k| <= 8 ====
+  t    budget        measured d/dt    right-hand side   relative residual   (palinstrophy production term)
+ 0.5   energy        -2.572448e-02   -2.572448e-02   2.8e-08
+ 0.5   enstrophy     -1.442647e+00   -1.442647e+00   2.6e-07
+ 0.5   palinstrophy  +1.056733e+03   +1.056737e+03   3.2e-06   production +1.3871e+03
+       enstrophy Z = 12.860794 (must never increase: H true in 2-D)
+ 1.0   energy        -2.379050e-02   -2.379050e-02   1.9e-08
+ 1.0   enstrophy     -2.357308e+00   -2.357309e+00   2.9e-07
+ 1.0   palinstrophy  +6.527396e+02   +6.527399e+02   3.7e-07   production +2.1494e+03
+       enstrophy Z = 11.892894 (must never increase: H true in 2-D)
+ 2.0   energy        -1.871025e-02   -1.871025e-02   4.6e-09
+ 2.0   enstrophy     -2.403846e+00   -2.403846e+00   1.3e-07
+ 2.0   palinstrophy  -2.682213e+02   -2.682189e+02   8.9e-06   production +1.5788e+03
+       enstrophy Z = 9.352721 (must never increase: H true in 2-D)
+ 4.0   energy        -1.218060e-02   -1.218060e-02   5.9e-09
+ 4.0   enstrophy     -1.044605e+00   -1.044605e+00   2.0e-08
+ 4.0   palinstrophy  -1.446334e+02   -1.446330e+02   2.6e-06   production +5.7621e+02
+       enstrophy Z = 6.089257 (must never increase: H true in 2-D)

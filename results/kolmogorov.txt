@@ -1,0 +1,22 @@
+spin-up done (281s), energy 0.0583
+snapshots 1200 (503s)
+  learned      step  500  loss 0.00024  56s
+  learned      step 1000  loss 0.00021  111s
+  learned      step 1500  loss 0.00016  166s
+  learned      step 2000  loss 0.00015  222s
+  learned      step 2500  loss 0.00013  277s
+  learned      step 3000  loss 0.00011  332s
+  frozen+gate  step  500  loss 0.00003  104s
+  frozen+gate  step 1000  loss 0.00004  209s
+  frozen+gate  step 1500  loss 0.00003  311s
+  frozen+gate  step 2000  loss 0.00004  414s
+  frozen+gate  step 2500  loss 0.00003  518s
+  frozen+gate  step 3000  loss 0.00003  621s
+
+rollouts of 2000 coarse steps from held-out initial conditions
+learned       horizon(corr>0.9)     55 steps | energy/truth min 0.59 max 1.50 | log-spectrum error 1.19
+frozen+gate   horizon(corr>0.9)    160 steps | energy/truth min 0.96 max 1.07 | log-spectrum error 0.73
+frozen        horizon(corr>0.9)    160 steps | energy/truth min 0.96 max 1.07 | log-spectrum error 0.72
+
+REGISTERED  horizon ratio frozen+gate/learned = 2.9 (>=3)  -> FAIL
+            frozen+gate energy band [0.96, 1.07] within [0.5,1.5] -> PASS | learned band [0.59, 1.50] leaves it -> yes

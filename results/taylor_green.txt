@@ -1,0 +1,17 @@
+==== A. 2-D viscous Taylor-Green (nu = 0.02), exact solution known ====
+   t   E/E0 (scheme)   E/E0 (exact)    L2 error vs exact
+ 0.5   0.96078944     0.96078944     5.03e-15
+ 1.0   0.92311635     0.92311635     1.02e-14
+ 1.5   0.88692044     0.88692044     1.49e-14
+ 2.0   0.85214379     0.85214379     1.95e-14
+
+==== B. 3-D inviscid Taylor-Green (Euler), energy must be conserved; enstrophy growth by resolution ====
+N=32^3 (5s):  t=1 E/E0=1.000000 Z=0.417  t=2 E/E0=1.000000 Z=0.574  t=3 E/E0=1.000000 Z=0.914  t=4 E/E0=1.000000 Z=1.570
+N=48^3 (28s):  t=1 E/E0=1.000000 Z=0.417  t=2 E/E0=1.000000 Z=0.574  t=3 E/E0=1.000000 Z=0.931  t=4 E/E0=1.000000 Z=1.724
+N=64^3 (101s):  t=1 E/E0=1.000000 Z=0.417  t=2 E/E0=1.000000 Z=0.574  t=3 E/E0=1.000000 Z=0.939  t=4 E/E0=1.000000 Z=1.823
+
+enstrophy by resolution (agreement = trustworthy; divergence = the grid, not the flow):
+  t=1   32^3 0.417   48^3 0.417   64^3 0.417
+  t=2   32^3 0.574   48^3 0.574   64^3 0.574
+  t=3   32^3 0.914   48^3 0.931   64^3 0.939
+  t=4   32^3 1.570   48^3 1.724   64^3 1.823
