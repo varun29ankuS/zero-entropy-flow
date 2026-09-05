@@ -1,0 +1,22 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective jacobi
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.685   Z(T)/Z0 = 1.012
+  iter   0   objective = 1.046   E0 = 0.0183   H/Hmax = -0.063   (3s)
+  iter   5   objective = 1.561   E0 = 0.0242   H/Hmax = +0.008   (13s)
+  iter  10   objective = 1.711   E0 = 0.0261   H/Hmax = -0.001   (23s)
+  iter  15   objective = 1.804   E0 = 0.0274   H/Hmax = +0.004   (34s)
+  iter  20   objective = 1.850   E0 = 0.0284   H/Hmax = +0.009   (44s)
+  iter  25   objective = 1.870   E0 = 0.0290   H/Hmax = +0.008   (54s)
+  iter  30   objective = 1.882   E0 = 0.0296   H/Hmax = +0.006   (64s)
+  iter  35   objective = 1.890   E0 = 0.0299   H/Hmax = +0.005   (75s)
+  iter  39   objective = 1.895   E0 = 0.0301   H/Hmax = +0.005   (83s)
+best amplification on the search grid: 1.895
+
+verification at 64^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 64^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.6343  (2dx = 0.1963)
+  kida-pelz      at 64^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.4579  (2dx = 0.1963)
+  abc+10%        at 64^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.7398  (2dx = 0.1963)
+  FOUND          at 64^3:  Z(T)/Z0 = 1.048   E(T)/E0 = 1.000000   delta(T) = 0.2904  (2dx = 0.1963)
+
+REGISTERED  found Z(T)/Z0 = 1.048 (delta > 2dx) vs best RELIABLE classical 1.112 at 64^3 -> FAIL
