@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | mechanism3d | budgets3d | highres | kolmogorov_v2"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | spectra | midpoint | mechanism3d | budgets3d | highres | kolmogorov_v2"
         default: "all"
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: install
-        run: pip install numpy torch --index-url https://download.pytorch.org/whl/cpu
+        run: pip install numpy matplotlib scikit-image torch --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
       - name: burgers
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'burgers' }}
         run: python -u burgers_entropy.py | tee results/burgers.txt
@@ -36,6 +36,14 @@ jobs:
           DIM=1 N=512 NU=0 T=0.95 DT=2e-4 python -u ns_d.py 2>/dev/null | tee results/ns_d_1d.txt
           DIM=2 N=128 NU=0.02 T=2 DT=2e-3 IC=tg python -u ns_d.py 2>/dev/null | tee results/ns_d_2d.txt
           DIM=3 N=48 NU=0 T=4 python -u ns_d.py 2>/dev/null | tee results/ns_d_3d.txt
+      - name: spectra
+        if: ${{ github.event.inputs.which == 'spectra' }}
+        run: |
+          N3=48 T3=20 python -u spectra.py 2>/dev/null | tee results/spectra.txt
+          git add figures/spectra.png
+      - name: midpoint
+        if: ${{ github.event.inputs.which == 'midpoint' }}
+        run: python -u midpoint.py 2>/dev/null | tee results/midpoint.txt
       - name: mechanism3d
         if: ${{ github.event.inputs.which == 'mechanism3d' }}
         run: |
@@ -59,7 +67,7 @@ jobs:
         run: |
           git config user.name "experiments-bot"
           git config user.email "actions@github.com"
-          git add results
+          git add results figures
           git diff --cached --quiet || git commit -m "results: $(date -u +%Y-%m-%dT%H:%MZ) run ${{ github.run_id }}"
           git pull --rebase origin master && git push
       - uses: actions/upload-artifact@v4

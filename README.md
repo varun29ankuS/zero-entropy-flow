@@ -17,6 +17,12 @@ energy the equation says is conserved.*
 budget closed, at 64^3, 96^3, 128^3. Energy is 1.000000 throughout. Coarser grids under-estimate the amplification; the
 curves converge upward.*
 
+![3-D Taylor-Green: vorticity isosurfaces in the symmetry cell and planar slices at t = 1..4](figures/vortex_sheets_3d.png)
+
+*3-D Euler, Taylor-Green at 48^3. Top: isosurface of |ω| in the symmetry cell [0,π]^3; bottom: |ω| on a plane. The
+initial tori become sheets (t = 2) that thin and stretch (t = 3) and fold to the grid scale (t = 4) - the last frame
+visibly under-resolved, as the resolution table says. Energy 1.000000 throughout. `vortex_iso.py`.*
+
 ![2-D turbulence: enstrophy decreasing while the unsigned palinstrophy production is large and positive](figures/ladder_2d.png)
 
 *2-D decaying turbulence. The unsigned production term one level above enstrophy is large and positive throughout, and
