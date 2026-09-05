@@ -64,8 +64,12 @@ and controls $\nabla u$; the unsigned term is pushed to level 2 where its size i
 sits at level 1 and level 0 does not control the gradient: open.
 
 Forcing adds an input $\langle u\cdot f\rangle$ at level 0 and $\langle\omega\cdot\nabla\times f\rangle$ at level 1.
-A learned closure that is projected to be skew (as in `kolmogorov_v2.py`) leaves the level-0 budget identical to the
-physical one by construction.
+A learned closure projected to be skew (as in `kolmogorov_v2.py`) is energy-neutral **to first order in the step**:
+its component along the energy gradient is zero to machine precision ($10^{-12}$, `verify_skew_closure.py`, random
+weights), but a finite step in an orthogonal direction still changes a quadratic energy at second order. Measured:
+$9	imes10^{-6}$ relative energy change per step against $3.5	imes10^{-4}$ for the unprojected correction - forty
+times less, not zero. Exact neutrality needs one more line, a rescaling of the state to the energy of the frozen step
+after the correction is added (v3).
 
 ## The contrast that locates the difficulty
 
