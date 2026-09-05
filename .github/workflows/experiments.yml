@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -69,6 +69,11 @@ jobs:
           OBJ=helicity HEL=0.5 N=32 T=1.0 ITERS=60 NVER=64 python -u adversarial_ic.py 2>/dev/null | tee results/overnight_helicity_05.txt
           OBJ=helicity HEL=0.9 N=32 T=1.0 ITERS=60 NVER=64 python -u adversarial_ic.py 2>/dev/null | tee results/overnight_helicity_09.txt
           OBJ=jacobi N=32 T=1.0 ITERS=40 NVER=64 python -u adversarial_ic.py 2>/dev/null | tee results/overnight_jacobi.txt
+      - name: leashed
+        if: ${{ github.event.inputs.which == 'leashed' }}
+        run: |
+          DMIN=0.30 N=32 T=1.0 ITERS=60 NVER=128 python -u adversarial_ic.py 2>/dev/null | tee results/leashed_dmin030_128.txt
+          DMIN=0.45 N=32 T=1.0 ITERS=60 NVER=128 python -u adversarial_ic.py 2>/dev/null | tee results/leashed_dmin045_128.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

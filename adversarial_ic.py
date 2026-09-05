@@ -25,6 +25,8 @@ LR = float(os.environ.get("LR", 0.05))
 OBJ = os.environ.get("OBJ", "enstrophy")          # enstrophy | helicity | jacobi
 HEL = float(os.environ.get("HEL", 0.0))          # helicity target as a fraction of the max possible at this Z0 (OBJ=helicity)
 HELW = float(os.environ.get("HELW", 50.0))       # penalty weight
+DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-strip width delta(T) below DMIN on the search grid (stay resolved)
+DW = float(os.environ.get("DW", 20.0))
 dev = "cpu"
 
 # ------------------------------------------ torch solver (differentiable) ------------------------------------------
@@ -79,6 +81,21 @@ def helicity(U):
     u = [ifft(Ui).real for Ui in U]
     w = vort(U)
     return sum((u[i] * w[i]).mean() for i in range(3))
+
+
+KMAG_T = torch.sqrt(K2)
+NB_T = int(N / 3)
+
+
+def delta_torch(U):
+    """analyticity-strip width on the search grid: fit log E(k) = c - 2 delta k over the upper half of retained modes"""
+    e = 0.5 * sum(Ui.abs() ** 2 for Ui in U) / N**6
+    ks = torch.arange(NB_T // 2, NB_T, dtype=torch.float64)
+    spec = torch.stack([e[(KMAG_T >= n - 0.5) & (KMAG_T < n + 0.5)].sum() for n in ks])
+    y = torch.log(spec + 1e-30)
+    xm, ym = ks.mean(), y.mean()
+    slope = ((ks - xm) * (y - ym)).sum() / ((ks - xm) ** 2).sum()
+    return -slope / 2.0
 
 
 def field_from_params(P, Z0):
@@ -149,6 +166,9 @@ for it in range(ITERS):
     else:
         growth = enstrophy(UT) / Z0
         loss = -torch.log(growth)
+        if DMIN > 0:
+            d = delta_torch(UT)
+            loss = loss + DW * torch.relu(DMIN - d) ** 2
         if OBJ == "helicity":
             H = helicity(U0)
             Hmax = 2 * torch.sqrt(energy(U0) * Z0 * 2)      # |H| <= 2 sqrt(E Z) (Cauchy-Schwarz), the Beltrami bound
@@ -160,7 +180,7 @@ for it in range(ITERS):
     if g > best[0]:
         best = (g, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
-        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0 * 2))).item(), time.time() - t0), flush=True)
+        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0 * 2))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), time.time() - t0), flush=True)
 print("best amplification on the search grid: %.3f" % best[0])
 with torch.no_grad():
     Ubest = field_from_params(best[1], Z0)
