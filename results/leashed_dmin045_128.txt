@@ -1,0 +1,26 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective enstrophy
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.685   Z(T)/Z0 = 1.012
+  iter   0   objective = 1.126   E0 = 0.0183   H/Hmax = -0.063   delta(T) on search grid = 0.430   (2s)
+  iter   5   objective = 1.353   E0 = 0.0228   H/Hmax = +0.034   delta(T) on search grid = 0.433   (8s)
+  iter  10   objective = 1.572   E0 = 0.0276   H/Hmax = -0.007   delta(T) on search grid = 0.426   (15s)
+  iter  15   objective = 1.881   E0 = 0.0291   H/Hmax = -0.000   delta(T) on search grid = 0.419   (21s)
+  iter  20   objective = 2.215   E0 = 0.0298   H/Hmax = +0.026   delta(T) on search grid = 0.420   (28s)
+  iter  25   objective = 2.513   E0 = 0.0313   H/Hmax = +0.033   delta(T) on search grid = 0.420   (35s)
+  iter  30   objective = 2.794   E0 = 0.0335   H/Hmax = +0.021   delta(T) on search grid = 0.415   (44s)
+  iter  35   objective = 3.042   E0 = 0.0367   H/Hmax = -0.004   delta(T) on search grid = 0.415   (52s)
+  iter  40   objective = 3.286   E0 = 0.0406   H/Hmax = -0.019   delta(T) on search grid = 0.411   (62s)
+  iter  45   objective = 3.492   E0 = 0.0448   H/Hmax = -0.024   delta(T) on search grid = 0.411   (71s)
+  iter  50   objective = 3.653   E0 = 0.0491   H/Hmax = -0.027   delta(T) on search grid = 0.411   (80s)
+  iter  55   objective = 3.755   E0 = 0.0537   H/Hmax = -0.028   delta(T) on search grid = 0.413   (89s)
+  iter  59   objective = 3.817   E0 = 0.0576   H/Hmax = -0.030   delta(T) on search grid = 0.415   (97s)
+best amplification on the search grid: 3.817
+
+verification at 128^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 128^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5290  (2dx = 0.0982)
+  kida-pelz      at 128^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3305  (2dx = 0.0982)
+  abc+10%        at 128^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.6371  (2dx = 0.0982)
+  FOUND          at 128^3:  Z(T)/Z0 = 5.849   E(T)/E0 = 0.999999   delta(T) = 0.0471  (2dx = 0.0982)   <-- unreliable
+
+REGISTERED  found Z(T)/Z0 = 5.849 (delta < 2dx) vs best RELIABLE classical 1.112 at 128^3 -> FAIL: outside the reliable window
