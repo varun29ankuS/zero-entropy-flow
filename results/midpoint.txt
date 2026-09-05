@@ -1,0 +1,8 @@
+
+DIM=1 N=512^1  dt=0.0002  energy drift |E/E0 - 1| at the end
+  RK4                max |E/E0 - 1| over the run = 6.66e-15   (2s)
+  implicit midpoint  max |E/E0 - 1| over the run = 3.11e-15   (5s)
+
+DIM=3 N=32^3  dt=0.0625  energy drift |E/E0 - 1| at the end
+  RK4                max |E/E0 - 1| over the run = 3.50e-08   (5s)
+  implicit midpoint  max |E/E0 - 1| over the run = 5.73e-12   (15s)
