@@ -19,6 +19,16 @@ What is here, each with the command that reproduces it and the observation that 
   energy between scales but cannot *create* it cuts the long-rollout spectrum error six-fold against a fully learned
   model that drifts to 1.9x the true energy (`kolmogorov_v2.py`, reproduced on two machines). A dissipative-only
   learned closure did nothing in 2-D; the missing physics there is backscatter.
+- **The regularity criteria, measured with a clock that says when to stop believing them:** BKM, the L3 norm,
+  the Constantin-Fefferman direction coherence at fixed physical scale, and the analyticity-strip width delta(t),
+  on Taylor-Green and Kida-Pelz at 64/96/128^3. Numbers past the clock were withdrawn from this page, and it says so.
+- **Feedback, not imitation:** a differentiable copy of the solver searches initial data for the fastest enstrophy
+  growth (Lu-Doering; Ayala-Protas) and a verifier at higher resolution with the clock rejects what only wins on the
+  search grid - it has rejected three so far. The same search with helicity held fixed orders attainable growth by
+  helicity (Moffatt's direction), and along Arnold's geodesic it measures the Jacobi-field exponent by resolution.
+- **Liouville, exactly:** the truncated inviscid system conserves phase volume (Lee 1952) - exact Jacobian trace
+  1e-16 by autograd - and the viscous contraction is a state-independent constant, so the Gibbs entropy of any
+  ensemble falls linearly. Zero entropy production per solution *and* per ensemble; what the flow does is stretch.
 - **Theory** (`THEORY.md`): the elementary propositions proved; Tao's 2016 theorem that this structure alone cannot
   decide 3-D regularity; the conditional theorem for what would; the open hypothesis stated so it can be attacked.
 - **Not claimed:** anything about the regularity of 3-D Navier-Stokes.
