@@ -113,6 +113,10 @@ uses far higher resolution beyond that.
 - It is **not** a statement about 3-D Navier-Stokes regularity. Nothing here proves anything; a proof is a theorem
   or nothing.
 
+## Theory
+Definitions, the elementary propositions with proofs, the classical limits (Tao 2016; Beale-Kato-Majda), and the one open
+hypothesis stated attackably: [THEORY.md](THEORY.md).
+
 ## Run
 ```
 python burgers_entropy.py      # ~1 minute, CPU
