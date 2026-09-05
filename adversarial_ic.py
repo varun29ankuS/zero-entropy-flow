@@ -25,6 +25,7 @@ LR = float(os.environ.get("LR", 0.05))
 OBJ = os.environ.get("OBJ", "enstrophy")          # enstrophy | helicity | jacobi
 HEL = float(os.environ.get("HEL", 0.0))          # helicity target as a fraction of the max possible at this Z0 (OBJ=helicity)
 HELW = float(os.environ.get("HELW", 50.0))       # penalty weight
+HELMODE = os.environ.get("HELMODE", "penalty")   # penalty | project  (project: Newton-project P onto H/Hmax = HEL after every step, a hard constraint)
 DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-strip width delta(T) below DMIN on the search grid (stay resolved)
 DW = float(os.environ.get("DW", 20.0))
 dev = "cpu"
@@ -176,6 +177,18 @@ for it in range(ITERS):
     opt.zero_grad()
     loss.backward()
     opt.step()
+    if OBJ == "helicity" and HELMODE == "project":
+        # hard constraint: Newton steps on c(P) = H/Hmax - HEL using the exact gradient of the constraint alone (no rollout)
+        for _ in range(6):
+            Uc = field_from_params(P, Z0)
+            c = helicity(Uc) / (2 * torch.sqrt(energy(Uc) * Z0 * 2)) - HEL
+            if abs(c.item()) < 1e-6:
+                break
+            gr = torch.autograd.grad(c, P)
+            gg = sum((gi ** 2).sum() for gi in gr)
+            with torch.no_grad():
+                for Pi, gi in zip(P, gr):
+                    Pi -= c * gi / gg
     g = growth.item()
     if g > best[0]:
         best = (g, [p.detach().clone() for p in P])
