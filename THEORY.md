@@ -17,10 +17,10 @@ $$\dot x  =  T(x)  +  D(x), \qquad x(0)=x_0 ,$$
 with the two parts characterised by their action on the norm:
 
 * **Transport** $T$ is *skew* (norm-preserving): $\langle x, T(x)\rangle = 0$ for all $x$ in its domain.
-* **Dissipation** $D$ is *contractive*: $\langle x, D(x)\rangle = -\,\mathcal{E}(x) \le 0$, with $\mathcal{E}\ge 0$
+* **Dissipation** $D$ is *contractive*: $\langle x, D(x)\rangle = - \mathcal{E}(x) \le 0$, with $\mathcal{E}\ge 0$
   called the dissipation rate.
 
-Examples. Burgers: $T(u) = -u\,u_x$, $D(u)=\nu u_{xx}$ on the torus; $\mathcal{E}(u)=\nu\|u_x\|^2$. Navier-Stokes on
+Examples. Burgers: $T(u) = -u u_x$, $D(u)=\nu u_{xx}$ on the torus; $\mathcal{E}(u)=\nu\|u_x\|^2$. Navier-Stokes on
 the torus $\mathbb{T}^d$, divergence-free velocity fields: $T(u) = -P[(u\cdot\nabla)u]$ with $P$ the Leray projector,
 $D(u)=\nu\Delta u$, $\mathcal{E}(u)=\nu\|\nabla u\|^2$. A recurrent memory: $x_{t+1} = R_t x_t$ with $R_t$
 orthogonal is the discrete transport; a gate $x \mapsto (1-g)\odot x$ with $g\in[0,1]$ is the discrete dissipation.
@@ -28,7 +28,7 @@ orthogonal is the discrete transport; a gate $x \mapsto (1-g)\odot x$ with $g\in
 **Definition 1 (entropy production).** For a differentiable flow map $\Phi_t$ on a finite-dimensional state space,
 the entropy production rate is the volume contraction rate
 
-$$\sigma(x)  =  -\,\nabla\cdot F(x) \qquad\text{for } \dot x = F(x),$$
+$$\sigma(x)  =  - \nabla\cdot F(x) \qquad\text{for } \dot x = F(x),$$
 
 and for a discrete map $x_{t+1}=\Phi(x_t)$ it is $\sigma = -\log|\det J_\Phi(x_t)|$. (This is the phase-space
 contraction rate of Ruelle; for a thermostatted system it equals the thermodynamic entropy production.)
@@ -36,7 +36,7 @@ contraction rate of Ruelle; for a thermostatted system it equals the thermodynam
 **Definition 2 (numerical entropy production).** For a numerical scheme applied to a system whose exact dynamics
 satisfies $\frac{d}{dt}\|x\|^2 = -2\mathcal{E}(x)$, the numerical entropy production over $[0,t]$ is
 
-$$\sigma_{\text{num}}  =  -\frac{1}{t}\Big(\log\frac{\|x_t\|^2}{\|x_0\|^2}  +  \frac{2}{\|x_0\|^2}\int_0^t \mathcal{E}\,ds\Big),$$
+$$\sigma_{\text{num}}  =  -\frac{1}{t}\Big(\log\frac{\|x_t\|^2}{\|x_0\|^2}  +  \frac{2}{\|x_0\|^2}\int_0^t \mathcal{E} ds\Big),$$
 
 the dissipation the scheme produces beyond the physical one. For $\mathcal{E}\equiv 0$ it reduces to
 $-\tfrac1t\log(\|x_t\|^2/\|x_0\|^2)$, the quantity measured in `burgers_entropy.py`.
@@ -48,7 +48,7 @@ $-\tfrac1t\log(\|x_t\|^2/\|x_0\|^2)$, the quantity measured in `burgers_entropy.
 **Proposition 1 (energy inequality). [proved here; classical for NS, Leray 1934]**
 For any solution of $\dot x = T(x)+D(x)$ on $[0,t]$ smooth enough for the identities to hold,
 
-$$\|x(t)\|^2 + 2\int_0^t \mathcal{E}(x(s))\,ds  =  \|x_0\|^2 .$$
+$$\|x(t)\|^2 + 2\int_0^t \mathcal{E}(x(s)) ds  =  \|x_0\|^2 .$$
 
 *Proof.* $\frac{d}{dt}\|x\|^2 = 2\langle x,\dot x\rangle = 2\langle x,T(x)\rangle + 2\langle x,D(x)\rangle = 0 - 2\mathcal{E}(x)$. Integrate. $\square$
 
@@ -72,7 +72,7 @@ the entropy production rate). [proved here]**
 (i) Let $x_{t+1} = R_t x_t$ with each $R_t$ orthogonal, and let $\delta_t$ be the difference between two
 trajectories with the same $R_t$. Then $\|\delta_t\| = \|\delta_0\|$ for all $t$.
 (ii) Let $x_{t+1} = (1-g_t)\odot R_t x_t + b_t$ with $g_t\in[0,1]^d$ (gated recurrence with input $b_t$). Then
-$\|\delta_t\| \le \prod_{s<t}(1-\min_i g_{s,i})\,\|\delta_0\|$, and the per-step entropy production is
+$\|\delta_t\| \le \prod_{s<t}(1-\min_i g_{s,i}) \|\delta_0\|$, and the per-step entropy production is
 $\sigma_t = -\sum_i \log(1-g_{t,i})$.
 (iii) (Position clock.) For rotation planes with angular rates $w_k$ driven by increments $\Delta_t$,
 $\theta_{k,t+1} = \theta_{k,t} + w_k\Delta_t$, the phases satisfy $\theta_{k,t} = \theta_{k,0} + w_k\sum_{s<t}\Delta_s$
@@ -88,7 +88,7 @@ $t$ (resp. at most $G$) independent increments. $\square$
 
 *Remark.* Part (ii) is the "forgetting law" and the measured $\sim 250$ nats/step of the trained drawing hand; part
 (iii) is the measured 1.8 px at 4000 moves (no noise), $\sigma\sqrt{n}$ drift under poison, and the flat 6 px with a
-glance every 50 moves. Note that in the Householder update $x\mapsto x-\beta\,u\,u^{\top}x$ the map is not
+glance every 50 moves. Note that in the Householder update $x\mapsto x-\beta u u^{\top}x$ the map is not
 orthogonal unless $\beta\in\{0,2\}$: $\det = 1-\beta = \cos\theta$, so the "transport" of that architecture is
 itself a contraction along $u$ and contributes $\log|\cos\theta|$ to $\sigma$. The exact-transport claim applies to
 the rotation planes, not to the Householder erasure.
@@ -113,15 +113,15 @@ Soc. 29 (2016), 601-674.
 **Theorem 5 (what suffices: a second controlled norm). [classical; conditional form proved here]**
 Let $u$ be a Leray-Hopf solution on $\mathbb{T}^3\times[0,T)$ that is smooth on $[0,T)$. If
 
-$$\int_0^T \|\omega(s)\|_{L^\infty}\,ds < \infty, \qquad \omega=\nabla\times u,$$
+$$\int_0^T \|\omega(s)\|_{L^\infty} ds < \infty, \qquad \omega=\nabla\times u,$$
 
 then $u$ extends smoothly past $T$ (Beale-Kato-Majda 1984). Consequently: **if there is a functional $M(u)\ge 0$ with
-(a) $M(u) \ge c\,\|\omega\|_{L^\infty}$ (or any bound implying the BKM integral is finite), and (b)
+(a) $M(u) \ge c \|\omega\|_{L^\infty}$ (or any bound implying the BKM integral is finite), and (b)
 $\frac{d}{dt}M(u)\le 0$ along solutions - i.e. $M$ is a norm in which the transport is skew or contractive and the
 dissipation contractive - then solutions are globally smooth.**
 
 *Proof of the consequence.* (b) gives $M(u(t))\le M(u_0)$ on $[0,T)$; (a) gives $\|\omega\|_{L^\infty}\le M(u_0)/c$;
-the BKM integral is at most $T\,M(u_0)/c<\infty$; apply BKM. $\square$
+the BKM integral is at most $T M(u_0)/c<\infty$; apply BKM. $\square$
 
 *Remark (why 2-D is solved and 3-D is not).* In two dimensions enstrophy $Z=\tfrac12\|\omega\|^2$ satisfies
 $\frac{d}{dt}Z = -\nu\|\nabla\omega\|^2 \le 0$: the vortex-stretching term $\int \omega\cdot(\omega\cdot\nabla)u$
