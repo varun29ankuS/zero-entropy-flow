@@ -41,7 +41,7 @@ Test: `N=128 T=4 python budgets3d.py` (~40 min on 2 cores); results in `results/
 
 **C6. The vorticity aligns preferentially with the intermediate strain eigenvector (Ashurst et al. 1987).**
 Refuted by: the intermediate-eigenvector fraction not exceeding the other two at 64^3 by t = 3.
-Test: `IC=tg N=64 T=4 python mechanism3d.py`. Status: met, weakly (0.341 vs 0.328/0.331 at t = 3; 0.356 at t = 2). Neither
+Test: `IC=tg N=64 T=4 python mechanism3d.py`. Status: met, weakly (0.341 vs 0.328/0.331 at t = 3; 0.356 at t = 2); note that by the analyticity clock the 64^3 Taylor-Green run is past its reliable window at t = 3, so the t = 2 number is the one that counts. Neither
 flow is developed turbulence by t = 4; the strong textbook signal is expected in the forced run and is not yet shown.
 
 **C7. Helicity is conserved under 3-D Euler dynamics to the same order as energy.**
@@ -63,6 +63,27 @@ Test: `python kolmogorov_closure.py`.
 Refuted by: a per-step relative energy change from the projected correction comparable to the unprojected one
 (3.5e-4), or exactly zero (which would mean the second-order argument is wrong).
 Test: `python verify_skew_closure.py` (expect ~1e-5 vs 3.5e-4).
+
+**C11. The Kida-Pelz early evolution is converged, and its vorticity direction roughens at a fixed physical scale.**
+At t = 0.5 (inside the reliability window at every resolution) 64/96/128^3 agree on Z = 5.4197 and S = 5.817 to four
+digits, and the Constantin-Fefferman direction coherence at fixed physical scale h = 2pi/32 is 0.128 / 0.127 / 0.124
+with a local Lipschitz exponent 1.49 / 1.51 / 1.53 (2 would be a smooth direction field). Refuted by: any of these
+moving with resolution beyond the third digit, or the exponent rising toward 2 at higher N.
+Test: `IC=kp N=64 T=1 python criteria3d.py` (and 96, 128). Earlier t = 3 Kida-Pelz numbers on this page were
+withdrawn: the analyticity strip is below 2 dx by t = 1.0 at all three resolutions, so nothing later is a statement
+about Euler.
+
+**C12. The adversarial searcher finds smooth low-k initial data that the verifier rejects as unresolved.**
+Twice, a |k| <= 4 field found by gradient ascent on enstrophy amplification over t = 1 cascaded to the grid cutoff
+(8.75x on the 32^3 search grid / 20x at 64^3 with delta(T) < 0; 4.96x / 8.0x at 96^3 with delta 0.06 < 0.13), and
+twice the registered verdict is FAIL because the verifier's clock says the number is not a statement about Euler.
+That is the design working; it is not a blow-up. Refuted by: a searcher result that stays resolved (delta > 2 dx on
+the verification grid) and beats the best classical flow. Test: `python adversarial_ic.py` and the `leashed` CI job.
+
+**C13. Attainable enstrophy growth is ordered by helicity.** With a helicity penalty on the same search, best growth
+over t = 1 (inside the window): 1.213 at H = 0, 1.097 at H/Hmax = 0.5, 1.006 at H/Hmax ~ 0.7. Monotone, the direction
+Moffatt's topological bound predicts. The penalty method is crude (soft constraint, one weight); the ordering is
+the claim, not the numbers. Refuted by: a helical field that beats the H = 0 optimum at the same Z0 and window.
 
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
