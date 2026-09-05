@@ -26,6 +26,19 @@ What is here, each with the command that reproduces it and the observation that 
 Everything runs on numpy, on a laptop or on this repository's GitHub Actions runners, which produced the results in
 `results/`. Issues and Discussions are open; refutations welcome, bring the output.
 
+## Two animations
+
+![2-D turbulence at 256^2, vorticity, with energy and enstrophy on every frame](figures/turbulence_2d.gif)
+
+*2-D decaying turbulence, 256^2, nu = 1e-4, vorticity. Vortices merge, filaments stretch and roll up, enstrophy
+cascades to small scales; the energy on each frame decays only by the physical viscous rate. `flow_gif.py`.*
+
+![1-D Burgers: inviscid blow-up (stopped at the grid limit) and the viscous shock on the Cole-Hopf exact solution](figures/burgers_shock.gif)
+
+*Left: inviscid Burgers, energy 1.000000000000 on every frame, the gradient climbing toward 1/(1-t) until the grid
+limit, where the animation stops and says so. Right: viscous Burgers on top of the Cole-Hopf closed form through the
+shock, error printed per frame.*
+
 ## Three pictures
 
 ![1-D Burgers: the frozen-rotation scheme sits on the exact 1/(1-t) blow-up curve while upwind drifts and loses energy](figures/burgers_blowup.png)

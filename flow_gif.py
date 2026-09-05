@@ -25,7 +25,8 @@ def fig_to_img(fig, w=None):
     fig.savefig(buf, format="png", dpi=100)
     plt.close(fig)
     buf.seek(0)
-    im = Image.open(buf).convert("P", palette=Image.ADAPTIVE, colors=128)
+    im = Image.open(buf)
+    im = im.resize((int(im.width * 0.8), int(im.height * 0.8)), Image.LANCZOS).convert("P", palette=Image.ADAPTIVE, colors=64)
     return im
 
 
@@ -56,11 +57,12 @@ rng = np.random.default_rng(1)
 wh = fft(rng.standard_normal((M, M))) * ((k2 >= 9) & (k2 <= 36)) * deal
 u, v = vel(wh)
 wh *= 1.0 / np.sqrt(np.mean(u * u + v * v))
+u, v = vel(wh)
 fac, fac2 = np.exp(-nu * k2 * dt), np.exp(-nu * k2 * dt / 2)
 E0 = 0.5 * np.mean(u * u + v * v)
 frames = []
 t = 0.0
-T, every = 12.0, 0.05
+T, every = 12.0, 0.1
 next_frame = 0.0
 vmax = np.abs(ifft(wh).real).max()
 while t < T:
@@ -136,7 +138,8 @@ while t < 1.6:
         g = np.abs(np.gradient(u1, x)).max()
         a1.plot(x, u1, color="#1b1b1b", lw=1.6)
         a1.set_ylim(-1.15, 1.15)
-        a1.set_title("inviscid Burgers   t = %.2f\nenergy / E0 = %.12f   max|u_x| = %.1f  (exact 1/(1-t) = %s)" % (t, np.mean(u1**2) / E0, g, ("%.1f" % (1 / (1 - t))) if t < 0.98 else "inf"), fontsize=8.5, loc="left")
+        ti = min(t, 0.95)
+        a1.set_title("inviscid Burgers   t = %.2f%s\nenergy / E0 = %.12f   max|u_x| = %.1f  (exact 1/(1-t) = %.1f)" % (ti, "   stopped at the grid limit" if t > 0.95 else "", np.mean(u1**2) / E0, g, 1 / (1 - ti)), fontsize=8.5, loc="left")
         if t > 0.02:
             a2.plot(x, cole_hopf(t), color="#8a8a8a", lw=5, alpha=0.4, label="Cole-Hopf exact")
         a2.plot(x, u2, color="#d9731f", lw=1.6, label="scheme")
@@ -149,7 +152,7 @@ while t < 1.6:
         fig.tight_layout()
         frames.append(fig_to_img(fig))
         next_frame += 0.02
-    ui = step1(ui, dt1, 0.0) if t < 0.96 else ui
+    ui = step1(ui, dt1, 0.0) if t < 0.95 else ui
     uv = step1(uv, dt1, NUV)
     t += dt1
 to_gif(frames, "figures/burgers_shock.gif", ms=60)
