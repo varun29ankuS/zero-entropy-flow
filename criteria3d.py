@@ -9,7 +9,10 @@ Each line below is a THEOREM giving a sufficient condition for smoothness; a blo
         grid spacing (small = parallel vortex lines = CF holds with a good constant); and the local stretching
         alpha = xi.(S xi) averaged over the same set (the CF depletion factor: stretching per unit |w|^2).
 Also: enstrophy Z and the stretching term S with the budget residual, as in budgets3d.py.
-usage: IC=tg|abc|kp N=64 T=4 python criteria3d.py     (kp = Kida-Pelz high-symmetry flow, Kida 1985)"""
+usage: IC=tg|abc|kp N=64 T=4 [NU=1e-3] python criteria3d.py     (kp = Kida-Pelz high-symmetry flow, Kida 1985)
+NOTE: ESS is a Navier-Stokes theorem; with NU=0 the L3 column is an observation about Euler, not the ESS criterion.
+The CF coherence is measured at fixed PHYSICAL scales so it is comparable across resolutions; the Lipschitz exponent
+is log2(rho(2h)/rho(h)) and equals 2 for a smooth direction field."""
 import os, time, numpy as np
 
 IC = os.environ.get("IC", "tg")
@@ -88,11 +91,17 @@ def diagnostics(U):
     high = wmag > 0.5 * wmag.max()
     xi = [wi / (wmag + 1e-12) for wi in w]
     alpha = sum(xi[i] * Sm[i][j] * xi[j] for i in range(3) for j in range(3))
-    # CF direction coherence at one grid spacing, averaged over the high-vorticity set and the three axes
-    rho = 0.0
-    for ax in range(3):
-        dot = sum(xi[i] * np.roll(xi[i], -1, axis=ax) for i in range(3))
-        rho += np.mean((1 - dot**2)[high]) / 3
+    # CF direction coherence at FIXED PHYSICAL scales h = 2pi/32, 2pi/16, 2pi/8 (resolution-independent), on the high set.
+    # If the direction field is Lipschitz, rho(h) ~ h^2: the local exponent between h and 2h is reported.
+    rhos = []
+    for hphys in (2 * np.pi / 32, 2 * np.pi / 16, 2 * np.pi / 8):
+        sh = int(round(hphys / (2 * np.pi / N)))
+        r = 0.0
+        for ax in range(3):
+            dot = sum(xi[i] * np.roll(xi[i], -sh, axis=ax) for i in range(3))
+            r += np.mean((1 - dot**2)[high]) / 3
+        rhos.append(r)
+    rho = tuple(rhos)
     return E, Z, S_total, wmag.max(), L3, rho, np.mean(alpha[high]), high.mean()
 
 
@@ -102,20 +111,27 @@ t0 = time.time()
 bkm = 0.0
 mark = 0.5
 print("IC=%s  N=%d^3  nu=%g  dt=%.4f" % (IC, N, NU, dt))
-print("   t     E/E0       Z        S        max|w|   int max|w| dt (BKM)   ||u||_L3 (ESS)   CF: rho(xi,h=dx) in |w|>0.5max   alpha=xi.S.xi there   |high set|")
+print("   t     E/E0       Z         S       dZ/dt residual   max|w|   BKM int   ||u||_L3   CF rho(h=2pi/32, /16, /8)   Lipschitz exp   alpha   |high set|")
 E, Z, S, wm, L3, rho, al, hs = diagnostics(U)
-print("%5.2f   %.6f   %7.4f   %+.4f   %7.3f   %8.3f              %.4f          %.4f                          %+.4f              %.3f" % (0, 1, Z, S, wm, 0, L3, rho, al, hs), flush=True)
+print("%5.2f   %.6f   %8.4f   %+.4f   %s   %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %s   %+.4f   %.3f" % (0, 1, Z, S, "   ---   ", wm, 0, L3, rho[0], rho[1], rho[2], "  ---  ", al, hs), flush=True)
 wm_prev = wm
 while t < T - 1e-9:
+    Up = U
     U = step(U, dt)
     t += dt
     E, Z, S, wm, L3, rho, al, hs = diagnostics(U) if t >= mark - dt / 2 else (None,) * 8
-    if E is not None:
-        pass
     # integrate BKM with the trapezoid rule on every step (cheap max|w|)
     wcur = np.sqrt(sum(c**2 for c in vort(U))).max()
     bkm += 0.5 * (wm_prev + wcur) * dt
     wm_prev = wcur
     if t >= mark - dt / 2:
-        print("%5.2f   %.6f   %7.4f   %+.4f   %7.3f   %8.3f              %.4f          %.4f                          %+.4f              %.3f   (%.0fs)" % (t, E / E0, Z, S, wm, bkm, L3, rho, al, hs, time.time() - t0), flush=True)
+        mid = step(Up, dt / 2)
+        Zb = 0.5 * np.mean(sum(c**2 for c in vort(Up)))
+        Smid = diagnostics(mid)[2]
+        wmid = vort(mid)
+        diss = NU * sum(np.mean(ifft(1j * K[j] * fft(c)).real ** 2) for c in wmid for j in range(3))
+        dZ = (Z - Zb) / dt
+        res = abs(dZ - (Smid - diss)) / max(abs(dZ), abs(Smid - diss), 1e-300)
+        lip = np.log(rho[1] / max(rho[0], 1e-12)) / np.log(2.0)
+        print("%5.2f   %.6f   %8.4f   %+.4f   %.1e        %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %+.2f   %+.4f   %.3f   (%.0fs)" % (t, E / E0, Z, S, res, wm, bkm, L3, rho[0], rho[1], rho[2], lip, al, hs, time.time() - t0), flush=True)
         mark += 0.5
