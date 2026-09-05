@@ -1,22 +1,24 @@
 search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective helicity (helicity target 0.90 of max)
   taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
   kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
-  abc+10%        E0 0.3578   H/Hmax +0.685   Z(T)/Z0 = 1.012
-  iter   0   objective = 1.126   E0 = 0.0183   H/Hmax = -0.063   delta(T) on search grid = 0.430   (2s)
-  iter   5   objective = 1.009   E0 = 0.0126   H/Hmax = +0.686   delta(T) on search grid = 0.847   (8s)
-  iter  10   objective = 1.018   E0 = 0.0115   H/Hmax = +0.655   delta(T) on search grid = 0.685   (15s)
-  iter  15   objective = 1.027   E0 = 0.0110   H/Hmax = +0.624   delta(T) on search grid = 0.570   (21s)
-  iter  20   objective = 1.035   E0 = 0.0107   H/Hmax = +0.595   delta(T) on search grid = 0.439   (28s)
-  iter  25   objective = 1.024   E0 = 0.0108   H/Hmax = +0.630   delta(T) on search grid = 0.564   (34s)
-  iter  30   objective = 1.031   E0 = 0.0108   H/Hmax = +0.605   delta(T) on search grid = 0.576   (41s)
-  iter  35   objective = 1.006   E0 = 0.0107   H/Hmax = +0.689   delta(T) on search grid = 0.508   (47s)
-  iter  39   objective = 1.012   E0 = 0.0107   H/Hmax = +0.671   delta(T) on search grid = 0.322   (52s)
-best amplification on the search grid: 1.126
+  abc+10%        E0 0.3578   H/Hmax +0.968   Z(T)/Z0 = 1.012
+bisection on the random-to-Beltrami segment reached H/Hmax = 0.9000
+initial projection onto H/Hmax = 0.90: ok (reached 0.9000)
+  iter   0   objective = 1.047   E0 = 0.3127   H/Hmax = +0.900   delta(T) on search grid = 0.344   (2s)
+  iter   5   objective = 1.197   E0 = 0.2867   H/Hmax = +0.900   delta(T) on search grid = 0.377   (9s)
+  iter  10   objective = 1.223   E0 = 0.2867   H/Hmax = +0.900   delta(T) on search grid = 0.378   (15s)
+  iter  15   objective = 1.238   E0 = 0.2854   H/Hmax = +0.900   delta(T) on search grid = 0.381   (22s)
+  iter  20   objective = 1.249   E0 = 0.2827   H/Hmax = +0.900   delta(T) on search grid = 0.388   (29s)
+  iter  25   objective = 1.256   E0 = 0.2797   H/Hmax = +0.900   delta(T) on search grid = 0.395   (35s)
+  iter  30   objective = 1.262   E0 = 0.2765   H/Hmax = +0.900   delta(T) on search grid = 0.401   (42s)
+  iter  35   objective = 1.265   E0 = 0.2731   H/Hmax = +0.900   delta(T) on search grid = 0.404   (49s)
+  iter  39   objective = 1.266   E0 = 0.2704   H/Hmax = +0.900   delta(T) on search grid = 0.405   (54s)
+best amplification on the search grid: 1.266
 
 verification at 96^3 with the numpy instrument (fields upsampled spectrally, same Z0):
   taylor-green   at 96^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5570  (2dx = 0.1309)
   kida-pelz      at 96^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3740  (2dx = 0.1309)
   abc+10%        at 96^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.6681  (2dx = 0.1309)
-  FOUND          at 96^3:  Z(T)/Z0 = 1.064   E(T)/E0 = 1.000000   delta(T) = 0.2575  (2dx = 0.1309)
+  FOUND          at 96^3:  Z(T)/Z0 = 1.266   E(T)/E0 = 1.000000   delta(T) = 0.1997  (2dx = 0.1309)
 
-REGISTERED  found Z(T)/Z0 = 1.064 (delta > 2dx) vs best RELIABLE classical 1.112 at 96^3 -> FAIL
+REGISTERED  found Z(T)/Z0 = 1.266 (delta > 2dx) vs best RELIABLE classical 1.112 at 96^3 -> PASS
