@@ -319,6 +319,39 @@ volume). And the viscous contraction is a constant independent of the state, so 
 Gibbs entropy of any ensemble decreases linearly, S(t) = S(0) - nu (d-1) (sum_k k^2) t, however turbulent the flow.
 What the flow does is not create or destroy phase volume but stretch it: the Jacobi ladder below measures the rate.
 
+## The Riemannian view, measured: Jacobi fields along the Euler geodesic
+
+Arnold (1966): an Euler flow is a geodesic on the group of volume-preserving maps with the L2 metric, and the
+separation of two nearby geodesics (a Jacobi field) is governed by the sectional curvature; negative curvature
+means exponential separation. `jacobi_ladder.py` integrates a flow and a copy perturbed by 1e-5 of a random
+solenoidal field and reports the separation growth and its local exponent lambda, with the reliability clock on
+every row (rows past the clock are omitted here).
+
+```
+Taylor-Green            growth |du|/(eps|v|)              local exponent lambda
+    t         32^3      48^3      64^3              32^3     48^3     64^3
+   0.5      1.0088    1.0128    1.0143              0.018    0.025    0.028
+   1.0      1.0466    1.0553    1.0572              0.073    0.082    0.083
+   1.5      1.1134    1.1301    1.1348              0.124    0.137    0.142
+   2.0      1.2193    1.2488    1.2593              0.182    0.200    0.208
+   2.5         -         -      1.4485                -        -      0.280
+
+Kida-Pelz
+   0.5         -      1.2301    1.2660                -      0.414    0.472
+```
+
+Three readings. The growth converges with resolution inside the window (Taylor-Green at t = 2: 48^3 and 64^3
+agree to 1%). The local exponent rises steadily with time, 0.03 to 0.28 for Taylor-Green: the geodesic moves into
+more negatively curved parts of the group as the vortex sheets form, which is Arnold's prediction in the one
+quantity a computer can measure. And Kida-Pelz is four times more unstable already at t = 0.5, before its enstrophy
+has grown by more than 30%: it is not yet converged at 64^3 (3% change from 48^3), so the number is provisional.
+Energy in both copies stays at 1 to 1e-8 throughout; nu = 0.
+
+Together with Liouville above this is the whole thermodynamic picture of the truncated inviscid system in two
+numbers: phase volume is conserved exactly (div F = 0), and it is stretched at rate lambda in the least stable
+direction and therefore compressed elsewhere. The flow does not lose information; it moves it to where a finite
+observer cannot read it. That is also, word for word, what the analyticity-strip clock measures.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by
