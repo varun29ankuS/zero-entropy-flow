@@ -19,7 +19,9 @@ IC = os.environ.get("IC", "tg")
 N = int(os.environ.get("N", 48))
 T = float(os.environ.get("T", 4.0))
 NU = float(os.environ.get("NU", 0.0))
-dt = 2.0 / N
+dt0 = 2.0 / N
+CFL = float(os.environ.get('CFL', 0.5))
+DT_DIV = float(os.environ.get('DT_DIV', 1.0))      # DT_DIV=2 halves every step: the time-stepping check
 fft, ifft = np.fft.fftn, np.fft.ifftn
 k = np.fft.fftfreq(N, d=1.0 / N)
 kx, ky, kz = np.meshgrid(k, k, k, indexing="ij")
@@ -76,6 +78,21 @@ def vort(U):
     return [ifft(1j * ky * U[2] - 1j * kz * U[1]).real, ifft(1j * kz * U[0] - 1j * kx * U[2]).real, ifft(1j * kx * U[1] - 1j * ky * U[0]).real]
 
 
+KMAG = np.sqrt(k2)
+NB = int(N / 3)
+
+
+def analyticity_strip(U):
+    e = 0.5 * sum(np.abs(Ui) ** 2 for Ui in U) / N**6
+    spec = np.array([e[(KMAG >= n - 0.5) & (KMAG < n + 0.5)].sum() for n in range(1, NB)])
+    ks = np.arange(1, NB)
+    sel = (ks >= NB // 2) & (spec > 0)
+    if sel.sum() < 4:
+        return np.nan
+    slope = np.polyfit(ks[sel], np.log(spec[sel]), 1)[0]
+    return -slope / 2.0                                 # delta: E(k) ~ exp(-2 delta k); reliable while delta > 2 dx
+
+
 def diagnostics(U):
     u = [ifft(Ui).real for Ui in U]
     w = vort(U)
@@ -102,7 +119,12 @@ def diagnostics(U):
             r += np.mean((1 - dot**2)[high]) / 3
         rhos.append(r)
     rho = tuple(rhos)
-    return E, Z, S_total, wmag.max(), L3, rho, np.mean(alpha[high]), high.mean()
+    return E, Z, S_total, wmag.max(), L3, rho, np.mean(alpha[high]), high.mean(), alpha.max(), analyticity_strip(U)
+
+
+def cfl_dt(U):
+    umax = max(np.abs(ifft(Ui).real).max() for Ui in U)
+    return min(dt0, CFL * (2 * np.pi / N) / max(umax, 1e-9)) / DT_DIV
 
 
 E0 = diagnostics(U)[0]
@@ -110,21 +132,25 @@ t = 0.0
 t0 = time.time()
 bkm = 0.0
 mark = 0.5
-print("IC=%s  N=%d^3  nu=%g  dt=%.4f" % (IC, N, NU, dt))
-print("   t     E/E0       Z         S       dZ/dt residual   max|w|   BKM int   ||u||_L3   CF rho(h=2pi/32, /16, /8)   Lipschitz exp   alpha   |high set|")
-E, Z, S, wm, L3, rho, al, hs = diagnostics(U)
-print("%5.2f   %.6f   %8.4f   %+.4f   %s   %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %s   %+.4f   %.3f" % (0, 1, Z, S, "   ---   ", wm, 0, L3, rho[0], rho[1], rho[2], "  ---  ", al, hs), flush=True)
+dt = cfl_dt(U)
+print("IC=%s  N=%d^3  nu=%g  dt0=%.4f (CFL %.2f adaptive, /%g)   2dx = %.4f" % (IC, N, NU, dt0, CFL, DT_DIV, 2 * 2 * np.pi / N))
+print("   t     E/E0       Z         S       dZ/dt residual   max|w|   BKM int   ||u||_L3   CF rho(h=2pi/32, /16, /8)   Lipschitz exp   alpha mean/max   |high set|   delta (analyticity strip)")
+E, Z, S, wm, L3, rho, al, hs, almax, delta = diagnostics(U)
+print("%5.2f   %.6f   %8.4f   %+.4f   %s   %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %s   %+.4f/%+.4f   %.3f   %.4f" % (0, 1, Z, S, "   ---   ", wm, 0, L3, rho[0], rho[1], rho[2], "  ---  ", al, almax, hs, delta), flush=True)
 wm_prev = wm
 while t < T - 1e-9:
     Up = U
+    dt = cfl_dt(U)
+    if t + dt > mark:
+        dt = mark - t + 1e-12
     U = step(U, dt)
     t += dt
-    E, Z, S, wm, L3, rho, al, hs = diagnostics(U) if t >= mark - dt / 2 else (None,) * 8
+    E, Z, S, wm, L3, rho, al, hs, almax, delta = diagnostics(U) if t >= mark - 1e-9 else (None,) * 10
     # integrate BKM with the trapezoid rule on every step (cheap max|w|)
     wcur = np.sqrt(sum(c**2 for c in vort(U))).max()
     bkm += 0.5 * (wm_prev + wcur) * dt
     wm_prev = wcur
-    if t >= mark - dt / 2:
+    if t >= mark - 1e-9:
         mid = step(Up, dt / 2)
         Zb = 0.5 * np.mean(sum(c**2 for c in vort(Up)))
         Smid = diagnostics(mid)[2]
@@ -133,5 +159,5 @@ while t < T - 1e-9:
         dZ = (Z - Zb) / dt
         res = abs(dZ - (Smid - diss)) / max(abs(dZ), abs(Smid - diss), 1e-300)
         lip = np.log(rho[1] / max(rho[0], 1e-12)) / np.log(2.0)
-        print("%5.2f   %.6f   %8.4f   %+.4f   %.1e        %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %+.2f   %+.4f   %.3f   (%.0fs)" % (t, E / E0, Z, S, res, wm, bkm, L3, rho[0], rho[1], rho[2], lip, al, hs, time.time() - t0), flush=True)
+        print("%5.2f   %.6f   %8.4f   %+.4f   %.1e        %7.3f   %7.3f   %.4f   %.4f %.4f %.4f   %+.2f   %+.4f/%+.4f   %.3f   %.4f%s   (%.0fs)" % (t, E / E0, Z, S, res, wm, bkm, L3, rho[0], rho[1], rho[2], lip, al, almax, hs, delta, "" if delta > 2 * 2 * np.pi / N else "  <-- delta < 2dx: NOT RELIABLE", time.time() - t0), flush=True)
         mark += 0.5

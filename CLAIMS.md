@@ -28,6 +28,11 @@ it (grid floor); a random single-shell 2-D field to 3e-14; the viscous ABC flow 
 Refuted by: errors materially above these at the stated grids and time steps.
 Test: `python exact_solutions.py`.
 
+**C4c. Time integration is converged: halving every step changes the state by ~3e-5 (Kida-Pelz 32^3, t = 1); the
+printed budget residual is the centred-difference diagnostic's own second-order error, not the integrator's.**
+Refuted by: a state difference between DT_DIV=1 and DT_DIV=2 runs above 1e-3 relative.
+Test: `IC=kp N=32 T=1 python criteria3d.py` and the same with `DT_DIV=2`.
+
 **C5. In 3-D Euler (Taylor-Green) the vortex-stretching term converges upward with resolution: 1.50, 1.80, 2.03 at
 t = 4 for 64^3, 96^3, 128^3, and the normalised rate S/Z^{3/2} rises with resolution.**
 Refuted by: a higher-resolution run (192^3 or above) giving S(t=4) below 2.03, or a Z(t=4) inconsistent with the
@@ -80,5 +85,8 @@ structure used here cannot decide it.
    verified the aliasing error bound at the highest retained modes for the 3-D runs.
 7. **Comparison with the literature is qualitative.** "In range" of Brachet's curves is not a digit-for-digit match;
    a digit-for-digit comparison at matched resolution and time step is the obvious next check.
-8. **The theory note's Proposition 3 (memory) is about a different system** than the fluid experiments; it is in the
+8. **Kida-Pelz is not resolved here.** The flow has octahedral symmetry and the literature runs it on 1/64 of the box
+   (effective thousands cubed). Our full-box 128^3 is their 32^3; the analyticity-strip clock in `criteria3d.py`
+   says where each run stops being reliable. Symmetry reduction is the next real step, not a bigger box.
+9. **The theory note's Proposition 3 (memory) is about a different system** than the fluid experiments; it is in the
    note because the same inequality governs both, not because the fluid runs test it.

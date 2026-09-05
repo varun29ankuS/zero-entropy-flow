@@ -225,7 +225,9 @@ Kida-Pelz: that criterion is nowhere near tight here. The geometric one (Constan
 Taylor-Green and ABC the vorticity direction stays coherent and the high-vorticity set localises to a fraction of a
 percent of the volume (depletion works); on Kida-Pelz the direction coherence is lost (rho 0.004 -> 0.52) exactly as
 the amplification runs away and the grid gives out (energy drift 1.4e-4 by t = 3 at 64^3) - the Hou-Li story in these
-numbers. `THEORY.md` section 6 lists the criteria.
+numbers. Caveat, pending the resolution ladder now running: the Kida-Pelz row is from a 64^3 full-box run, which the
+analyticity-strip test (Sulem-Sulem-Frisch 1983, now in `criteria3d.py`) will likely mark unreliable well before t = 3;
+the table will be re-cut to the reliable window. `THEORY.md` section 6 lists the criteria.
 
 ### Learned coarse simulators of 2-D Kolmogorov flow (`kolmogorov_v2.py`, run on CI)
 $32^2$ coarse models against a $128^2$ truth, 2000-step rollouts from held-out states, $Re\approx1250$.
