@@ -213,21 +213,45 @@ The classical preference of vorticity for the intermediate strain eigenvector (A
 weak here - a few points above random - because neither flow is developed turbulence by $t=4$; the forced run in
 `spectra.py` is where the textbook signal belongs, and that check is pending.
 
-### The regularity criteria along the classical candidates (`criteria3d.py`, 64^3, CI)
-| flow (t) | Z | max\|w\| | BKM integral | critical norm \|\|u\|\|_L3 | CF direction coherence rho | high-vorticity set |
-|---|---|---|---|---|---|---|
-| Taylor-Green (4) | 0.38 -> 1.82 | 2 -> 13.7 | 13.4 | 0.548 -> 0.527, flat | 0.002 -> 0.10 | 21% -> 0.6% of volume |
-| perturbed ABC (4) | 1.58 -> 11.4 | 3.1 -> 47 | 73.6 | 1.807, flat to 3 digits | 0.003 -> 0.12 | 60% -> 0.2% |
-| Kida-Pelz (3) | 4.1 -> 99.9 | 8 -> 41.6 | 72.6 | 0.967 -> 0.925, flat | 0.004 -> 0.52 | 14% -> 10% |
+### The regularity criteria along the classical candidates (`criteria3d.py`, CI)
+**Reliability first.** The analyticity-strip clock (Sulem-Sulem-Frisch 1983) falls below 2 dx for full-box Kida-Pelz by
+t = 1.0 at 64^3, 96^3 AND 128^3 (delta 0.124, 0.102, 0.079 against 0.196, 0.131, 0.098): the flow is trustworthy only to
+t ~ 0.5-0.75 without symmetry reduction. Numbers previously shown here for Kida-Pelz at t = 3 were outside that window and
+are withdrawn. Inside the window the picture converges and is physical:
 
-The scale-critical norm (Escauriaza-Seregin-Sverak) does not move on any of the three while enstrophy grows 25-fold on
-Kida-Pelz: that criterion is nowhere near tight here. The geometric one (Constantin-Fefferman) is what degrades: on
-Taylor-Green and ABC the vorticity direction stays coherent and the high-vorticity set localises to a fraction of a
-percent of the volume (depletion works); on Kida-Pelz the direction coherence is lost (rho 0.004 -> 0.52) exactly as
-the amplification runs away and the grid gives out (energy drift 1.4e-4 by t = 3 at 64^3) - the Hou-Li story in these
-numbers. Caveat, pending the resolution ladder now running: the Kida-Pelz row is from a 64^3 full-box run, which the
-analyticity-strip test (Sulem-Sulem-Frisch 1983, now in `criteria3d.py`) will likely mark unreliable well before t = 3;
-the table will be re-cut to the reliable window. `THEORY.md` section 6 lists the criteria.
+| Kida-Pelz at t = 0.5 | Z | S | max\|w\| | CF coherence rho at h = 2pi/32 | Lipschitz exponent of the direction field |
+|---|---|---|---|---|---|
+| 64^3 | 5.4197 | 5.816 | 6.08 | 0.128 | 1.49 |
+| 96^3 | 5.4197 | 5.817 | 6.08 | 0.127 | 1.51 |
+| 128^3 | 5.4197 | 5.817 | 6.12 | 0.124 | 1.53 |
+
+Four-digit agreement, and the geometric quantity is converged: the early roughening of the vorticity direction
+(exponent 1.5 against 2 for a smooth field, from 2.7 at t = 0) is the flow's, not the grid's. The 64^3 run's later
+"collapse" of the exponent to 0.5 was a grid artefact (96^3 and 128^3 give 1.15 at t = 1, itself past the clock). On
+Taylor-Green and ABC (inside their windows) the critical L3 norm is flat to three digits, the direction field stays
+coherent, and the high-vorticity set localises to under 1% of the volume. With nu = 1e-3, Kida-Pelz's enstrophy is
+capped near 30 where the inviscid run reached 69, and the L3 norm falls 0.97 -> 0.83. Time integration is converged
+(dt/2 changes the state by 3e-5). `THEORY.md` section 6 lists the criteria.
+
+### Feedback, not imitation: searching initial data (`adversarial_ic.py`, CI)
+Gradient ascent through the differentiable solver on the enstrophy amplification at fixed initial enstrophy, from smooth
+|k| <= 4 data; every candidate re-verified at higher resolution with the analyticity clock.
+
+| objective | search grid (32^3) | verified | classical best (reliable) | verdict |
+|---|---|---|---|---|
+| enstrophy, Kida-Pelz amplitude | 8.75x | 20.1x at 64^3, delta = 0 | 3.0x | outside the reliable window |
+| enstrophy, Taylor-Green amplitude | 4.96x | 8.03x at 96^3, delta 0.06 < 0.13 | 1.11x | outside the reliable window |
+| enstrophy with helicity = 0 (penalty) | 1.21x | 1.213x at 64^3, delta 0.28 > 0.20 | 1.112x | **pass** |
+| enstrophy with helicity = 0.5 max | 1.13x | 1.097x at 64^3 | 1.112x | fail (below classical) |
+| enstrophy with helicity ~ 0.7 max (0.9 asked) | 1.13x | 1.006x: no amplification | 1.112x | fail (below classical) |
+| Jacobi growth along Taylor-Green | 1.90x spreading | - | - | measurement only |
+
+Pointed at enstrophy, the searcher twice found smooth low-k data that cascades to the grid cutoff within one time unit
+while every classical flow stays smooth - the Lu-Doering / Ayala-Protas phenomenon - and twice the verifier rejected
+it as unresolved, which is the design working. Next: maximise growth *subject to staying resolved*. Topology: at fixed
+initial enstrophy the attainable amplification falls monotonically as helicity is imposed (1.21, 1.10, 1.01), the
+direction Moffatt's conjecture wants; the penalty method is crude, so the ordering is the result, not the sizes. Arnold's
+geodesic spreading along mild Taylor-Green is 1.9x over one time unit; it needs a ladder before it means more.
 
 ### Learned coarse simulators of 2-D Kolmogorov flow (`kolmogorov_v2.py`, run on CI)
 $32^2$ coarse models against a $128^2$ truth, 2000-step rollouts from held-out states, $Re\approx1250$.
