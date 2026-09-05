@@ -153,6 +153,18 @@ by damping, which is the opposite of a dissipative scheme's failure mode. The no
 resolution as well (0.61, 0.68, 0.73 at $t=4$). This is a measurement of the term that decides the 3-D question, at
 a resolution where its trend can be trusted, and nothing more.
 
+### Mechanism, second invariant, and the BKM quantity (`mechanism3d.py`, $64^3$, from CI)
+| flow | helicity $\langle u\cdot\omega\rangle$ | enstrophy $Z$ | $\max\lvert\omega\rvert$ (BKM integrand) | alignment with the intermediate strain eigenvector |
+|---|---|---|---|---|
+| Taylor-Green | $10^{-18}$ (zero by symmetry, preserved) | 0.375 → 1.823 | 2.0 → 13.7 | 0.356 at $t=2$ vs 0.317 / 0.327 (random 0.333) |
+| perturbed ABC | **2.979345 → 2.979345** through $t=3$; 2.979187 at $t=4$ with energy 0.999979 | 1.58 → 11.3 | 3.1 → 47.5 | 0.339 vs 0.322 / 0.339 |
+
+Helicity is conserved to six digits under dynamics that amplify enstrophy seven-fold; at $t=4$ the two invariants drift
+together (within a factor 2.5), which is the grid being reached ($\max\lvert\omega\rvert = 47$ at $\Delta x = 0.1$).
+The classical preference of vorticity for the intermediate strain eigenvector (Ashurst et al. 1987) is present but
+weak here - a few points above random - because neither flow is developed turbulence by $t=4$; the forced run in
+`spectra.py` is where the textbook signal belongs, and that check is pending.
+
 ### Budget closure in 1-D and 2-D, where Hypothesis H is known (`budgets.py`)
 Every balance law checked term by term along the flow (measured $d/dt$ across one step vs the right-hand side from
 the field), including the **unsigned production terms** whose 3-D cousin is the regularity problem.

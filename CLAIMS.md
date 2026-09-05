@@ -31,11 +31,13 @@ Test: `N=128 T=4 python budgets3d.py` (~40 min on 2 cores); results in `results/
 
 **C6. The vorticity aligns preferentially with the intermediate strain eigenvector (Ashurst et al. 1987).**
 Refuted by: the intermediate-eigenvector fraction not exceeding the other two at 64^3 by t = 3.
-Test: `IC=tg N=64 T=4 python mechanism3d.py`.
+Test: `IC=tg N=64 T=4 python mechanism3d.py`. Status: met, weakly (0.341 vs 0.328/0.331 at t = 3; 0.356 at t = 2). Neither
+flow is developed turbulence by t = 4; the strong textbook signal is expected in the forced run and is not yet shown.
 
 **C7. Helicity is conserved under 3-D Euler dynamics to the same order as energy.**
 Refuted by: helicity drift exceeding energy drift by more than a factor of ~10 for the perturbed ABC flow.
-Test: `IC=abc N=64 T=4 python mechanism3d.py`.
+Test: `IC=abc N=64 T=4 python mechanism3d.py`. Status: pass (helicity 2.979345 through t = 3; drift at t = 4 within 2.5x of
+energy drift, as the grid is reached).
 
 **C8. A learned coarse simulator with frozen exact transport holds energy within a few percent over 2000 steps where
 a fully learned one drifts by tens of percent.**
