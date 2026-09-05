@@ -162,9 +162,9 @@ uses far higher resolution beyond that.
 ### Three more closed-form solutions, one per dimension (`exact_solutions.py`)
 | exact solution | grid | error against the closed form |
 |---|---|---|
-| **1-D** viscous Burgers, u_0=sin x, nu=0.02: Cole-Hopf, evaluated in heat-kernel form | 512 | 5e-14 (t=0.5), 6e-12 (t=1), 2e-6 through the shock (t=1.5-2, gradient 22 on dx = 0.012: the resolution floor) |
-| **2-D** a *random* vorticity field on the single shell | k|^2=25 (nonlinear term vanishes identically): u_0 e^(-25nu t) | 128^2 | 2-3e-14 out to t=4 |
-| **3-D** ABC flow with viscosity (Beltrami, curl u = u): u_0 e^(-nu t) | 32^3 | 1-7e-15 out to t=8 |
+| **1-D** viscous Burgers, u0 = sin x, nu = 0.02: Cole-Hopf, evaluated in heat-kernel form | 512 | 5e-14 (t=0.5), 6e-12 (t=1), 2e-6 through the shock (t=1.5-2, gradient 22 on dx = 0.012: the resolution floor) |
+| **2-D** a *random* vorticity field on the single shell k^2 = 25 (nonlinear term vanishes identically): u0 e^(-25 nu t) | 128^2 | 2e-14 to 3e-14 out to t = 4 |
+| **3-D** ABC flow with viscosity (Beltrami, curl u = u): u0 e^(-nu t) | 32^3 | 1e-15 to 7e-15 out to t = 8 |
 
 ![Exact solutions in 1-D, 2-D, 3-D and the scheme's error against each](figures/exact_solutions.png)
 
