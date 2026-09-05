@@ -368,6 +368,39 @@ numbers: phase volume is conserved exactly (div F = 0), and it is stretched at r
 direction and therefore compressed elsewhere. The flow does not lose information; it moves it to where a finite
 observer cannot read it. That is also, word for word, what the analyticity-strip clock measures.
 
+## Complex singularities: the analyticity strip as a Riemann-surface question
+
+The clock used throughout this page is itself the classical singularity detector (Sulem, Sulem and Frisch 1983;
+Frisch, Matsumoto and Bec 2003): E(k) ~ exp(-2 delta(t) k) where delta(t) is the distance of the nearest
+complex-space singularity of the solution from the real domain, and a real finite-time singularity is delta(t*) = 0.
+The two classical hypotheses are distinguishable *inside the reliable window* by the trend of the local decay rate
+-d log(delta)/dt: constant for exponential decay (no real singularity), rising as 1/(t* - t) for linear decay.
+`strip_tracker.py` samples delta every 0.025-0.05 time units and fits both laws over the window only.
+
+![Analyticity-strip width delta(t) by resolution, Taylor-Green and Kida-Pelz](figures/strip_decay.png)
+
+```
+flow            N^3   window          exponential tau   (2nd half)   linear t*   (2nd half)   decay rate start -> end   better fit
+Taylor-Green     48   0.15 - 2.15       0.93            1.20          2.09        2.84           2.3 -> 0.51             exponential
+Taylor-Green     64   0.15 - 2.60       1.04            1.69          2.41        3.65            -  -> 0.37             exponential
+Taylor-Green     96   0.20 - 2.30       1.03            0.95          2.39        2.72            -  -> 0.77             exponential
+Kida-Pelz        64   0.15 - 0.65       0.40            0.44          0.81        0.97           3.3 -> 2.0              exponential
+Kida-Pelz        96   0.15 - 0.80       0.44            0.46          0.92        1.11           3.9 -> 1.7              exponential
+Kida-Pelz       128   0.15 - 0.85       0.42            0.45          0.91        1.14           4.1 -> 1.9              exponential
+```
+
+Kida-Pelz is the case the literature argued about (Boratav and Pelz 1994 for a singularity; Hou and Li 2006, 2008
+against). Here the exponential time constant is converged across 64/96/128^3 (0.40, 0.44, 0.42; second half
+0.44, 0.46, 0.45), the local decay rate falls by half inside every window instead of rising, and the linear
+extrapolation's t* retreats as the window lengthens - all three signatures of no real singularity in the reach of
+these runs. Taylor-Green likewise (Brachet et al. 1983). The absolute delta shifts down with resolution because the
+prefactor exponent n in k^-n exp(-2 delta k) is held at 0 (the clock's definition) and the fit range moves to
+higher k; the decay *law* is what is compared, and it is resolution-independent. This is not a proof of anything:
+it says that within t < 0.85 for Kida-Pelz and t < 2.6 for Taylor-Green, at up to 128^3, the nearest complex
+singularity is moving away from the real axis at a slowing rate, exactly as the regularity side of the argument
+predicts, and that a claim of a singularity from either flow would have to come from beyond where this instrument
+can see.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by
