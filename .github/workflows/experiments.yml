@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | budgets3d | highres"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | budgets3d | highres | kolmogorov_v2"
         default: "all"
 
 permissions:
@@ -30,6 +30,12 @@ jobs:
       - name: budgets
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'budgets' }}
         run: python -u budgets.py 2>/dev/null | tee results/budgets.txt
+      - name: ns_d
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'ns_d' }}
+        run: |
+          DIM=1 N=512 NU=0 T=0.95 DT=2e-4 python -u ns_d.py 2>/dev/null | tee results/ns_d_1d.txt
+          DIM=2 N=128 NU=0.02 T=2 DT=2e-3 IC=tg python -u ns_d.py 2>/dev/null | tee results/ns_d_2d.txt
+          DIM=3 N=48 NU=0 T=4 python -u ns_d.py 2>/dev/null | tee results/ns_d_3d.txt
       - name: budgets3d
         if: ${{ github.event.inputs.which == 'budgets3d' }}
         run: N=64 T=4 python -u budgets3d.py 2>/dev/null | tee results/budgets3d_64.txt
@@ -38,6 +44,9 @@ jobs:
         run: |
           N=96 T=4 python -u budgets3d.py 2>/dev/null | tee results/budgets3d_96.txt
           N=128 T=4 python -u budgets3d.py 2>/dev/null | tee results/budgets3d_128.txt
+      - name: kolmogorov_v2
+        if: ${{ github.event.inputs.which == 'kolmogorov_v2' }}
+        run: python -u kolmogorov_v2.py 2>/dev/null | tee results/kolmogorov_v2.txt
       - name: kolmogorov
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'kolmogorov' }}
         run: python -u kolmogorov_closure.py 2>/dev/null | tee results/kolmogorov.txt
