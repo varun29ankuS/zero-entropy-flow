@@ -6,8 +6,6 @@ on:
       which:
         description: "which experiments to run: all | burgers | taylor_green | kolmogorov"
         default: "all"
-  push:
-    paths: ["*.py", ".github/workflows/experiments.yml"]
 
 permissions:
   contents: write
@@ -24,10 +22,10 @@ jobs:
       - name: install
         run: pip install numpy torch --index-url https://download.pytorch.org/whl/cpu
       - name: burgers
-        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'burgers' || github.event_name == 'push' }}
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'burgers' }}
         run: python -u burgers_entropy.py | tee results/burgers.txt
       - name: taylor_green
-        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'taylor_green' || github.event_name == 'push' }}
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'taylor_green' }}
         run: python -u taylor_green.py 2>/dev/null | tee results/taylor_green.txt
       - name: kolmogorov
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'kolmogorov' }}
@@ -38,7 +36,7 @@ jobs:
           git config user.email "actions@github.com"
           git add results
           git diff --cached --quiet || git commit -m "results: $(date -u +%Y-%m-%dT%H:%MZ) run ${{ github.run_id }}"
-          git push
+          git pull --rebase origin master && git push
       - uses: actions/upload-artifact@v4
         with:
           name: results-${{ github.run_id }}
