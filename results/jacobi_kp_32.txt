@@ -1,0 +1,6 @@
+Jacobi field along IC=kp, N=32^3, nu=0, eps=1e-05, |v|=1 (random solenoidal |k|<=3), 2dx = 0.3927
+   t     growth |du|/(eps|v|)   lambda (local, per unit t)   E/E0 (u)      E/E0 (u+eps v)   delta(t)
+ 0.00       1.0000              ---                     1.00000000    1.00000000      -0.0228
+ 0.50       1.2415            +0.433                   0.99999917    0.99999917      0.2526  <-- delta < 2dx: NOT RELIABLE   (1s)
+ 1.00       2.2065            +1.150                   0.99999781    0.99999781      0.1247  <-- delta < 2dx: NOT RELIABLE   (3s)
+ 1.50       3.9771            +1.178                   0.99999536    0.99999536      0.0947  <-- delta < 2dx: NOT RELIABLE   (4s)
