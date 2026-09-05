@@ -176,7 +176,7 @@ and uses the exact nonlinearity. The measurements do neither; they report which 
 candidate flows (Taylor-Green; the perturbed ABC flow; the Kida-Pelz high-symmetry flow, whose apparent blow-up
 dissolved at high resolution, Hou and Li 2006) and whether the critical norm stays bounded on them.
 
-## 7. Two further viewpoints, with what each lets us measure
+## 7. Further viewpoints, with what each lets us measure
 
 **Topology: helicity and the linking of vortex lines.** Helicity $H = \int u\cdot\omega$ is a topological invariant
 of ideal flow: it measures the linking of vortex lines (Moffatt 1969) and is conserved by Euler (measured here to six
@@ -208,4 +208,39 @@ yet a result; the searcher is now run at a milder amplitude and verified at 96^3
 pointed at $\delta$ itself is the honest numerical form of "look for a singularity": ask the optimiser to shrink the
 analyticity strip, and let a verifier that cannot be fooled by the grid say whether it did.
 
-Status of all three: **[measured or in progress]**; none bears on Theorem 4, which stands.
+**Thermodynamics of the truncated system: Liouville.** Write the Galerkin-truncated equation as $\dot U = F(U)$ on
+the finite-dimensional phase space $\mathcal{P}$ of retained divergence-free modes.
+
+**Proposition 6 (Lee 1952; measured here).** For $\nu = 0$, $\operatorname{div}_{\mathcal P} F = 0$: the flow on
+$\mathcal P$ preserves phase volume, and the Gibbs entropy $S = -\int \rho\log\rho$ of any ensemble of solutions is
+constant. For $\nu > 0$, $\operatorname{div}_{\mathcal P} F = -\nu (d-1) \sum_{k \in \mathcal K} \lvert k\rvert^2$,
+a constant, so $S(t) = S(0) - \nu (d-1)\big(\sum_k \lvert k\rvert^2\big)\, t$ for every ensemble.
+
+*Proof.* The quadratic term in mode $k$ is $\sum_{p+q=k} B_k(\hat u_p, \hat u_q)$; its derivative with respect to
+$\hat u_k$ itself keeps only the terms with $p = k$ or $q = k$, i.e. $q = 0$ or $p = 0$, and the mean mode is zero
+for a mean-free flow (or is not advected). The Leray projection and the dealiasing mask are linear and idempotent
+and commute with this. So the diagonal of the Jacobian of the quadratic term vanishes identically, and the diagonal
+of the viscous term is $-\nu\lvert k\rvert^2$ on each of the $d-1$ solenoidal directions per retained wavevector.
+$\square$
+
+This holds for the skew form, the advective form and the divergence form alike: Liouville is a property of the
+convolution structure, not of energy conservation, and the advective form (which loses energy) preserves phase
+volume. Measured (`liouville.py`, exact Jacobian trace by autograd): $-2.9\cdot10^{-16}$ (2-D) and
+$+3.3\cdot10^{-16}$ (3-D) inviscid; $-24.20$ and $-82.32$ viscous, equal to the formula to every digit.
+
+The consequence worth stating: the truncated inviscid system does not create entropy in *any* sense, per solution
+(Proposition 2) or per ensemble (Proposition 6). What it does is stretch phase volume along the least stable
+directions and compress it along the others, at the rate the Jacobi field measures (`jacobi_ladder.py`: local
+exponent rising from 0.03 to 0.28 along Taylor-Green as the sheets form, 0.47 for Kida-Pelz at $t = 0.5$). The
+information is not lost; it is moved below the scale a finite observer can read, and the analyticity-strip clock is
+exactly the statement of when that has happened. A proof of regularity would have to control where the phase volume
+goes, not how much of it there is; that is Theorem 4 again in thermodynamic dress.
+
+**Complex singularities: the strip as a Riemann-surface statement.** The analyticity strip $\delta(t)$ is the
+distance from the real domain of the nearest singularity of the solution continued to complex space (Sulem, Sulem
+and Frisch 1983). A real blow-up at $t^*$ is $\delta(t^*) = 0$. The two classical decay laws, exponential (no real
+singularity; Taylor-Green, Brachet et al.) and linear (singularity at $t^*$), are distinguishable inside the
+reliable window by the sign of the change of the local decay rate $-\,d\log\delta/dt$: constant for exponential,
+rising as $1/(t^* - t)$ for linear. **Measured** (`strip_tracker.py`) by flow and by resolution.
+
+Status of all of the above: **[measured or in progress]**; none bears on Theorem 4, which stands.
