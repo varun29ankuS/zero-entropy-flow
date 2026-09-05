@@ -4,3 +4,4 @@ __pycache__/
 *.png
 !figures/*.png
 .claude/
+adversarial_ic_*.npz
