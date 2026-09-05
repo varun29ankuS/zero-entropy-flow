@@ -22,6 +22,9 @@ ITERS = int(os.environ.get("ITERS", 40))
 KMAX_IC = int(os.environ.get("KMAX_IC", 4))
 NVER = int(os.environ.get("NVER", 64))
 LR = float(os.environ.get("LR", 0.05))
+OBJ = os.environ.get("OBJ", "enstrophy")          # enstrophy | helicity | jacobi
+HEL = float(os.environ.get("HEL", 0.0))          # helicity target as a fraction of the max possible at this Z0 (OBJ=helicity)
+HELW = float(os.environ.get("HELW", 50.0))       # penalty weight
 dev = "cpu"
 
 # ------------------------------------------ torch solver (differentiable) ------------------------------------------
@@ -72,6 +75,12 @@ def energy(U):
     return 0.5 * sum((ifft(Ui).real ** 2).mean() for Ui in U)
 
 
+def helicity(U):
+    u = [ifft(Ui).real for Ui in U]
+    w = vort(U)
+    return sum((u[i] * w[i]).mean() for i in range(3))
+
+
 def field_from_params(P, Z0):
     """P: 3 real tensors [N,N,N] -> low-k, divergence-free, enstrophy-normalised spectral velocity"""
     U = [fft(Pi) * LOWK for Pi in P]
@@ -112,12 +121,12 @@ def candidates():
 
 cands = candidates()
 Z0 = float(os.environ.get("Z0", 0)) or enstrophy(cands["taylor-green"]).item()   # common initial enstrophy (default: Taylor-Green's, the mild one)
-print("search grid %d^3, T = %.2f, low-k initial data |k| <= %d, common Z0 = %.4f" % (N, T, KMAX_IC, Z0))
+print("search grid %d^3, T = %.2f, low-k initial data |k| <= %d, common Z0 = %.4f, objective %s%s" % (N, T, KMAX_IC, Z0, OBJ, (" (helicity target %.2f of max)" % HEL) if OBJ == "helicity" else ""))
 with torch.no_grad():
     for name, U in cands.items():
         Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
         UT = rollout(Un, T)
-        print("  %-14s E0 %.4f   Z(T)/Z0 = %.3f" % (name, energy(Un).item(), enstrophy(UT).item() / Z0), flush=True)
+        print("  %-14s E0 %.4f   H/Hmax %+.3f   Z(T)/Z0 = %.3f" % (name, energy(Un).item(), (helicity(Un) / (2 * torch.sqrt(energy(Un) * Z0 * 2))).item(), enstrophy(UT).item() / Z0), flush=True)
 
 # --------------------------------------------- gradient ascent on the initial field ---------------------------------------------
 torch.manual_seed(1)
@@ -128,8 +137,22 @@ t0 = time.time()
 for it in range(ITERS):
     U0 = field_from_params(P, Z0)
     UT = rollout(U0, T)
-    growth = enstrophy(UT) / Z0
-    loss = -torch.log(growth)
+    if OBJ == "jacobi":
+        # geodesic spreading: maximise the growth of a small perturbation of Taylor-Green along the flow (Arnold's curvature)
+        base = [Ui * math.sqrt(Z0 / enstrophy(cands["taylor-green"]).item()) for Ui in cands["taylor-green"]]
+        eps = 1e-3
+        Up = [base[i] + eps * U0[i] for i in range(3)]
+        UTb = rollout(base, T)
+        UTp = rollout(Up, T)
+        growth = torch.sqrt(sum(((ifft(UTp[i] - UTb[i]).real) ** 2).mean() for i in range(3))) / (eps * torch.sqrt(sum((ifft(U0[i]).real ** 2).mean() for i in range(3))))
+        loss = -torch.log(growth)
+    else:
+        growth = enstrophy(UT) / Z0
+        loss = -torch.log(growth)
+        if OBJ == "helicity":
+            H = helicity(U0)
+            Hmax = 2 * torch.sqrt(energy(U0) * Z0 * 2)      # |H| <= 2 sqrt(E Z) (Cauchy-Schwarz), the Beltrami bound
+            loss = loss + HELW * (H / Hmax - HEL) ** 2
     opt.zero_grad()
     loss.backward()
     opt.step()
@@ -137,7 +160,7 @@ for it in range(ITERS):
     if g > best[0]:
         best = (g, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
-        print("  iter %3d   Z(T)/Z0 = %.3f   E0 = %.4f   (%.0fs)" % (it, g, energy(U0).item(), time.time() - t0), flush=True)
+        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0 * 2))).item(), time.time() - t0), flush=True)
 print("best amplification on the search grid: %.3f" % best[0])
 with torch.no_grad():
     Ubest = field_from_params(best[1], Z0)
