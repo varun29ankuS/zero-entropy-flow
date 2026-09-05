@@ -175,3 +175,37 @@ A regularity proof shows one of the first three always holds. A blow-up construc
 and uses the exact nonlinearity. The measurements do neither; they report which criterion is tightest on the classical
 candidate flows (Taylor-Green; the perturbed ABC flow; the Kida-Pelz high-symmetry flow, whose apparent blow-up
 dissolved at high resolution, Hou and Li 2006) and whether the critical norm stays bounded on them.
+
+## 7. Two further viewpoints, with what each lets us measure
+
+**Topology: helicity and the linking of vortex lines.** Helicity $H = \int u\cdot\omega$ is a topological invariant
+of ideal flow: it measures the linking of vortex lines (Moffatt 1969) and is conserved by Euler (measured here to six
+digits under a seven-fold enstrophy growth). It bounds energy from below: $E \ge c\lvert H\rvert$ for knotted
+vorticity (Arnold 1974; Freedman and He 1991), so linked vortex lines cannot relax away. Moffatt's conjecture is that
+helicity inhibits the cascade. Two of our runs point the same way: the helical ABC flow amplified enstrophy seven-fold
+where the zero-helicity Kida-Pelz flow amplified it twenty-five-fold. **Measured** (`adversarial_ic.py`,
+`OBJ=helicity`): the maximal enstrophy amplification attainable at fixed initial enstrophy when the relative helicity
+$H / 2\sqrt{EZ}$ is constrained to 0, 0.5, 0.9 of its Beltrami maximum. The registered prediction is that the fastest
+amplifier is helicity-free and that attainable growth falls as helicity is imposed.
+
+**Riemannian geometry: Euler as a geodesic.** Arnold (1966): an ideal flow is a geodesic on the group of
+volume-preserving diffeomorphisms with the kinetic-energy metric; Ebin and Marsden (1970) proved local existence
+this way. **Global regularity is exactly geodesic completeness** - whether the geodesic can be continued for all
+time. The sectional curvature of the group along the flow is mostly negative (Arnold; Lukatskii), so nearby geodesics
+diverge exponentially: Lagrangian unpredictability is curvature. The vortex-stretching term is how that curvature acts
+on the velocity field. **Measured** (`OBJ=jacobi`): the maximal growth of a perturbation along the flow - the Jacobi
+field, found by maximising $\lVert\delta u(T)\rVert / \lVert\delta u(0)\rVert$ through the differentiable solver - by
+resolution and by flow. A blow-up would be a geodesic reaching the boundary of the group in finite time; a rapidly
+growing Jacobi field is necessary for it and far from sufficient.
+
+**The search itself: feedback, not imitation.** Lu and Doering (2008) and Ayala and Protas (2017) found, by adjoint
+optimisation, initial data whose enstrophy grows far faster than any classical candidate. `adversarial_ic.py`
+reproduces that search with autograd through the conserving solver and re-verifies every candidate at higher
+resolution with the analyticity-strip clock, so a field that only wins by exploiting the search grid is rejected.
+First run (Kida-Pelz enstrophy normalisation, 32^3 search, 64^3 verification): the found field amplified 8.75x on its
+own grid and 20x at 64^3, with the analyticity strip collapsed to zero - outside the reliable window, therefore not
+yet a result; the searcher is now run at a milder amplitude and verified at 96^3 and 128^3. The same machinery
+pointed at $\delta$ itself is the honest numerical form of "look for a singularity": ask the optimiser to shrink the
+analyticity strip, and let a verifier that cannot be fooled by the grid say whether it did.
+
+Status of all three: **[measured or in progress]**; none bears on Theorem 4, which stands.
