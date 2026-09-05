@@ -55,7 +55,7 @@ each new level brings a production term the level below did not have:
 | 0 | E=(1/2)<\|u\|^2> | dE/dt=-nu<\|grad u\|^2> | none, in any d |
 | 1 | Z=(1/2)<\|w\|^2> | dZ/dt=S_1-nu<\|grad w\|^2> | S_1=-(1/2)<u_x^3> (d=1); 0 (d=2); <w.(w.grad)u> (d=3) |
 | 2 | P=(1/2)<\|grad w\|^2> | dP/dt=S_2-nu<\|lap w\|^2> | unsigned in every d (measured +1387, +2149, +1579, +576 in 2-D) |
-| k | (1/2)||grad ^k u||^2 | same shape | unsigned, growing with k |
+| k | (1/2) ||grad^k u||^2 | same shape | unsigned, growing with k |
 
 Regularity is decided by where the first unsigned term lands relative to the level that controls the gradient:
 $d=1$, it lands at level 1 and nothing below controls the gradient (inviscid blow-up; the viscous case is rescued by
