@@ -14,6 +14,7 @@ delta(T) > 2 dx for both (i.e. the comparison is made inside the reliable window
 fails here the search is broken, not the literature.
 usage: N=32 T=1.0 ITERS=40 python adversarial_ic.py"""
 import os, time, math, numpy as np, torch
+import torch.utils.checkpoint
 
 torch.set_default_dtype(torch.float64)
 N = int(os.environ.get("N", 32))
@@ -28,6 +29,7 @@ HELW = float(os.environ.get("HELW", 50.0))       # penalty weight
 HELMODE = os.environ.get("HELMODE", "penalty")   # penalty | project  (project: Newton-project P onto H/Hmax = HEL after every step, a hard constraint)
 DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-strip width delta(T) below DMIN on the search grid (stay resolved)
 DW = float(os.environ.get("DW", 20.0))
+CKPT = int(os.environ.get("CKPT", 1))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
 dev = "cpu"
 
 # ------------------------------------------ torch solver (differentiable) ------------------------------------------
@@ -112,7 +114,11 @@ def rollout(U, T, cfl=0.5):
     while t < T - 1e-12:
         umax = max(ifft(Ui).real.abs().max() for Ui in U)
         dt = min(2.0 / N, cfl * (2 * math.pi / N) / max(float(umax), 1e-9), T - t)
-        U = step(U, dt)
+        if CKPT and any(Ui.requires_grad for Ui in U):
+            # gradient checkpointing: keep only the state at each step, recompute the RK4 stages in the backward pass
+            U = list(torch.utils.checkpoint.checkpoint(lambda *Us: tuple(step(list(Us), dt)), *U, use_reentrant=False))
+        else:
+            U = step(U, dt)
         t += dt
     return U
 

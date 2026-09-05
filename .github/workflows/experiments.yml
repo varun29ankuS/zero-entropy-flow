@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -88,6 +88,10 @@ jobs:
         run: |
           for n in 48 64 96; do IC=tg N=$n T=3 python -u strip_tracker.py 2>/dev/null | tee results/strip_tg_$n.txt; done
           for n in 64 96 128; do IC=kp N=$n T=1.2 EVERY=0.025 python -u strip_tracker.py 2>/dev/null | tee results/strip_kp_$n.txt; done
+      - name: leashed64
+        if: ${{ github.event.inputs.which == 'leashed64' }}
+        run: |
+          DMIN=0.30 N=64 T=1.0 ITERS=45 NVER=128 python -u adversarial_ic.py 2>/dev/null | tee results/leashed64_dmin030_128.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

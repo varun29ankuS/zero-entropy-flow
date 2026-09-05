@@ -255,11 +255,18 @@ Gradient ascent through the differentiable solver on the enstrophy amplification
 | enstrophy with helicity = 0.71 max (penalty) | 1.13x | 1.097x at 64^3 | 1.112x | fail (below classical) |
 | enstrophy with helicity ~ 0.99 max (penalty) | 1.13x | 1.006x: no amplification | 1.112x | fail (below classical) |
 | enstrophy, Taylor-Green amplitude, corrected verdict | 4.96x | 7.89x at 96^3 (delta 0.050), 8.70x at 128^3 (delta 0.040) | 1.112x | outside the window at both |
+| enstrophy, leashed: delta(T) >= 0.30 on the 32^3 search grid | 4.44x, delta 0.27 | 8.28x at 128^3, delta 0.042 | 1.112x | outside the window |
+| enstrophy, leashed: delta(T) >= 0.45 on the 32^3 search grid | 3.82x, delta 0.41 | 5.85x at 128^3, delta 0.047 | 1.112x | outside the window |
 | Jacobi growth along Taylor-Green | 1.90x spreading | - | - | measurement only |
 
 Pointed at enstrophy, the searcher twice found smooth low-k data that cascades to the grid cutoff within one time unit
 while every classical flow stays smooth - the Lu-Doering / Ayala-Protas phenomenon - and twice the verifier rejected
-it as unresolved, which is the design working. Next: maximise growth *subject to staying resolved*. Topology: at fixed
+it as unresolved, which is the design working. The leashed search (a penalty when delta(T) on the search grid drops
+below a threshold) satisfied its leash on the 32^3 grid and still failed at 128^3, and that failure is the finding:
+the coarse grid's truncation blocks the cascade the field triggers, so the field's spectrum tail *looks* resolved at
+32^3 (delta 0.27-0.41) while its true continuation has delta 0.04. Resolution measured on the search grid is not
+resolution. The leash has to be measured where the cascade lives: a 64^3 search grid with gradient checkpointing
+(`CKPT=1`, memory 2.2 GB) is the next run. Topology: at fixed
 initial enstrophy the attainable amplification falls monotonically as helicity is imposed (1.21, 1.10, 1.01 at
 relative helicity 0, 0.71, 0.99), the direction Moffatt's conjecture wants; the penalty method is crude, so the
 ordering is the result, not the sizes. (Correction, 2026-09-06: the first version of this table labelled these
