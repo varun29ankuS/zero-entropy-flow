@@ -185,8 +185,12 @@ vorticity (Arnold 1974; Freedman and He 1991), so linked vortex lines cannot rel
 helicity inhibits the cascade. Two of our runs point the same way: the helical ABC flow amplified enstrophy seven-fold
 where the zero-helicity Kida-Pelz flow amplified it twenty-five-fold. **Measured** (`adversarial_ic.py`,
 `OBJ=helicity`): the maximal enstrophy amplification attainable at fixed initial enstrophy when the relative helicity
-$H / 2\sqrt{EZ}$ is constrained to 0, 0.5, 0.9 of its Beltrami maximum. The registered prediction is that the fastest
-amplifier is helicity-free and that attainable growth falls as helicity is imposed.
+$H / 2\sqrt{EZ}$ is constrained to 0, 0.5, 0.9 of its Beltrami maximum. The registered prediction was that the fastest
+amplifier is helicity-free and that attainable growth falls as helicity is imposed. **Result** (hard constraint,
+32^3 truncated system, one time unit): 4.54, 4.68, 4.47, 3.11, 1.27 at relative helicity 0, 0.25, 0.5, 0.75, 0.9.
+The prediction held in direction and failed in shape: helicity is a threshold, not a slope. Half the maximal
+helicity costs nothing; the inhibition arrives between 0.5 and 0.9. A Beltrami-like field ($H/H_{\max} = 0.9$)
+still amplifies enstrophy 1.27-fold, resolved, more than any classical flow at the same $Z_0$.
 
 **Riemannian geometry: Euler as a geodesic.** Arnold (1966): an ideal flow is a geodesic on the group of
 volume-preserving diffeomorphisms with the kinetic-energy metric; Ebin and Marsden (1970) proved local existence
