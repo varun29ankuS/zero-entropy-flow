@@ -109,12 +109,12 @@ resolve a gradient of 20 - a visible resolution limit, not hidden dissipation.
 ### 2-D viscous Taylor-Green, exact solution known (`taylor_green.py`, part A)
 $\nu = 0.02$, $128^2$ grid, $\Delta t = 2\times10^{-3}$, viscosity as an exact integrating factor per mode.
 
-| t | $E/E_0$ scheme | $E/E_0$ exact $= e^{-4\nu t}$ | $L_2$ error vs the exact field |
+| t | E/E_0 scheme | E/E_0 exact = e^(-4nu t) | L_2 error vs the exact field |
 |---|---|---|---|
-| 0.5 | 0.96078944 | 0.96078944 | $5\times10^{-15}$ |
-| 1.0 | 0.92311635 | 0.92311635 | $1\times10^{-14}$ |
-| 1.5 | 0.88692044 | 0.88692044 | $1.5\times10^{-14}$ |
-| 2.0 | 0.85214379 | 0.85214379 | $2\times10^{-14}$ |
+| 0.5 | 0.96078944 | 0.96078944 | 5e-15 |
+| 1.0 | 0.92311635 | 0.92311635 | 1e-14 |
+| 1.5 | 0.88692044 | 0.88692044 | 1.5e-14 |
+| 2.0 | 0.85214379 | 0.85214379 | 2e-14 |
 
 The dissipation is exactly the physical $\nu\langle|\nabla u|^2\rangle$ and nothing more. (Taylor-Green in 2-D is a
 single decaying mode, so this is a precision test, not a cascade test.)
@@ -124,10 +124,10 @@ Skew-symmetric nonlinearity, Leray projection, RK4, 2/3 dealiasing, $\Delta t = 
 
 | | t = 1 | t = 2 | t = 3 | t = 4 |
 |---|---|---|---|---|
-| $E/E_0$, all three grids | 1.000000 | 1.000000 | 1.000000 | 1.000000 |
-| enstrophy $Z$, $32^3$ | 0.417 | 0.574 | 0.914 | 1.570 |
-| enstrophy $Z$, $48^3$ | 0.417 | 0.574 | 0.931 | 1.724 |
-| enstrophy $Z$, $64^3$ | 0.417 | 0.574 | 0.939 | 1.823 |
+| E/E_0, all three grids | 1.000000 | 1.000000 | 1.000000 | 1.000000 |
+| enstrophy Z, 32^3 | 0.417 | 0.574 | 0.914 | 1.570 |
+| enstrophy Z, 48^3 | 0.417 | 0.574 | 0.931 | 1.724 |
+| enstrophy Z, 64^3 | 0.417 | 0.574 | 0.939 | 1.823 |
 
 Energy is conserved to six decimals in 3-D: zero numerical entropy production on the benchmark flow. Enstrophy
 agrees across resolutions to three decimals through $t = 2$ and then fans out as the cascade reaches scales the
@@ -139,9 +139,9 @@ uses far higher resolution beyond that.
 ### Three more closed-form solutions, one per dimension (`exact_solutions.py`)
 | exact solution | grid | error against the closed form |
 |---|---|---|
-| **1-D** viscous Burgers, $u_0=\sin x$, $\nu=0.02$: Cole-Hopf, evaluated in heat-kernel form | 512 | $5\times10^{-14}$ ($t=0.5$), $6\times10^{-12}$ ($t=1$), $2\times10^{-6}$ through the shock ($t=1.5$-$2$, gradient 22 on $\Delta x=0.012$: the resolution floor) |
-| **2-D** a *random* vorticity field on the single shell $\lvert k\rvert^2=25$ (nonlinear term vanishes identically): $u_0 e^{-25\nu t}$ | $128^2$ | $2$-$3\times10^{-14}$ out to $t=4$ |
-| **3-D** ABC flow with viscosity (Beltrami, $\nabla\times u=u$): $u_0 e^{-\nu t}$ | $32^3$ | $1$-$7\times10^{-15}$ out to $t=8$ |
+| **1-D** viscous Burgers, u_0=sin x, nu=0.02: Cole-Hopf, evaluated in heat-kernel form | 512 | 5e-14 (t=0.5), 6e-12 (t=1), 2e-6 through the shock (t=1.5-2, gradient 22 on dx = 0.012: the resolution floor) |
+| **2-D** a *random* vorticity field on the single shell | k|^2=25 (nonlinear term vanishes identically): u_0 e^(-25nu t) | 128^2 | 2-3e-14 out to t=4 |
+| **3-D** ABC flow with viscosity (Beltrami, curl u = u): u_0 e^(-nu t) | 32^3 | 1-7e-15 out to t=8 |
 
 ![Exact solutions in 1-D, 2-D, 3-D and the scheme's error against each](figures/exact_solutions.png)
 
@@ -152,7 +152,7 @@ property provides. The 1-D shock comparison is the demanding one, and its error 
 $\dot Z = S$ with $S=\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ measured from the field; energy $E/E_0 = 1.000000$ at
 every grid and time; budget residual $10^{-5}$-$10^{-6}$.
 
-| t | $64^3$: $Z$ / $S$ | $96^3$: $Z$ / $S$ | $128^3$: $Z$ / $S$ | $S/Z^{3/2}$ at $128^3$ |
+| t | 64^3: Z / S | 96^3: Z / S | 128^3: Z / S | S/Z^3/2 at 128^3 |
 |---|---|---|---|---|
 | 1 | 0.4169 / 0.0876 | 0.4169 / 0.0882 | 0.4169 / 0.0885 | 0.329 |
 | 2 | 0.5743 / 0.238 | 0.5743 / 0.239 | 0.5743 / 0.239 | 0.550 |
@@ -166,10 +166,10 @@ resolution as well (0.61, 0.68, 0.73 at $t=4$). This is a measurement of the ter
 a resolution where its trend can be trusted, and nothing more.
 
 ### Mechanism, second invariant, and the BKM quantity (`mechanism3d.py`, $64^3$, from CI)
-| flow | helicity $\langle u\cdot\omega\rangle$ | enstrophy $Z$ | $\max\lvert\omega\rvert$ (BKM integrand) | alignment with the intermediate strain eigenvector |
+| flow | helicity < u.w> | enstrophy Z | max\|w\| (BKM integrand) | alignment with the intermediate strain eigenvector |
 |---|---|---|---|---|
-| Taylor-Green | $10^{-18}$ (zero by symmetry, preserved) | 0.375 → 1.823 | 2.0 → 13.7 | 0.356 at $t=2$ vs 0.317 / 0.327 (random 0.333) |
-| perturbed ABC | **2.979345 → 2.979345** through $t=3$; 2.979187 at $t=4$ with energy 0.999979 | 1.58 → 11.3 | 3.1 → 47.5 | 0.339 vs 0.322 / 0.339 |
+| Taylor-Green | 10^-18 (zero by symmetry, preserved) | 0.375 → 1.823 | 2.0 → 13.7 | 0.356 at t=2 vs 0.317 / 0.327 (random 0.333) |
+| perturbed ABC | **2.979345 → 2.979345** through t=3; 2.979187 at t=4 with energy 0.999979 | 1.58 → 11.3 | 3.1 → 47.5 | 0.339 vs 0.322 / 0.339 |
 
 Helicity is conserved to six digits under dynamics that amplify enstrophy seven-fold; at $t=4$ the two invariants drift
 together (within a factor 2.5), which is the grid being reached ($\max\lvert\omega\rvert = 47$ at $\Delta x = 0.1$).
@@ -184,7 +184,7 @@ $32^2$ coarse models against a $128^2$ truth, 2000-step rollouts from held-out s
 |---|---|---|
 | fully learned CNN (width 64, 16-step unroll) | 0.95 - **1.91** | 0.50 |
 | frozen exact transport, no closure | 0.96 - 1.07 | 0.53 |
-| frozen + dissipative gate only ($\nu_t\ge0$; v1) | 0.95 - 1.07 | 0.53 |
+| frozen + dissipative gate only (nu_tge0; v1) | 0.95 - 1.07 | 0.53 |
 | **frozen + energy-neutral learned redistribution + gate** | 0.87 - 1.07 | **0.09** |
 
 In 2-D the missing physics at coarse resolution is backscatter, which a dissipative closure cannot express: the gate
@@ -210,10 +210,10 @@ the field), including the **unsigned production terms** whose 3-D cousin is the 
 
 | case | budget | frozen scheme residual | upwind residual | what it shows |
 |---|---|---|---|---|
-| 1-D inviscid (H false) | gradient, $-\tfrac12\langle u_x^3\rangle$ production | $10^{-8}$ | 1-5 % | production +0.13, +0.47, +1.59 at t = 0.3, 0.6, 0.8: the blow-up, measured |
-| 1-D viscous (H true) | energy | $10^{-9}$ | **10 %** | upwind's numerical dissipation is a tenth of the physical viscosity |
-| 1-D viscous | maximum principle $\max\|u\|$ | 0.994, 0.988, 0.984 | - | never increases: the controlled norm that gives 1-D regularity |
-| 2-D decaying (H true, $M=Z$) | energy / enstrophy / palinstrophy | $10^{-8}$ / $10^{-7}$ / $3$-$9\times10^{-6}$ | - | palinstrophy production **+1387, +2149, +1579, +576** (unsigned, large) while enstrophy falls 12.86 -> 6.09 |
+| 1-D inviscid (H false) | gradient, -(1/2)<u_x^3> production | 10^-8 | 1-5 % | production +0.13, +0.47, +1.59 at t = 0.3, 0.6, 0.8: the blow-up, measured |
+| 1-D viscous (H true) | energy | 10^-9 | **10 %** | upwind's numerical dissipation is a tenth of the physical viscosity |
+| 1-D viscous | maximum principle max\|u\| | 0.994, 0.988, 0.984 | - | never increases: the controlled norm that gives 1-D regularity |
+| 2-D decaying (H true, M=Z) | energy / enstrophy / palinstrophy | 10^-8 / 10^-7 / 3-9e-6 | - | palinstrophy production **+1387, +2149, +1579, +576** (unsigned, large) while enstrophy falls 12.86 -> 6.09 |
 
 The 2-D row is Theorem 5 of `THEORY.md` with its terms filled in: the dangerous unsigned term is present and large,
 and regularity holds because a norm one level below it is controlled. The registered residual bar of $10^{-6}$ is

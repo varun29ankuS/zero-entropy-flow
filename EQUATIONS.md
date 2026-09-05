@@ -52,10 +52,10 @@ each new level brings a production term the level below did not have:
 
 | level | quantity | budget | production term |
 |---|---|---|---|
-| 0 | $E=\tfrac12\langle\lvert u\rvert^2\rangle$ | $\dot E=-\nu\langle\lvert\nabla u\rvert^2\rangle$ | none, in any $d$ |
-| 1 | $Z=\tfrac12\langle\lvert\omega\rvert^2\rangle$ | $\dot Z=S_1-\nu\langle\lvert\nabla\omega\rvert^2\rangle$ | $S_1=-\tfrac12\langle u_x^3\rangle$ ($d=1$); $0$ ($d=2$); $\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ ($d=3$) |
-| 2 | $P=\tfrac12\langle\lvert\nabla\omega\rvert^2\rangle$ | $\dot P=S_2-\nu\langle\lvert\Delta\omega\rvert^2\rangle$ | unsigned in every $d$ (measured $+1387,\ +2149,\ +1579,\ +576$ in 2-D) |
-| $k$ | $\tfrac12\lVert\nabla^k u\rVert^2$ | same shape | unsigned, growing with $k$ |
+| 0 | E=(1/2)<| u|^2> | dE/dt=-nu<|grad  u|^2> | none, in any d |
+| 1 | Z=(1/2)<\|w\|^2> | dZ/dt=S_1-nu<\|grad w\|^2> | S_1=-(1/2)<u_x^3> (d=1); 0 (d=2); <w.(w.grad)u> (d=3) |
+| 2 | P=(1/2)<\|grad w\|^2> | dP/dt=S_2-nu<\|lap w\|^2> | unsigned in every d (measured +1387, +2149, +1579, +576 in 2-D) |
+| k | (1/2)||grad ^k u||^2 | same shape | unsigned, growing with k |
 
 Regularity is decided by where the first unsigned term lands relative to the level that controls the gradient:
 $d=1$, it lands at level 1 and nothing below controls the gradient (inviscid blow-up; the viscous case is rescued by
