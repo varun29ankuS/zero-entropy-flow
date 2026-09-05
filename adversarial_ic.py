@@ -144,11 +144,64 @@ with torch.no_grad():
     for name, U in cands.items():
         Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
         UT = rollout(Un, T)
-        print("  %-14s E0 %.4f   H/Hmax %+.3f   Z(T)/Z0 = %.3f" % (name, energy(Un).item(), (helicity(Un) / (2 * torch.sqrt(energy(Un) * Z0 * 2))).item(), enstrophy(UT).item() / Z0), flush=True)
+        print("  %-14s E0 %.4f   H/Hmax %+.3f   Z(T)/Z0 = %.3f" % (name, energy(Un).item(), (helicity(Un) / (2 * torch.sqrt(energy(Un) * Z0))).item(), enstrophy(UT).item() / Z0), flush=True)
 
 # --------------------------------------------- gradient ascent on the initial field ---------------------------------------------
 torch.manual_seed(1)
 P = [torch.randn(N, N, N, requires_grad=True) for _ in range(3)]
+
+
+def hel_of(P):
+    with torch.no_grad():
+        Uc = field_from_params(P, Z0)
+        return (helicity(Uc) / (2 * torch.sqrt(energy(Uc) * Z0))).item()
+
+
+def hel_project(P, iters=40):
+    """hard constraint: damped Newton steps on c(P) = H/Hmax - HEL using the exact gradient of the constraint alone
+    (no rollout). Steps are capped at 0.1 in c per iteration so the projection cannot overshoot on the curved level set."""
+    for _ in range(iters):
+        Uc = field_from_params(P, Z0)
+        c = helicity(Uc) / (2 * torch.sqrt(energy(Uc) * Z0)) - HEL
+        if abs(c.item()) < 1e-6:
+            return True
+        gr = torch.autograd.grad(c, P)
+        gg = sum((gi ** 2).sum() for gi in gr)
+        step_c = max(min(c.item(), 0.1), -0.1)
+        with torch.no_grad():
+            saved = [Pi.clone() for Pi in P]
+            for frac in (1.0, 0.5, 0.25, 0.125, 0.0625):     # backtracking: accept a step only if |c| decreases
+                for Pi, Si, gi in zip(P, saved, gr):
+                    Pi.copy_(Si - frac * step_c * gi / gg)
+                if abs(hel_of(P) - HEL) < abs(c.item()):
+                    break
+            else:
+                for Pi, Si in zip(P, saved):
+                    Pi.copy_(Si)
+                return abs(c.item()) < 1e-3
+    return abs(c.item()) < 1e-3
+
+
+if OBJ == "helicity" and HELMODE == "project":
+    # initial point: relative helicity is continuous along the segment from the random field (H ~ 0) to the Beltrami
+    # ABC field (H/Hmax = 1 exactly), so bisect on the blend to the target, then let the Newton projection polish it
+    with torch.no_grad():
+        abc0 = [torch.sin(Z_) + torch.cos(Y), torch.sin(X) + torch.cos(Z_), torch.sin(Y) + torch.cos(X)]
+        rnd = [Pi.clone() for Pi in P]
+        sc = math.sqrt(sum((a ** 2).mean() for a in abc0) / sum((r ** 2).mean() for r in rnd))
+        rnd = [r * sc for r in rnd]
+        lo, hi = 0.0, 1.0
+        for _ in range(60):
+            al = 0.5 * (lo + hi)
+            for Pi, ai, ri in zip(P, abc0, rnd):
+                Pi.copy_(al * ai + (1 - al) * ri)
+            if hel_of(P) < HEL:
+                lo = al
+            else:
+                hi = al
+    print("bisection on the random-to-Beltrami segment reached H/Hmax = %.4f" % hel_of(P), flush=True)
+    ok0 = hel_project(P, iters=200)
+    print("initial projection onto H/Hmax = %.2f: %s (reached %.4f)" % (HEL, "ok" if ok0 else "NOT REACHED", hel_of(P)), flush=True)
 opt = torch.optim.Adam(P, lr=LR)
 best = (0.0, None)
 t0 = time.time()
@@ -172,28 +225,20 @@ for it in range(ITERS):
             loss = loss + DW * torch.relu(DMIN - d) ** 2
         if OBJ == "helicity":
             H = helicity(U0)
-            Hmax = 2 * torch.sqrt(energy(U0) * Z0 * 2)      # |H| <= 2 sqrt(E Z) (Cauchy-Schwarz), the Beltrami bound
+            Hmax = 2 * torch.sqrt(energy(U0) * Z0)      # |H| <= |u| |w| = 2 sqrt(E Z) (Cauchy-Schwarz), equality for a single-shell Beltrami field (ABC: exactly 1)
             loss = loss + HELW * (H / Hmax - HEL) ** 2
     opt.zero_grad()
     loss.backward()
     opt.step()
     if OBJ == "helicity" and HELMODE == "project":
-        # hard constraint: Newton steps on c(P) = H/Hmax - HEL using the exact gradient of the constraint alone (no rollout)
-        for _ in range(6):
-            Uc = field_from_params(P, Z0)
-            c = helicity(Uc) / (2 * torch.sqrt(energy(Uc) * Z0 * 2)) - HEL
-            if abs(c.item()) < 1e-6:
-                break
-            gr = torch.autograd.grad(c, P)
-            gg = sum((gi ** 2).sum() for gi in gr)
-            with torch.no_grad():
-                for Pi, gi in zip(P, gr):
-                    Pi -= c * gi / gg
+        hel_project(P)
     g = growth.item()
-    if g > best[0]:
+    if g > best[0] and (OBJ != "helicity" or HELMODE != "project" or abs(hel_of(P) - HEL) < 1e-3):
         best = (g, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
-        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0 * 2))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), time.time() - t0), flush=True)
+        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), time.time() - t0), flush=True)
+if best[1] is None:
+    best = (growth.item(), [p.detach().clone() for p in P])
 print("best amplification on the search grid: %.3f" % best[0])
 with torch.no_grad():
     Ubest = field_from_params(best[1], Z0)

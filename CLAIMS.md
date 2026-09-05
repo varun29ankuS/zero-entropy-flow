@@ -81,7 +81,8 @@ That is the design working; it is not a blow-up. Refuted by: a searcher result t
 the verification grid) and beats the best classical flow. Test: `python adversarial_ic.py` and the `leashed` CI job.
 
 **C13. Attainable enstrophy growth is ordered by helicity.** With a helicity penalty on the same search, best growth
-over t = 1 (inside the window): 1.213 at H = 0, 1.097 at H/Hmax = 0.5, 1.006 at H/Hmax ~ 0.7. Monotone, the direction
+over t = 1 (inside the window): 1.213 at H = 0, 1.097 at H/Hmax = 0.71, 1.006 at H/Hmax ~ 0.99 (relabelled
+2026-09-06 after a sqrt 2 error in the code's helicity bound was found; the fields are unchanged). Monotone, the direction
 Moffatt's topological bound predicts. The penalty method is crude (soft constraint, one weight); the ordering is
 the claim, not the numbers. Refuted by: a helical field that beats the H = 0 optimum at the same Z0 and window.
 

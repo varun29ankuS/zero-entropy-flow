@@ -252,15 +252,19 @@ Gradient ascent through the differentiable solver on the enstrophy amplification
 | enstrophy, Kida-Pelz amplitude | 8.75x | 20.1x at 64^3, delta = 0 | 3.0x | outside the reliable window |
 | enstrophy, Taylor-Green amplitude | 4.96x | 8.03x at 96^3, delta 0.06 < 0.13 | 1.11x | outside the reliable window |
 | enstrophy with helicity = 0 (penalty) | 1.21x | 1.213x at 64^3, delta 0.28 > 0.20 | 1.112x | **pass** |
-| enstrophy with helicity = 0.5 max | 1.13x | 1.097x at 64^3 | 1.112x | fail (below classical) |
-| enstrophy with helicity ~ 0.7 max (0.9 asked) | 1.13x | 1.006x: no amplification | 1.112x | fail (below classical) |
+| enstrophy with helicity = 0.71 max (penalty) | 1.13x | 1.097x at 64^3 | 1.112x | fail (below classical) |
+| enstrophy with helicity ~ 0.99 max (penalty) | 1.13x | 1.006x: no amplification | 1.112x | fail (below classical) |
+| enstrophy, Taylor-Green amplitude, corrected verdict | 4.96x | 7.89x at 96^3 (delta 0.050), 8.70x at 128^3 (delta 0.040) | 1.112x | outside the window at both |
 | Jacobi growth along Taylor-Green | 1.90x spreading | - | - | measurement only |
 
 Pointed at enstrophy, the searcher twice found smooth low-k data that cascades to the grid cutoff within one time unit
 while every classical flow stays smooth - the Lu-Doering / Ayala-Protas phenomenon - and twice the verifier rejected
 it as unresolved, which is the design working. Next: maximise growth *subject to staying resolved*. Topology: at fixed
-initial enstrophy the attainable amplification falls monotonically as helicity is imposed (1.21, 1.10, 1.01), the
-direction Moffatt's conjecture wants; the penalty method is crude, so the ordering is the result, not the sizes. Arnold's
+initial enstrophy the attainable amplification falls monotonically as helicity is imposed (1.21, 1.10, 1.01 at
+relative helicity 0, 0.71, 0.99), the direction Moffatt's conjecture wants; the penalty method is crude, so the
+ordering is the result, not the sizes. (Correction, 2026-09-06: the first version of this table labelled these
+0.5 and 0.7; the code's helicity bound was 2 sqrt(2 E Z) instead of the Cauchy-Schwarz 2 sqrt(E Z), a factor
+sqrt 2. Fixed in `adversarial_ic.py`; a hard-constraint ladder at 0, 0.25, 0.5, 0.75, 0.9 is the replacement.) Arnold's
 geodesic spreading along mild Taylor-Green is 1.9x over one time unit; it needs a ladder before it means more.
 
 ### Learned coarse simulators of 2-D Kolmogorov flow (`kolmogorov_v2.py`, run on CI)
