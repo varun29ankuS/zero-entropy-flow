@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | budgets3d | highres | kolmogorov_v2"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | mechanism3d | budgets3d | highres | kolmogorov_v2"
         default: "all"
 
 permissions:
@@ -36,6 +36,11 @@ jobs:
           DIM=1 N=512 NU=0 T=0.95 DT=2e-4 python -u ns_d.py 2>/dev/null | tee results/ns_d_1d.txt
           DIM=2 N=128 NU=0.02 T=2 DT=2e-3 IC=tg python -u ns_d.py 2>/dev/null | tee results/ns_d_2d.txt
           DIM=3 N=48 NU=0 T=4 python -u ns_d.py 2>/dev/null | tee results/ns_d_3d.txt
+      - name: mechanism3d
+        if: ${{ github.event.inputs.which == 'mechanism3d' }}
+        run: |
+          IC=tg N=64 T=4 python -u mechanism3d.py 2>/dev/null | tee results/mechanism3d_tg_64.txt
+          IC=abc N=64 T=4 python -u mechanism3d.py 2>/dev/null | tee results/mechanism3d_abc_64.txt
       - name: budgets3d
         if: ${{ github.event.inputs.which == 'budgets3d' }}
         run: N=64 T=4 python -u budgets3d.py 2>/dev/null | tee results/budgets3d_64.txt
