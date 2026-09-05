@@ -1,0 +1,20 @@
+DIM=2  N=16  nu=0  retained solenoidal dof ~ 121  |F| = 2.153  (exact trace over 512 coordinates)
+expected viscous contraction  -nu (DIM-1) sum_k k^2 = -0.0000
+  skew         div F = tr(dF/dU) = +1.943e-16    (largest Jacobian entry 0.53; relative 3.0e-18)   (1s)
+  advective    div F = tr(dF/dU) = +0.000e+00    (largest Jacobian entry 0.53; relative 0.0e+00)   (1s)
+  divergence   div F = tr(dF/dU) = -9.021e-17    (largest Jacobian entry 0.53; relative 1.4e-18)   (1s)
+DIM=2  N=16  nu=0.01  retained solenoidal dof ~ 121  |F| = 2.173  (exact trace over 512 coordinates)
+expected viscous contraction  -nu (DIM-1) sum_k k^2 = -24.2000
+  skew         div F = tr(dF/dU) = -2.420e+01    (largest Jacobian entry 0.53; relative 3.7e-01)   (1s)
+  advective    div F = tr(dF/dU) = -2.420e+01    (largest Jacobian entry 0.53; relative 3.7e-01)   (1s)
+  divergence   div F = tr(dF/dU) = -2.420e+01    (largest Jacobian entry 0.53; relative 3.7e-01)   (2s)
+DIM=3  N=12  nu=0  retained solenoidal dof ~ 686  |F| = 6.857  (exact trace over 5184 coordinates)
+expected viscous contraction  -nu (DIM-1) sum_k k^2 = -0.0000
+  skew         div F = tr(dF/dU) = +3.348e-16    (largest Jacobian entry 0.10; relative 4.8e-18)   (32s)
+  advective    div F = tr(dF/dU) = +3.834e-16    (largest Jacobian entry 0.10; relative 5.5e-18)   (54s)
+  divergence   div F = tr(dF/dU) = -2.880e-16    (largest Jacobian entry 0.10; relative 4.1e-18)   (77s)
+DIM=3  N=12  nu=0.01  retained solenoidal dof ~ 686  |F| = 6.921  (exact trace over 5184 coordinates)
+expected viscous contraction  -nu (DIM-1) sum_k k^2 = -82.3200
+  skew         div F = tr(dF/dU) = -8.232e+01    (largest Jacobian entry 0.11; relative 1.1e+00)   (36s)
+  advective    div F = tr(dF/dU) = -8.232e+01    (largest Jacobian entry 0.11; relative 1.1e+00)   (60s)
+  divergence   div F = tr(dF/dU) = -8.232e+01    (largest Jacobian entry 0.11; relative 1.1e+00)   (85s)

@@ -298,6 +298,27 @@ and regularity holds because a norm one level below it is controlled. The regist
 narrowly missed by the 2-D palinstrophy budget (terms of order $1e3$, RK4 error); halving the time step would
 clear it, and the bar is left where it was.
 
+## Liouville: the ensemble version of zero entropy production
+
+Lee (1952) showed that the Galerkin-truncated Euler equations are a divergence-free vector field on the phase space
+of retained modes: phase-space volume, and with it the Gibbs entropy of any ensemble of solutions, is exactly
+conserved. That is the ensemble form of the statement this repository is built on. `liouville.py` measures it with
+autograd, taking the exact trace of the Jacobian of the transport operator (one reverse pass per coordinate):
+
+```
+                          div F = tr(dF/dU)         expected
+2-D  16^2  nu = 0         -2.9e-16                  0
+3-D  12^3  nu = 0         +3.3e-16                  0
+2-D  16^2  nu = 0.01      -24.20                    -nu (d-1) sum_k k^2 = -24.20
+3-D  12^3  nu = 0.01      -82.32                    -nu (d-1) sum_k k^2 = -82.32
+```
+
+Two things worth noticing. The inviscid divergence is zero for the skew form, the advective form and the divergence
+form alike: Liouville is a weaker property than energy conservation (the advective form loses energy but not phase
+volume). And the viscous contraction is a constant independent of the state, so along truncated Navier-Stokes the
+Gibbs entropy of any ensemble decreases linearly, S(t) = S(0) - nu (d-1) (sum_k k^2) t, however turbulent the flow.
+What the flow does is not create or destroy phase volume but stretch it: the Jacobi ladder below measures the rate.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by
