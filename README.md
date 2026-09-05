@@ -257,6 +257,11 @@ Gradient ascent through the differentiable solver on the enstrophy amplification
 | enstrophy, Taylor-Green amplitude, corrected verdict | 4.96x | 7.89x at 96^3 (delta 0.050), 8.70x at 128^3 (delta 0.040) | 1.112x | outside the window at both |
 | enstrophy, leashed: delta(T) >= 0.30 on the 32^3 search grid | 4.44x, delta 0.27 | 8.28x at 128^3, delta 0.042 | 1.112x | outside the window |
 | enstrophy, leashed: delta(T) >= 0.45 on the 32^3 search grid | 3.82x, delta 0.41 | 5.85x at 128^3, delta 0.047 | 1.112x | outside the window |
+| helicity held at 0 (hard constraint, corrected bound) | 4.54x | 7.38x at 96^3, delta 0.047 | 1.112x | outside the window |
+| helicity held at 0.25 max | 4.68x | 7.11x at 96^3, delta 0.065 | 1.112x | outside the window |
+| helicity held at 0.50 max | 4.47x | 6.35x at 96^3, delta 0.069 | 1.112x | outside the window |
+| helicity held at 0.75 max | 3.11x | 3.99x at 96^3, delta 0.076 | 1.112x | outside the window |
+| helicity held at 0.90 max | 1.27x | 1.266x at 96^3, delta 0.20 > 0.13 | 1.112x | **pass** |
 | Jacobi growth along Taylor-Green | 1.90x spreading | - | - | measurement only |
 
 Pointed at enstrophy, the searcher twice found smooth low-k data that cascades to the grid cutoff within one time unit
@@ -266,10 +271,14 @@ below a threshold) satisfied its leash on the 32^3 grid and still failed at 128^
 the coarse grid's truncation blocks the cascade the field triggers, so the field's spectrum tail *looks* resolved at
 32^3 (delta 0.27-0.41) while its true continuation has delta 0.04. Resolution measured on the search grid is not
 resolution. The leash has to be measured where the cascade lives: a 64^3 search grid with gradient checkpointing
-(`CKPT=1`, memory 2.2 GB) is the next run. Topology: at fixed
-initial enstrophy the attainable amplification falls monotonically as helicity is imposed (1.21, 1.10, 1.01 at
-relative helicity 0, 0.71, 0.99), the direction Moffatt's conjecture wants; the penalty method is crude, so the
-ordering is the result, not the sizes. (Correction, 2026-09-06: the first version of this table labelled these
+(`CKPT=1`, memory 2.2 GB) is the next run. Topology, with the
+helicity held fixed by a hard constraint (Newton projection onto the level set after every step, `HELMODE=project`):
+on the 32^3 truncated system the maximal amplification over one time unit is *flat* up to relative helicity 0.5
+(4.54, 4.68, 4.47) and then collapses (3.11 at 0.75, 1.27 at 0.9). Helicity inhibits the cascade, as Moffatt's
+conjecture wants, but as a threshold rather than a slope: half the maximal helicity costs nothing, ninety percent
+costs a factor of four. The four fast fields cascade to the cutoff at 96^3 and are registered as outside the window;
+the 0.9 field stays resolved and beats every classical flow (1.266 vs 1.112, pass). The earlier penalty-method rows
+above, which showed a gentle monotone decline, were the penalty failing to explore, not the physics. (Correction, 2026-09-06: the first version of this table labelled these
 0.5 and 0.7; the code's helicity bound was 2 sqrt(2 E Z) instead of the Cauchy-Schwarz 2 sqrt(E Z), a factor
 sqrt 2. Fixed in `adversarial_ic.py`; a hard-constraint ladder at 0, 0.25, 0.5, 0.75, 0.9 is the replacement.) Arnold's
 geodesic spreading along mild Taylor-Green is 1.9x over one time unit; it needs a ladder before it means more.

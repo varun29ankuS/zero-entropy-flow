@@ -80,11 +80,14 @@ twice the registered verdict is FAIL because the verifier's clock says the numbe
 That is the design working; it is not a blow-up. Refuted by: a searcher result that stays resolved (delta > 2 dx on
 the verification grid) and beats the best classical flow. Test: `python adversarial_ic.py` and the `leashed` CI job.
 
-**C13. Attainable enstrophy growth is ordered by helicity.** With a helicity penalty on the same search, best growth
-over t = 1 (inside the window): 1.213 at H = 0, 1.097 at H/Hmax = 0.71, 1.006 at H/Hmax ~ 0.99 (relabelled
-2026-09-06 after a sqrt 2 error in the code's helicity bound was found; the fields are unchanged). Monotone, the direction
-Moffatt's topological bound predicts. The penalty method is crude (soft constraint, one weight); the ordering is
-the claim, not the numbers. Refuted by: a helical field that beats the H = 0 optimum at the same Z0 and window.
+**C13. Attainable enstrophy growth is flat in helicity up to half the maximum, then collapses.** With the helicity
+held fixed by a hard constraint on the 32^3 truncated system, the maximal amplification over t = 1 at fixed Z0 is
+4.54, 4.68, 4.47, 3.11, 1.27 at relative helicity 0, 0.25, 0.5, 0.75, 0.9 (`results/helicity_proj_*.txt`). The
+direction is Moffatt's; the shape (a threshold, not a slope) is the claim. The 0.9 field is resolved at 96^3 and
+beats Taylor-Green (1.266 vs 1.112); the others cascade to the cutoff and are outside the window. Refuted by: a
+64^3 search grid giving a different ordering, or a helical field at 0.75-0.9 that matches the helicity-free growth.
+(The first version of this claim, from a penalty method with a sqrt 2 error in the bound, read 1.21 / 1.10 / 1.01
+at 0 / 0.71 / 0.99; the penalty was failing to explore. Both are kept in the README table.)
 
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
