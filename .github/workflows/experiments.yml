@@ -58,7 +58,9 @@ jobs:
           IC=kp N=64 T=3 python -u criteria3d.py 2>/dev/null | tee results/criteria3d_kp_64.txt
       - name: adversarial
         if: ${{ github.event.inputs.which == 'adversarial' }}
-        run: N=32 T=1.0 ITERS=40 NVER=64 python -u adversarial_ic.py 2>/dev/null | tee results/adversarial_ic.txt
+        run: |
+          N=32 T=1.0 ITERS=40 NVER=96 python -u adversarial_ic.py 2>/dev/null | tee results/adversarial_ic_z0tg_96.txt
+          N=32 T=1.0 ITERS=40 NVER=128 python -u adversarial_ic.py 2>/dev/null | tee results/adversarial_ic_z0tg_128.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

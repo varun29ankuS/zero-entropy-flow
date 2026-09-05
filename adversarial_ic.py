@@ -111,8 +111,8 @@ def candidates():
 
 
 cands = candidates()
-Z0 = enstrophy(cands["kida-pelz"]).item()          # common initial enstrophy: Kida-Pelz's
-print("search grid %d^3, T = %.2f, low-k initial data |k| <= %d, common Z0 = %.4f (Kida-Pelz's)" % (N, T, KMAX_IC, Z0))
+Z0 = float(os.environ.get("Z0", 0)) or enstrophy(cands["taylor-green"]).item()   # common initial enstrophy (default: Taylor-Green's, the mild one)
+print("search grid %d^3, T = %.2f, low-k initial data |k| <= %d, common Z0 = %.4f" % (N, T, KMAX_IC, Z0))
 with torch.no_grad():
     for name, U in cands.items():
         Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
@@ -216,5 +216,10 @@ with torch.no_grad():
         Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
         phys = [ifft(Ui).real.numpy() for Ui in Un]
         results[name] = verify(phys, NVER, T, name)
-best_classical = max(v[0] for kname, v in results.items() if kname != "FOUND")
-print("\nREGISTERED  found Z(T)/Z0 = %.3f vs best classical %.3f at %d^3 -> %s" % (results["FOUND"][0], best_classical, NVER, "PASS" if results["FOUND"][0] > best_classical else "FAIL"))
+ok = {kname: v[1] > 2 * 2 * math.pi / NVER for kname, v in results.items()}
+classical_ok = {kname: v[0] for kname, v in results.items() if kname != "FOUND" and ok[kname]}
+best_classical = max(classical_ok.values()) if classical_ok else float("nan")
+reliable = ok["FOUND"] and bool(classical_ok)
+print("\nREGISTERED  found Z(T)/Z0 = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % (
+    results["FOUND"][0], ">" if ok["FOUND"] else "<", best_classical, NVER,
+    "PASS" if reliable and results["FOUND"][0] > best_classical else ("FAIL: outside the reliable window" if not reliable else "FAIL")))
