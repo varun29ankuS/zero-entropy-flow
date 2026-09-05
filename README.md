@@ -250,16 +250,13 @@ clear it, and the bar is left where it was.
 - It is **not** a statement about 3-D Navier-Stokes regularity. Nothing here proves anything; a proof is a theorem
   or nothing.
 
-## Poke holes
-Every claim, what would refute it, the command that tests it, and the list of our own weak points: [CLAIMS.md](CLAIMS.md).
-Issues and Discussions are open. Refutations are welcome; bring the output.
+## Further reading
+[CLAIMS.md](CLAIMS.md) - every claim, its refutation condition, its command, and our weak points.
 
-## The equations
-The one-family system in $d=1,2,3$, the skew/contractive split, the discretisation, and the budget line with its
+[EQUATIONS.md](EQUATIONS.md) - the one-family system in $d=1,2,3$, the skew/contractive split, the discretisation, and the budget line with its
 production term per dimension: [EQUATIONS.md](EQUATIONS.md). One solver for all three: `ns_d.py`.
 
-## Theory
-Definitions, the elementary propositions with proofs, the classical limits (Tao 2016; Beale-Kato-Majda), and the one open
+[THEORY.md](THEORY.md) - definitions, the elementary propositions with proofs, the classical limits (Tao 2016; Beale-Kato-Majda), and the one open
 hypothesis stated attackably: [THEORY.md](THEORY.md).
 
 ## Run
