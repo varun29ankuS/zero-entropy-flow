@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -50,6 +50,12 @@ jobs:
       - name: midpoint
         if: ${{ github.event.inputs.which == 'midpoint' }}
         run: python -u midpoint.py 2>/dev/null | tee results/midpoint.txt
+      - name: criteria3d
+        if: ${{ github.event.inputs.which == 'criteria3d' }}
+        run: |
+          IC=tg N=64 T=4 python -u criteria3d.py 2>/dev/null | tee results/criteria3d_tg_64.txt
+          IC=abc N=64 T=4 python -u criteria3d.py 2>/dev/null | tee results/criteria3d_abc_64.txt
+          IC=kp N=64 T=3 python -u criteria3d.py 2>/dev/null | tee results/criteria3d_kp_64.txt
       - name: mechanism3d
         if: ${{ github.event.inputs.which == 'mechanism3d' }}
         run: |

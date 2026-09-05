@@ -157,3 +157,21 @@ be established from skewness and dissipation alone; a candidate $M$ must use the
 $P[(u\cdot\nabla)u]$. The numerical route to evidence is to compute, for candidate $M$, the sign of
 $\frac{d}{dt}M$ along flows near the strongest known amplification events, with a scheme whose own dissipation is
 zero so that the sign is not an artefact - which is what Proposition 2 provides.
+
+## 6. What a proof must control: the criteria, and what is measured
+
+Each of the following is a theorem giving a sufficient condition for smoothness; a blow-up must violate all of them.
+The right-hand column is what `criteria3d.py` measures along a flow, by resolution, with the budgets closed.
+
+| criterion | statement | measured |
+|---|---|---|
+| Beale-Kato-Majda (1984) | int_0^T max\|w\| dt < inf implies smooth on [0,T] | max\|w\|(t) and its time integral |
+| Ladyzhenskaya-Prodi-Serrin; Escauriaza-Seregin-Sverak (2003) | sup_t \|\|u\|\|_L3 < inf implies smooth (the scale-critical norm) | \|\|u(t)\|\|_L3 |
+| Constantin-Fefferman (1993) | if the vorticity direction xi = w/\|w\| is Lipschitz where \|w\| is large, stretching is depleted and the solution is smooth | direction coherence rho = <1 - (xi(x).xi(x+h))^2> over \|w\| > 0.5 max, h = dx; and the local stretching alpha = xi.S.xi there |
+| Caffarelli-Kohn-Nirenberg (1982) | the singular set has one-dimensional parabolic Hausdorff measure zero | (a blow-up, if any, is at points, not sheets or lines) |
+| Tao (2016) | the skew-plus-dissipation structure alone cannot decide regularity | (limits what any argument built on Sections 1-2 can prove) |
+
+A regularity proof shows one of the first three always holds. A blow-up construction violates all of them at a point
+and uses the exact nonlinearity. The measurements do neither; they report which criterion is tightest on the classical
+candidate flows (Taylor-Green; the perturbed ABC flow; the Kida-Pelz high-symmetry flow, whose apparent blow-up
+dissolved at high resolution, Hou and Li 2006) and whether the critical norm stays bounded on them.
