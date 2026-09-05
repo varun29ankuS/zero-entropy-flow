@@ -1,0 +1,22 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750
+  taylor-green   E0 0.1250   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   Z(T)/Z0 = 1.012
+  iter   0   Z(T)/Z0 = 1.126   E0 = 0.0183   (2s)
+  iter   5   Z(T)/Z0 = 1.440   E0 = 0.0224   (8s)
+  iter  10   Z(T)/Z0 = 1.849   E0 = 0.0250   (14s)
+  iter  15   Z(T)/Z0 = 2.341   E0 = 0.0261   (21s)
+  iter  20   Z(T)/Z0 = 2.809   E0 = 0.0280   (28s)
+  iter  25   Z(T)/Z0 = 3.376   E0 = 0.0299   (36s)
+  iter  30   Z(T)/Z0 = 3.922   E0 = 0.0321   (45s)
+  iter  35   Z(T)/Z0 = 4.258   E0 = 0.0346   (56s)
+  iter  39   Z(T)/Z0 = 4.433   E0 = 0.0368   (64s)
+best amplification on the search grid: 4.433
+
+verification at 128^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 128^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5290  (2dx = 0.0982)
+  kida-pelz      at 128^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3305  (2dx = 0.0982)
+  abc+10%        at 128^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.6371  (2dx = 0.0982)
+  FOUND          at 128^3:  Z(T)/Z0 = 8.704   E(T)/E0 = 0.999998   delta(T) = 0.0397  (2dx = 0.0982)   <-- unreliable
+
+REGISTERED  found Z(T)/Z0 = 8.704 (delta < 2dx) vs best RELIABLE classical 1.112 at 128^3 -> FAIL: outside the reliable window
