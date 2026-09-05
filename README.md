@@ -276,11 +276,11 @@ helicity held fixed by a hard constraint (Newton projection onto the level set a
 on the 32^3 truncated system the maximal amplification over one time unit is *flat* up to relative helicity 0.5
 (4.54, 4.68, 4.47) and then collapses (3.11 at 0.75, 1.27 at 0.9). Helicity inhibits the cascade, as Moffatt's
 conjecture wants, but as a threshold rather than a slope: half the maximal helicity costs nothing, ninety percent
-costs a factor of four. The four fast fields cascade to the cutoff at 96^3 and are registered as outside the window;
+costs a factor of four.
 
 ![Maximal enstrophy amplification versus relative helicity held fixed](figures/helicity_threshold.png)
 
-The four fast fields are outside the window;
+The four fast fields cascade to the cutoff at 96^3 and are registered as outside the window;
 the 0.9 field stays resolved and beats every classical flow (1.266 vs 1.112, pass). The earlier penalty-method rows
 above, which showed a gentle monotone decline, were the penalty failing to explore, not the physics. (Correction, 2026-09-06: the first version of this table labelled these
 0.5 and 0.7; the code's helicity bound was 2 sqrt(2 E Z) instead of the Cauchy-Schwarz 2 sqrt(E Z), a factor
