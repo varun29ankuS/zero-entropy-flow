@@ -117,7 +117,7 @@ $$u_j^{n+1} = u_j^n - \frac{\Delta t}{\Delta x}\big(F_{j+1/2} - F_{j-1/2}\big) +
 ## Results so far
 
 ### 1-D Burgers, inviscid, `u0 = sin x` (`burgers_entropy.py`)
-The gradient provably blows up at $t^*=1$ with $\max|u_x| = 1/(1-t)$. Grid $N=512$, $\Delta t = 2e-4$.
+The gradient provably blows up at $t^*=1$ with $\max|u_x| = 1/(1-t)$. Grid $N=512$, dt = 2e-4.
 
 | t | frozen-rotation scheme: E/E0, max\|u_x\|, L2 error | truth max\|u_x\| | first-order upwind: E/E0, L2 error |
 |---|---|---|---|
@@ -126,7 +126,7 @@ The gradient provably blows up at $t^*=1$ with $\max|u_x| = 1/(1-t)$. Grid $N=51
 | 0.90 | 1.00000, 9.99, 0.0000 | 10.00 | 0.9941, 0.0097 |
 | 0.95 | 1.00000, 18.72, 0.0004 | 20.00 | 0.9934, 0.0116 |
 
-Numerical entropy production $\sigma_{	ext{num}}$ over $[0, 0.95]$: upwind 7e-3 per unit time; frozen -3e-15 (zero to machine precision). The frozen scheme tracks the exact approach to the singularity until the 512-point grid can no longer
+Numerical entropy production sigma_num over $[0, 0.95]$: upwind 7e-3 per unit time; frozen -3e-15 (zero to machine precision). The frozen scheme tracks the exact approach to the singularity until the 512-point grid can no longer
 resolve a gradient of 20 - a visible resolution limit, not hidden dissipation.
 
 ### 2-D viscous Taylor-Green, exact solution known (`taylor_green.py`, part A)
