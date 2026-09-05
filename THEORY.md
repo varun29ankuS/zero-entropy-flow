@@ -64,7 +64,7 @@ norm is constant and $\sigma_{\text{num}}=0$ by Definition 2. $\square$
 *Remark.* The pseudo-spectral scheme in this repository realises Proposition 2 up to time-stepping error: the
 skew-symmetric form makes the semi-discrete transport exactly skew ($\langle \hat u, \hat T(\hat u)\rangle = 0$ on
 the dealiased modes), the viscous integrating factor exp(-\nu k^2\Delta t) is an exact contraction per mode, and
-RK4 adds an $O(\Delta t^4)$ deviation. Measured: $\sigma_{\text{num}} = -3\times10^{-15}$ (Burgers), energy conserved
+RK4 adds an $O(\Delta t^4)$ deviation. Measured: $\sigma_{\text{num}} = -3e-15 (Burgers), energy conserved
 to 1e-6 (3-D Euler).
 
 **Proposition 3 (a frozen isometric memory carries a conserved quantity exactly; a dissipative one forgets at
