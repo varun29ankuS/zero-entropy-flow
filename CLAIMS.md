@@ -74,8 +74,8 @@ structure used here cannot decide it.
    learned simulators exist (Kochkov et al. 2021, FNO variants). "Learned drifts" only counts against a strong one.
 4. **Resolution.** 128^3 is small by modern standards; the t = 4 Taylor-Green numbers are a lower bound on a curve
    still rising with resolution, as stated. Nothing here approaches the resolutions of published singularity searches.
-5. **RK4 is not exactly conservative.** The 10^-6 in 3-D and the 3-9e-6 palinstrophy residuals are time-stepping
-   error. An exactly conservative time integrator (implicit midpoint on the skew part) would remove them.
+5. ~~RK4 is not exactly conservative.~~ Closed: `midpoint.py` (implicit midpoint on the skew part) brings the 3-D drift
+   from 3.5e-8 to 5.7e-12. The RK4 numbers elsewhere stand as reported; the midpoint integrator is available.
 6. **The 2/3 rule and the skew form.** Energy conservation on the dealiased modes is standard; we have not separately
    verified the aliasing error bound at the highest retained modes for the 3-D runs.
 7. **Comparison with the literature is qualitative.** "In range" of Brachet's curves is not a digit-for-digit match;

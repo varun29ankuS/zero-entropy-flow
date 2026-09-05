@@ -177,6 +177,33 @@ The classical preference of vorticity for the intermediate strain eigenvector (A
 weak here - a few points above random - because neither flow is developed turbulence by $t=4$; the forced run in
 `spectra.py` is where the textbook signal belongs, and that check is pending.
 
+### Learned coarse simulators of 2-D Kolmogorov flow (`kolmogorov_v2.py`, run on CI)
+$32^2$ coarse models against a $128^2$ truth, 2000-step rollouts from held-out states, $Re\approx1250$.
+
+| coarse simulator | energy / truth | spectrum error (2nd half, averaged) |
+|---|---|---|
+| fully learned CNN (width 64, 16-step unroll) | 0.95 - **1.91** | 0.50 |
+| frozen exact transport, no closure | 0.96 - 1.07 | 0.53 |
+| frozen + dissipative gate only ($\nu_t\ge0$; v1) | 0.95 - 1.07 | 0.53 |
+| **frozen + energy-neutral learned redistribution + gate** | 0.87 - 1.07 | **0.09** |
+
+In 2-D the missing physics at coarse resolution is backscatter, which a dissipative closure cannot express: the gate
+alone changes nothing (0.53 = no closure). A learned term projected to move energy between scales *without creating
+it* cuts the long-rollout spectrum error six-fold, while the fully learned model drifts to 1.9x the true energy.
+Registered: spectrum ratio 0.18 (bar 0.6), energy band within [0.8, 1.2], learned leaves it - all pass. The dip to 0.87
+is the first-order neutrality (`verify_skew_closure.py`) accumulating over 2000 steps; exact rescaling is the v3 fix.
+
+### Energy spectra (`spectra.py`, CI) and exact time integration (`midpoint.py`)
+![Energy spectra: 2-D k^-3 and 3-D k^-5/3 with a pile-up at the grid cutoff](figures/spectra.png)
+
+*2-D decaying turbulence at $256^2$ follows Kraichnan's $k^{-3}$ over a decade (a little steeper, as decaying 2-D
+turbulence does). 3-D forced turbulence at $48^3$ follows $k^{-5/3}$ for a few wavenumbers and then **piles up at
+the cutoff**: energy arrives faster than viscosity removes it on a grid this small. A dissipative scheme would have
+damped that into a plausible slope; the conserving scheme shows the under-resolution. $96^3$ is queued.*
+
+Implicit midpoint on the skew transport makes the discrete energy conservation exact: 3-D drift
+$3.5\times10^{-8}$ (RK4) $\to 5.7\times10^{-12}$ (midpoint), round-off. Weak point 5 of `CLAIMS.md`, closed.
+
 ### Budget closure in 1-D and 2-D, where Hypothesis H is known (`budgets.py`)
 Every balance law checked term by term along the flow (measured $d/dt$ across one step vs the right-hand side from
 the field), including the **unsigned production terms** whose 3-D cousin is the regularity problem.

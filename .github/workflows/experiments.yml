@@ -6,6 +6,9 @@ on:
       which:
         description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | mechanism3d | budgets3d | highres | kolmogorov_v2"
         default: "all"
+      n3:
+        description: "3-D grid for the spectra job"
+        default: "48"
 
 permissions:
   contents: write
@@ -42,7 +45,7 @@ jobs:
       - name: spectra
         if: ${{ github.event.inputs.which == 'spectra' }}
         run: |
-          N3=48 T3=20 python -u spectra.py 2>/dev/null | tee results/spectra.txt
+          N3=${{ github.event.inputs.n3 || 48 }} T3=20 python -u spectra.py 2>/dev/null | tee results/spectra.txt
           git add figures/spectra.png
       - name: midpoint
         if: ${{ github.event.inputs.which == 'midpoint' }}
