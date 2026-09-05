@@ -130,7 +130,7 @@ Numerical entropy production sigma_num over $[0, 0.95]$: upwind 7e-3 per unit ti
 resolve a gradient of 20 - a visible resolution limit, not hidden dissipation.
 
 ### 2-D viscous Taylor-Green, exact solution known (`taylor_green.py`, part A)
-$\nu = 0.02$, $128^2$ grid, $\Delta t = 2e-3, viscosity as an exact integrating factor per mode.
+nu = 0.02, 128^2 grid, dt = 2e-3, viscosity as an exact integrating factor per mode.
 
 | t | E/E_0 scheme | E/E_0 exact = exp(-4nu t) | L_2 error vs the exact field |
 |---|---|---|---|
@@ -225,7 +225,7 @@ the cutoff**: energy arrives faster than viscosity removes it on a grid this sma
 damped that into a plausible slope; the conserving scheme shows the under-resolution. $96^3$ is queued.*
 
 Implicit midpoint on the skew transport makes the discrete energy conservation exact: 3-D drift
-3.5e-8 (RK4) $\to 5.7e-12 (midpoint), round-off. Weak point 5 of `CLAIMS.md`, closed.
+3.5e-8 (RK4) -> 5.7e-12 (midpoint), round-off. Weak point 5 of `CLAIMS.md`, closed.
 
 ### Budget closure in 1-D and 2-D, where Hypothesis H is known (`budgets.py`)
 Every balance law checked term by term along the flow (measured $d/dt$ across one step vs the right-hand side from
