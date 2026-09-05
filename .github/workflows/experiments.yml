@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | jacobi | helicity_ladder | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -83,6 +83,11 @@ jobs:
         if: ${{ github.event.inputs.which == 'helicity_ladder' }}
         run: |
           for h in 0.0 0.25 0.5 0.75 0.9; do OBJ=helicity HELMODE=project HEL=$h N=32 T=1.0 ITERS=40 NVER=96 python -u adversarial_ic.py 2>/dev/null | tee results/helicity_proj_$h.txt; done
+      - name: strip
+        if: ${{ github.event.inputs.which == 'strip' }}
+        run: |
+          for n in 48 64 96; do IC=tg N=$n T=3 python -u strip_tracker.py 2>/dev/null | tee results/strip_tg_$n.txt; done
+          for n in 64 96 128; do IC=kp N=$n T=1.2 EVERY=0.025 python -u strip_tracker.py 2>/dev/null | tee results/strip_kp_$n.txt; done
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
