@@ -350,6 +350,8 @@ Kida-Pelz
    0.5         -      1.2301    1.2660                -      0.414    0.472
 ```
 
+![Jacobi-field growth along Taylor-Green and Kida-Pelz by resolution](figures/jacobi_ladder.png)
+
 Three readings. The growth converges with resolution inside the window (Taylor-Green at t = 2: 48^3 and 64^3
 agree to 1%). The local exponent rises steadily with time, 0.03 to 0.28 for Taylor-Green: the geodesic moves into
 more negatively curved parts of the group as the vortex sheets form, which is Arnold's prediction in the one
