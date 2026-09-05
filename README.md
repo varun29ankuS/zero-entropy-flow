@@ -129,6 +129,10 @@ clear it, and the bar is left where it was.
 - It is **not** a statement about 3-D Navier-Stokes regularity. Nothing here proves anything; a proof is a theorem
   or nothing.
 
+## The equations
+The one-family system in $d=1,2,3$, the skew/contractive split, the discretisation, and the budget line with its
+production term per dimension: [EQUATIONS.md](EQUATIONS.md). One solver for all three: `ns_d.py`.
+
 ## Theory
 Definitions, the elementary propositions with proofs, the classical limits (Tao 2016; Beale-Kato-Majda), and the one open
 hypothesis stated attackably: [THEORY.md](THEORY.md).
