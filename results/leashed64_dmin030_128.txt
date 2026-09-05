@@ -1,0 +1,23 @@
+search grid 64^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective enstrophy
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3590   H/Hmax +0.971   Z(T)/Z0 = 1.014
+  iter   0   objective = 1.118   E0 = 0.0186   H/Hmax = +0.022   delta(T) on search grid = 0.314   (25s)
+  iter   5   objective = 1.351   E0 = 0.0226   H/Hmax = +0.013   delta(T) on search grid = 0.287   (133s)
+  iter  10   objective = 1.449   E0 = 0.0259   H/Hmax = +0.008   delta(T) on search grid = 0.285   (240s)
+  iter  15   objective = 1.544   E0 = 0.0274   H/Hmax = +0.026   delta(T) on search grid = 0.285   (347s)
+  iter  20   objective = 1.692   E0 = 0.0283   H/Hmax = +0.040   delta(T) on search grid = 0.283   (453s)
+  iter  25   objective = 1.963   E0 = 0.0286   H/Hmax = +0.054   delta(T) on search grid = 0.280   (561s)
+  iter  30   objective = 2.345   E0 = 0.0284   H/Hmax = +0.046   delta(T) on search grid = 0.275   (667s)
+  iter  35   objective = 2.712   E0 = 0.0283   H/Hmax = +0.016   delta(T) on search grid = 0.270   (775s)
+  iter  40   objective = 2.959   E0 = 0.0293   H/Hmax = -0.001   delta(T) on search grid = 0.266   (886s)
+  iter  44   objective = 3.093   E0 = 0.0306   H/Hmax = -0.012   delta(T) on search grid = 0.264   (978s)
+best amplification on the search grid: 3.093
+
+verification at 128^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 128^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5290  (2dx = 0.0982)
+  kida-pelz      at 128^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3305  (2dx = 0.0982)
+  abc+10%        at 128^3:  Z(T)/Z0 = 1.014   E(T)/E0 = 1.000000   delta(T) = 0.6445  (2dx = 0.0982)
+  FOUND          at 128^3:  Z(T)/Z0 = 3.175   E(T)/E0 = 1.000000   delta(T) = 0.0714  (2dx = 0.0982)   <-- unreliable
+
+REGISTERED  found Z(T)/Z0 = 3.175 (delta < 2dx) vs best RELIABLE classical 1.112 at 128^3 -> FAIL: outside the reliable window
