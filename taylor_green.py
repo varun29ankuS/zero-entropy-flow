@@ -13,7 +13,7 @@ def k_grid(N, dims):
 def tg2d(N=128, nu=0.02, T=2.0, dt=2e-3):
     kx, ky = k_grid(N, 2); k2 = kx * kx + ky * ky; k2[0, 0] = 1.0; deal = (np.abs(kx) < N / 3) & (np.abs(ky) < N / 3)
     x = np.linspace(0, 2 * np.pi, N, endpoint=False); X, Y = np.meshgrid(x, x, indexing='ij')
-    w = -2 * np.sin(X) * np.cos(Y)                                  # vorticity of the TG field
+    w = 2 * np.sin(X) * np.sin(Y)                                   # vorticity omega = v_x - u_y of u = sin x cos y, v = -cos x sin y
     wh = np.fft.fft2(w)
     def vel(wh):
         psih = wh / k2; psih[0, 0] = 0
@@ -33,13 +33,15 @@ def tg2d(N=128, nu=0.02, T=2.0, dt=2e-3):
             out.append((t, E(wh) / E0, np.exp(-4 * nu * t), np.sqrt(np.mean((u - ut) ** 2 + (v - vt) ** 2))))
     return out
 
-print('==== A. 2-D viscous Taylor-Green (nu = 0.02), exact solution known ====')
-print('   t   E/E0 (scheme)   E/E0 (exact)    L2 error vs exact')
-for t, e, ex, err in tg2d(): print('%4.1f   %.8f     %.8f     %.2e' % (t, e, ex, err))
+import os
+if os.environ.get('ONLY3D') != '1':
+  print('==== A. 2-D viscous Taylor-Green (nu = 0.02), exact solution known ====')
+  print('   t   E/E0 (scheme)   E/E0 (exact)    L2 error vs exact')
+  for t, e, ex, err in tg2d(): print('%4.1f   %.8f     %.8f     %.2e' % (t, e, ex, err))
 
 # ---------------- B. 3-D inviscid Taylor-Green (Euler) ----------------
 def tg3d(N, T=4.0, dt=None):
-    dt = dt or 4.0 / N * 0.5
+    dt = dt or 2.0 / N
     kx, ky, kz = k_grid(N, 3); k2 = kx ** 2 + ky ** 2 + kz ** 2; k2[0, 0, 0] = 1.0
     deal = (np.abs(kx) < N / 3) & (np.abs(ky) < N / 3) & (np.abs(kz) < N / 3)
     x = np.linspace(0, 2 * np.pi, N, endpoint=False); X, Y, Z = np.meshgrid(x, x, x, indexing='ij')
@@ -47,13 +49,14 @@ def tg3d(N, T=4.0, dt=None):
     U = [np.fft.fftn(u), np.fft.fftn(v), np.fft.fftn(w)]
     K = [kx, ky, kz]
     def project(F):                                                  # remove the compressible part
-        div = sum(1j * K[i] * F[i] for i in range(3)) / k2
-        return [F[i] - 1j * K[i] * div for i in range(3)]
+        kdotF = sum(K[i] * F[i] for i in range(3)) / k2                # Leray projection: F - k (k.F)/|k|^2
+        return [F[i] - K[i] * kdotF for i in range(3)]
     def rhs(U):
-        u = [np.fft.ifftn(Ui).real for Ui in U]; out = []
-        for i in range(3):                                           # -(u.grad)u_i, dealiased, then projected
-            adv = sum(u[j] * np.fft.ifftn(1j * K[j] * U[i]).real for j in range(3))
-            out.append(-np.fft.fftn(adv) * deal)
+        Ud = [Ui * deal for Ui in U]; u = [np.fft.ifftn(Ui).real for Ui in Ud]; out = []
+        for i in range(3):                                           # skew-symmetric: 1/2[(u.grad)u_i + div(u u_i)], energy-conserving
+            adv = sum(u[j] * np.fft.ifftn(1j * K[j] * Ud[i]).real for j in range(3))
+            div = sum(np.fft.ifftn(1j * K[j] * np.fft.fftn(u[j] * u[i])).real for j in range(3))
+            out.append(-0.5 * np.fft.fftn(adv + div) * deal)
         return project(out)
     def energy(U): return 0.5 * sum(np.mean(np.fft.ifftn(Ui).real ** 2) for Ui in U)
     def enstrophy(U):

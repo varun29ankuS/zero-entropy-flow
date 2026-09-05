@@ -76,10 +76,35 @@ The gradient provably blows up at $t^*=1$ with $\max|u_x| = 1/(1-t)$. Grid $N=51
 Numerical entropy production $\sigma_{	ext{num}}$ over $[0, 0.95]$: upwind $7	imes10^{-3}$ per unit time; frozen $-3	imes10^{-15}$ (zero to machine precision). The frozen scheme tracks the exact approach to the singularity until the 512-point grid can no longer
 resolve a gradient of 20 - a visible resolution limit, not hidden dissipation.
 
-### 2-D and 3-D Taylor-Green (`taylor_green.py`)
-2-D viscous case against the exact solution `u = e^{-2 nu t} sin x cos y`; 3-D inviscid Euler (the Brachet 1983
-benchmark) at 32^3 / 48^3 / 64^3 with energy conservation and enstrophy growth reported per resolution, so that
-grid artefacts are separated from the flow. Results are appended here as they are produced.
+### 2-D viscous Taylor-Green, exact solution known (`taylor_green.py`, part A)
+$\nu = 0.02$, $128^2$ grid, $\Delta t = 2\times10^{-3}$, viscosity as an exact integrating factor per mode.
+
+| t | $E/E_0$ scheme | $E/E_0$ exact $= e^{-4\nu t}$ | $L_2$ error vs the exact field |
+|---|---|---|---|
+| 0.5 | 0.96078944 | 0.96078944 | $5\times10^{-15}$ |
+| 1.0 | 0.92311635 | 0.92311635 | $1\times10^{-14}$ |
+| 1.5 | 0.88692044 | 0.88692044 | $1.5\times10^{-14}$ |
+| 2.0 | 0.85214379 | 0.85214379 | $2\times10^{-14}$ |
+
+The dissipation is exactly the physical $\nu\langle|\nabla u|^2\rangle$ and nothing more. (Taylor-Green in 2-D is a
+single decaying mode, so this is a precision test, not a cascade test.)
+
+### 3-D inviscid Taylor-Green / Euler, the Brachet (1983) benchmark (`taylor_green.py`, part B)
+Skew-symmetric nonlinearity, Leray projection, RK4, 2/3 dealiasing, $\Delta t = 2/N$.
+
+| | t = 1 | t = 2 | t = 3 | t = 4 |
+|---|---|---|---|---|
+| $E/E_0$, all three grids | 1.000000 | 1.000000 | 1.000000 | 1.000000 |
+| enstrophy $Z$, $32^3$ | 0.417 | 0.574 | 0.914 | 1.570 |
+| enstrophy $Z$, $48^3$ | 0.417 | 0.574 | 0.931 | 1.724 |
+| enstrophy $Z$, $64^3$ | 0.417 | 0.574 | 0.939 | 1.823 |
+
+Energy is conserved to six decimals in 3-D: zero numerical entropy production on the benchmark flow. Enstrophy
+agrees across resolutions to three decimals through $t = 2$ and then fans out as the cascade reaches scales the
+coarser grids cannot hold; the spread shrinks with resolution (convergence). Because nothing dissipates
+numerically, under-resolution appears as **disagreement between grids** rather than as a smooth, plausible and wrong
+curve - which is the point of the instrument. The trustworthy window at $64^3$ is roughly $t \le 3$; the literature
+uses far higher resolution beyond that.
 
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
