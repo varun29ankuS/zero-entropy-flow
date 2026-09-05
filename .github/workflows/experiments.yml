@@ -1,0 +1,45 @@
+name: experiments
+
+on:
+  workflow_dispatch:
+    inputs:
+      which:
+        description: "which experiments to run: all | burgers | taylor_green | kolmogorov"
+        default: "all"
+  push:
+    paths: ["*.py", ".github/workflows/experiments.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install
+        run: pip install numpy torch --index-url https://download.pytorch.org/whl/cpu
+      - name: burgers
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'burgers' || github.event_name == 'push' }}
+        run: python -u burgers_entropy.py | tee results/burgers.txt
+      - name: taylor_green
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'taylor_green' || github.event_name == 'push' }}
+        run: python -u taylor_green.py 2>/dev/null | tee results/taylor_green.txt
+      - name: kolmogorov
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'kolmogorov' }}
+        run: python -u kolmogorov_closure.py 2>/dev/null | tee results/kolmogorov.txt
+      - name: commit results
+        run: |
+          git config user.name "experiments-bot"
+          git config user.email "actions@github.com"
+          git add results
+          git diff --cached --quiet || git commit -m "results: $(date -u +%Y-%m-%dT%H:%MZ) run ${{ github.run_id }}"
+          git push
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ github.run_id }}
+          path: results/
