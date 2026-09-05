@@ -213,6 +213,20 @@ The classical preference of vorticity for the intermediate strain eigenvector (A
 weak here - a few points above random - because neither flow is developed turbulence by $t=4$; the forced run in
 `spectra.py` is where the textbook signal belongs, and that check is pending.
 
+### The regularity criteria along the classical candidates (`criteria3d.py`, 64^3, CI)
+| flow (t) | Z | max\|w\| | BKM integral | critical norm \|\|u\|\|_L3 | CF direction coherence rho | high-vorticity set |
+|---|---|---|---|---|---|---|
+| Taylor-Green (4) | 0.38 -> 1.82 | 2 -> 13.7 | 13.4 | 0.548 -> 0.527, flat | 0.002 -> 0.10 | 21% -> 0.6% of volume |
+| perturbed ABC (4) | 1.58 -> 11.4 | 3.1 -> 47 | 73.6 | 1.807, flat to 3 digits | 0.003 -> 0.12 | 60% -> 0.2% |
+| Kida-Pelz (3) | 4.1 -> 99.9 | 8 -> 41.6 | 72.6 | 0.967 -> 0.925, flat | 0.004 -> 0.52 | 14% -> 10% |
+
+The scale-critical norm (Escauriaza-Seregin-Sverak) does not move on any of the three while enstrophy grows 25-fold on
+Kida-Pelz: that criterion is nowhere near tight here. The geometric one (Constantin-Fefferman) is what degrades: on
+Taylor-Green and ABC the vorticity direction stays coherent and the high-vorticity set localises to a fraction of a
+percent of the volume (depletion works); on Kida-Pelz the direction coherence is lost (rho 0.004 -> 0.52) exactly as
+the amplification runs away and the grid gives out (energy drift 1.4e-4 by t = 3 at 64^3) - the Hou-Li story in these
+numbers. `THEORY.md` section 6 lists the criteria.
+
 ### Learned coarse simulators of 2-D Kolmogorov flow (`kolmogorov_v2.py`, run on CI)
 $32^2$ coarse models against a $128^2$ truth, 2000-step rollouts from held-out states, $Re\approx1250$.
 
@@ -227,7 +241,9 @@ In 2-D the missing physics at coarse resolution is backscatter, which a dissipat
 alone changes nothing (0.53 = no closure). A learned term projected to move energy between scales *without creating
 it* cuts the long-rollout spectrum error six-fold, while the fully learned model drifts to 1.9x the true energy.
 Registered: spectrum ratio 0.18 (bar 0.6), energy band within [0.8, 1.2], learned leaves it - all pass. The dip to 0.87
-is the first-order neutrality (`verify_skew_closure.py`) accumulating over 2000 steps; exact rescaling is the v3 fix.
+is NOT the first-order leak of the skew projection: v3 (`kolmogorov_v3.py`, exact energy-neutral rescaling) reproduces
+v2 to the digit, so the dip comes from the gate, which trained beside the skew term learns to dissipate more than
+viscosity alone - and that is what best matches the truth's spectrum. A prediction of ours refuted by its own test.
 
 ### Energy spectra (`spectra.py`, CI) and exact time integration (`midpoint.py`)
 ![Energy spectra: 2-D k^-3 and 3-D k^-5/3 with a pile-up at the grid cutoff](figures/spectra.png)
