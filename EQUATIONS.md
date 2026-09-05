@@ -45,6 +45,28 @@ Measured: $S=+0.13,+0.47,+4.92$ approaching the 1-D singularity ($t=0.3,0.6,0.9$
 monotonically; $S=+0.088,+0.238,+0.511,+1.502$ in 3-D at $t=1,2,3,4$ ($64^3$), budget residual $10^{-5}$, and the
 normalised rate $S/Z^{3/2}$ rising $0.33\to0.61$.
 
+## The hierarchy of budgets, and where the dimension enters
+
+The energy identity is the same in every $d$. Climbing one derivative at a time, each norm has its own budget and
+each new level brings a production term the level below did not have:
+
+| level | quantity | budget | production term |
+|---|---|---|---|
+| 0 | $E=\tfrac12\langle\lvert u\rvert^2\rangle$ | $\dot E=-\nu\langle\lvert\nabla u\rvert^2\rangle$ | none, in any $d$ |
+| 1 | $Z=\tfrac12\langle\lvert\omega\rvert^2\rangle$ | $\dot Z=S_1-\nu\langle\lvert\nabla\omega\rvert^2\rangle$ | $S_1=-\tfrac12\langle u_x^3\rangle$ ($d=1$); $0$ ($d=2$); $\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ ($d=3$) |
+| 2 | $P=\tfrac12\langle\lvert\nabla\omega\rvert^2\rangle$ | $\dot P=S_2-\nu\langle\lvert\Delta\omega\rvert^2\rangle$ | unsigned in every $d$ (measured $+1387,\ +2149,\ +1579,\ +576$ in 2-D) |
+| $k$ | $\tfrac12\lVert\nabla^k u\rVert^2$ | same shape | unsigned, growing with $k$ |
+
+Regularity is decided by where the first unsigned term lands relative to the level that controls the gradient:
+$d=1$, it lands at level 1 and nothing below controls the gradient (inviscid blow-up; the viscous case is rescued by
+a different controlled quantity, $\max\lvert u\rvert$). $d=2$, level 1 is clean, $S_1\equiv0$, so $Z$ is controlled
+and controls $\nabla u$; the unsigned term is pushed to level 2 where its size is harmless. $d=3$, the unsigned term
+sits at level 1 and level 0 does not control the gradient: open.
+
+Forcing adds an input $\langle u\cdot f\rangle$ at level 0 and $\langle\omega\cdot\nabla\times f\rangle$ at level 1.
+A learned closure that is projected to be skew (as in `kolmogorov_v2.py`) leaves the level-0 budget identical to the
+physical one by construction.
+
 ## The contrast that locates the difficulty
 
 Vacuum Maxwell, $\partial_t E=c \nabla\times B,\ \partial_t B=-c \nabla\times E$, is linear: every Fourier mode rotates at
