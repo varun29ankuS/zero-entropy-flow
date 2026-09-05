@@ -1,0 +1,7 @@
+2-D decaying 256^2 ...
+3-D forced 48^3 ...
+  3-D forced: t=4.2  E=0.6444  (73s)
+  3-D forced: t=8.3  E=0.5472  (149s)
+  3-D forced: t=12.5  E=0.5788  (225s)
+  3-D forced: t=16.7  E=0.6370  (301s)
+figures/spectra.png
