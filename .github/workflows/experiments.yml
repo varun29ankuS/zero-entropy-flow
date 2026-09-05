@@ -91,7 +91,7 @@ jobs:
       - name: leashed64
         if: ${{ github.event.inputs.which == 'leashed64' }}
         run: |
-          DMIN=0.30 N=64 T=1.0 ITERS=45 NVER=128 python -u adversarial_ic.py 2>/dev/null | tee results/leashed64_dmin030_128.txt
+          DMIN=0.30 N=64 T=1.0 ITERS=45 NVERS=128,192 TAG=leashed64_dmin030 python -u adversarial_ic.py 2>/dev/null | tee results/leashed64_dmin030_192.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

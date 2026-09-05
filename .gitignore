@@ -5,3 +5,4 @@ __pycache__/
 !figures/*.png
 .claude/
 adversarial_ic_*.npz
+!results/found/*.npz

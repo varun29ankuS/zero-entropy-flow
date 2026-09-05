@@ -248,7 +248,8 @@ if best[1] is None:
 print("best amplification on the search grid: %.3f" % best[0])
 with torch.no_grad():
     Ubest = field_from_params(best[1], Z0)
-    np.savez_compressed("adversarial_ic_%d.npz" % N, u=np.stack([ifft(Ui).real.numpy() for Ui in Ubest]), Z0=Z0, T=T)
+    os.makedirs("results/found", exist_ok=True)
+    np.savez_compressed("results/found/%s.npz" % os.environ.get("TAG", "adversarial_ic_%d" % N), u=np.stack([ifft(Ui).real.numpy() for Ui in Ubest]).astype(np.float32), Z0=Z0, T=T)
 
 # ------------------------------------------------- verification (numpy, higher N) -------------------------------------------------
 import numpy as _np
@@ -316,17 +317,21 @@ def verify(u_phys_list, N2, T, label):
     return Zf(U) / Z0v, delta
 
 
-print("\nverification at %d^3 with the numpy instrument (fields upsampled spectrally, same Z0):" % NVER)
-results = {}
-with torch.no_grad():
-    for name, U in list(cands.items()) + [("FOUND", Ubest)]:
-        Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
-        phys = [ifft(Ui).real.numpy() for Ui in Un]
-        results[name] = verify(phys, NVER, T, name)
-ok = {kname: v[1] > 2 * 2 * math.pi / NVER for kname, v in results.items()}
-classical_ok = {kname: v[0] for kname, v in results.items() if kname != "FOUND" and ok[kname]}
-best_classical = max(classical_ok.values()) if classical_ok else float("nan")
-reliable = ok["FOUND"] and bool(classical_ok)
-print("\nREGISTERED  found Z(T)/Z0 = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % (
-    results["FOUND"][0], ">" if ok["FOUND"] else "<", best_classical, NVER,
-    "PASS" if reliable and results["FOUND"][0] > best_classical else ("FAIL: outside the reliable window" if not reliable else "FAIL")))
+NVERS = [int(v) for v in os.environ.get("NVERS", str(NVER)).split(",")]     # e.g. NVERS=128,192: every candidate at the first, then only FOUND and Taylor-Green at the rest
+for iv, NV in enumerate(NVERS):
+    print("\nverification at %d^3 with the numpy instrument (fields upsampled spectrally, same Z0):" % NV, flush=True)
+    results = {}
+    with torch.no_grad():
+        for name, U in list(cands.items()) + [("FOUND", Ubest)]:
+            if iv > 0 and name not in ("taylor-green", "FOUND"):
+                continue
+            Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
+            phys = [ifft(Ui).real.numpy() for Ui in Un]
+            results[name] = verify(phys, NV, T, name)
+    ok = {kname: v[1] > 2 * 2 * math.pi / NV for kname, v in results.items()}
+    classical_ok = {kname: v[0] for kname, v in results.items() if kname != "FOUND" and ok[kname]}
+    best_classical = max(classical_ok.values()) if classical_ok else float("nan")
+    reliable = ok["FOUND"] and bool(classical_ok)
+    print("\nREGISTERED  found Z(T)/Z0 = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % (
+        results["FOUND"][0], ">" if ok["FOUND"] else "<", best_classical, NV,
+        "PASS" if reliable and results["FOUND"][0] > best_classical else ("FAIL: outside the reliable window" if not reliable else "FAIL")), flush=True)
