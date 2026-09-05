@@ -1,7 +1,30 @@
 # zero-entropy-flow
 
-Numerical experiments on one question: **does an integrator with zero numerical entropy production see a
-fluid singularity forming, where a dissipative integrator hides it?**
+**One pseudo-spectral solver for the incompressible Navier-Stokes family in 1-D, 2-D and 3-D, built so that its own
+numerical dissipation is zero** - the transport is exactly energy-conserving on the grid, viscosity is an exact
+per-mode contraction - and then used to look at the things numerical dissipation normally hides: a singularity
+forming, vortex stretching, the terms of every balance law.
+
+What is here, each with the command that reproduces it and the observation that would refute it (`CLAIMS.md`):
+
+- **Verified against five closed-form solutions**, one per dimension and then some, to machine precision:
+  inviscid Burgers approaching its blow-up exactly as 1/(1-t); the Cole-Hopf viscous shock; 2-D Taylor-Green;
+  a *random* 2-D exact solution; the 3-D viscous ABC flow. Errors 1e-12 to 1e-15 except through the shock, where
+  the error is the grid's and says so.
+- **Every budget closes term by term** - energy, enstrophy, palinstrophy - including the unsigned production terms,
+  at residuals 1e-6 to 1e-9. The unsigned term is measured driving the 1-D blow-up, vanishing identically in 2-D,
+  and in 3-D **vortex stretching is measured directly at 64^3, 96^3, 128^3 and converges upward** with resolution;
+  energy 1.000000 throughout. Helicity conserved to six digits under 3-D dynamics that amplify enstrophy seven-fold.
+- **A learning result:** a coarse simulator with frozen exact transport plus a learned correction that may *move*
+  energy between scales but cannot *create* it cuts the long-rollout spectrum error six-fold against a fully learned
+  model that drifts to 1.9x the true energy (`kolmogorov_v2.py`, reproduced on two machines). A dissipative-only
+  learned closure did nothing in 2-D; the missing physics there is backscatter.
+- **Theory** (`THEORY.md`): the elementary propositions proved; Tao's 2016 theorem that this structure alone cannot
+  decide 3-D regularity; the conditional theorem for what would; the open hypothesis stated so it can be attacked.
+- **Not claimed:** anything about the regularity of 3-D Navier-Stokes.
+
+Everything runs on numpy, on a laptop or on this repository's GitHub Actions runners, which produced the results in
+`results/`. Issues and Discussions are open; refutations welcome, bring the output.
 
 ## Three pictures
 
