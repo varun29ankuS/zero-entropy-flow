@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | kolmogorov"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov"
         default: "all"
 
 permissions:
@@ -27,6 +27,9 @@ jobs:
       - name: taylor_green
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'taylor_green' }}
         run: python -u taylor_green.py 2>/dev/null | tee results/taylor_green.txt
+      - name: budgets
+        if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'budgets' }}
+        run: python -u budgets.py 2>/dev/null | tee results/budgets.txt
       - name: kolmogorov
         if: ${{ github.event.inputs.which == 'all' || github.event.inputs.which == 'kolmogorov' }}
         run: python -u kolmogorov_closure.py 2>/dev/null | tee results/kolmogorov.txt

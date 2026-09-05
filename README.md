@@ -106,6 +106,22 @@ numerically, under-resolution appears as **disagreement between grids** rather t
 curve - which is the point of the instrument. The trustworthy window at $64^3$ is roughly $t \le 3$; the literature
 uses far higher resolution beyond that.
 
+### Budget closure in 1-D and 2-D, where Hypothesis H is known (`budgets.py`)
+Every balance law checked term by term along the flow (measured $d/dt$ across one step vs the right-hand side from
+the field), including the **unsigned production terms** whose 3-D cousin is the regularity problem.
+
+| case | budget | frozen scheme residual | upwind residual | what it shows |
+|---|---|---|---|---|
+| 1-D inviscid (H false) | gradient, $-\tfrac12\langle u_x^3\rangle$ production | $10^{-8}$ | 1-5 % | production +0.13, +0.47, +1.59 at t = 0.3, 0.6, 0.8: the blow-up, measured |
+| 1-D viscous (H true) | energy | $10^{-9}$ | **10 %** | upwind's numerical dissipation is a tenth of the physical viscosity |
+| 1-D viscous | maximum principle $\max\|u\|$ | 0.994, 0.988, 0.984 | - | never increases: the controlled norm that gives 1-D regularity |
+| 2-D decaying (H true, $M=Z$) | energy / enstrophy / palinstrophy | $10^{-8}$ / $10^{-7}$ / $3$-$9\times10^{-6}$ | - | palinstrophy production **+1387, +2149, +1579, +576** (unsigned, large) while enstrophy falls 12.86 -> 6.09 |
+
+The 2-D row is Theorem 5 of `THEORY.md` with its terms filled in: the dangerous unsigned term is present and large,
+and regularity holds because a norm one level below it is controlled. The registered residual bar of $10^{-6}$ is
+narrowly missed by the 2-D palinstrophy budget (terms of order $10^3$, RK4 error); halving the time step would
+clear it, and the bar is left where it was.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by
