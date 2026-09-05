@@ -1,0 +1,24 @@
+spin-up done (282s), energy 0.0583
+snapshots 1200 (507s)
+  learned        step  500  loss 0.00290  245s
+  learned        step 1000  loss 0.00159  490s
+  learned        step 1500  loss 0.00115  733s
+  learned        step 2000  loss 0.00087  976s
+  frozen+skew+gate step  500  loss 0.00032  346s
+  frozen+skew+gate step 1000  loss 0.00021  691s
+  frozen+skew+gate step 1500  loss 0.00016  1046s
+  frozen+skew+gate step 2000  loss 0.00013  1397s
+  frozen+gate    step  500  loss 0.00043  332s
+  frozen+gate    step 1000  loss 0.00037  666s
+  frozen+gate    step 1500  loss 0.00039  1015s
+  frozen+gate    step 2000  loss 0.00035  1355s
+
+rollouts of 2000 coarse steps from held-out initial conditions
+learned             horizon(corr>0.9)     60 steps | energy/truth min 0.95 max 1.91 | log-spectrum error (2nd half, avg) 0.50
+frozen+skew+gate    horizon(corr>0.9)    160 steps | energy/truth min 0.87 max 1.07 | log-spectrum error (2nd half, avg) 0.09
+frozen+gate         horizon(corr>0.9)    160 steps | energy/truth min 0.95 max 1.07 | log-spectrum error (2nd half, avg) 0.53
+frozen              horizon(corr>0.9)    160 steps | energy/truth min 0.96 max 1.07 | log-spectrum error (2nd half, avg) 0.53
+
+REGISTERED  spectrum error frozen+skew+gate / learned = 0.18 (<= 0.6)  -> PASS
+            frozen+skew+gate energy band [0.87, 1.07] within [0.8,1.2] -> PASS | learned band [0.95, 1.91] leaves it -> yes
+            does the learned skew correction help over frozen alone? spectrum error 0.09 vs 0.53 -> yes
