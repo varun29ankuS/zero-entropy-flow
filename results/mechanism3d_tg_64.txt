@@ -1,0 +1,7 @@
+IC=tg  N=64^3  dt=0.0312   (alignment: fraction of points whose vorticity aligns best with the strain eigenvector; random = 0.33 each)
+   t     E/E0       helicity H      Z        max|w|     align: stretching  intermediate  compressing
+ 0.00   1.000000   +2.488799e-19    0.3750     2.000      0.333         0.335          0.333
+ 1.00   1.000000   +2.578787e-18    0.4169     1.577      0.327         0.340          0.333   (44s)
+ 2.00   1.000000   +8.709891e-20    0.5743     1.881      0.317         0.356          0.327   (91s)
+ 3.00   1.000000   +1.321766e-18    0.9386     3.995      0.328         0.341          0.331   (137s)
+ 4.00   1.000000   +3.040723e-18    1.8231    13.685      0.336         0.334          0.330   (184s)
