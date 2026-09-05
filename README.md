@@ -136,6 +136,18 @@ numerically, under-resolution appears as **disagreement between grids** rather t
 curve - which is the point of the instrument. The trustworthy window at $64^3$ is roughly $t \le 3$; the literature
 uses far higher resolution beyond that.
 
+### Three more closed-form solutions, one per dimension (`exact_solutions.py`)
+| exact solution | grid | error against the closed form |
+|---|---|---|
+| **1-D** viscous Burgers, $u_0=\sin x$, $\nu=0.02$: Cole-Hopf, evaluated in heat-kernel form | 512 | $5\times10^{-14}$ ($t=0.5$), $6\times10^{-12}$ ($t=1$), $2\times10^{-6}$ through the shock ($t=1.5$-$2$, gradient 22 on $\Delta x=0.012$: the resolution floor) |
+| **2-D** a *random* vorticity field on the single shell $\lvert k\rvert^2=25$ (nonlinear term vanishes identically): $u_0 e^{-25\nu t}$ | $128^2$ | $2$-$3\times10^{-14}$ out to $t=4$ |
+| **3-D** ABC flow with viscosity (Beltrami, $\nabla\times u=u$): $u_0 e^{-\nu t}$ | $32^3$ | $1$-$7\times10^{-15}$ out to $t=8$ |
+
+![Exact solutions in 1-D, 2-D, 3-D and the scheme's error against each](figures/exact_solutions.png)
+
+*The 2-D case is a random exact solution, not a hand-picked mode; the 3-D case is the closed form the Beltrami
+property provides. The 1-D shock comparison is the demanding one, and its error is the grid's, visibly.*
+
 ### 3-D Euler: the vortex-stretching term measured, by resolution (`budgets3d.py`, run on GitHub's runners)
 $\dot Z = S$ with $S=\langle\omega\cdot(\omega\cdot\nabla)u\rangle$ measured from the field; energy $E/E_0 = 1.000000$ at
 every grid and time; budget residual $10^{-5}$-$10^{-6}$.

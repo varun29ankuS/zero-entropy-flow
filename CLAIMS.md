@@ -23,6 +23,11 @@ Test: `python burgers_entropy.py`; figure `figures/burgers_blowup.png` from `pyt
 Refuted by: L2 error against e^{-2 nu t} sin x cos y above 1e-12 at t = 2.
 Test: `python taylor_green.py` (part A) or `DIM=2 N=128 NU=0.02 T=2 DT=2e-3 IC=tg python ns_d.py`.
 
+**C4b. Three further closed forms are reproduced: Cole-Hopf viscous Burgers to 6e-12 before the shock and 2e-6 through
+it (grid floor); a random single-shell 2-D field to 3e-14; the viscous ABC flow in 3-D to 7e-15 over t = 8.**
+Refuted by: errors materially above these at the stated grids and time steps.
+Test: `python exact_solutions.py`.
+
 **C5. In 3-D Euler (Taylor-Green) the vortex-stretching term converges upward with resolution: 1.50, 1.80, 2.03 at
 t = 4 for 64^3, 96^3, 128^3, and the normalised rate S/Z^{3/2} rises with resolution.**
 Refuted by: a higher-resolution run (192^3 or above) giving S(t=4) below 2.03, or a Z(t=4) inconsistent with the
