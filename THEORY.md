@@ -12,7 +12,7 @@ under which it would decide regularity. Status of each statement is marked: **[p
 Let $H$ be a real Hilbert space with inner product $\langle\cdot,\cdot\rangle$ and norm $\|\cdot\|$. Consider an
 evolution
 
-$$\dot x \;=\; T(x) \;+\; D(x), \qquad x(0)=x_0 ,$$
+$$\dot x  =  T(x)  +  D(x), \qquad x(0)=x_0 ,$$
 
 with the two parts characterised by their action on the norm:
 
@@ -28,7 +28,7 @@ orthogonal is the discrete transport; a gate $x \mapsto (1-g)\odot x$ with $g\in
 **Definition 1 (entropy production).** For a differentiable flow map $\Phi_t$ on a finite-dimensional state space,
 the entropy production rate is the volume contraction rate
 
-$$\sigma(x) \;=\; -\,\nabla\!\cdot F(x) \qquad\text{for } \dot x = F(x),$$
+$$\sigma(x)  =  -\,\nabla\cdot F(x) \qquad\text{for } \dot x = F(x),$$
 
 and for a discrete map $x_{t+1}=\Phi(x_t)$ it is $\sigma = -\log|\det J_\Phi(x_t)|$. (This is the phase-space
 contraction rate of Ruelle; for a thermostatted system it equals the thermodynamic entropy production.)
@@ -36,7 +36,7 @@ contraction rate of Ruelle; for a thermostatted system it equals the thermodynam
 **Definition 2 (numerical entropy production).** For a numerical scheme applied to a system whose exact dynamics
 satisfies $\frac{d}{dt}\|x\|^2 = -2\mathcal{E}(x)$, the numerical entropy production over $[0,t]$ is
 
-$$\sigma_{\text{num}} \;=\; -\frac{1}{t}\Big(\log\frac{\|x_t\|^2}{\|x_0\|^2} \;+\; \frac{2}{\|x_0\|^2}\!\int_0^t \mathcal{E}\,ds\Big),$$
+$$\sigma_{\text{num}}  =  -\frac{1}{t}\Big(\log\frac{\|x_t\|^2}{\|x_0\|^2}  +  \frac{2}{\|x_0\|^2}\int_0^t \mathcal{E}\,ds\Big),$$
 
 the dissipation the scheme produces beyond the physical one. For $\mathcal{E}\equiv 0$ it reduces to
 $-\tfrac1t\log(\|x_t\|^2/\|x_0\|^2)$, the quantity measured in `burgers_entropy.py`.
@@ -48,7 +48,7 @@ $-\tfrac1t\log(\|x_t\|^2/\|x_0\|^2)$, the quantity measured in `burgers_entropy.
 **Proposition 1 (energy inequality). [proved here; classical for NS, Leray 1934]**
 For any solution of $\dot x = T(x)+D(x)$ on $[0,t]$ smooth enough for the identities to hold,
 
-$$\|x(t)\|^2 + 2\int_0^t \mathcal{E}(x(s))\,ds \;=\; \|x_0\|^2 .$$
+$$\|x(t)\|^2 + 2\int_0^t \mathcal{E}(x(s))\,ds  =  \|x_0\|^2 .$$
 
 *Proof.* $\frac{d}{dt}\|x\|^2 = 2\langle x,\dot x\rangle = 2\langle x,T(x)\rangle + 2\langle x,D(x)\rangle = 0 - 2\mathcal{E}(x)$. Integrate. $\square$
 
@@ -88,7 +88,7 @@ $t$ (resp. at most $G$) independent increments. $\square$
 
 *Remark.* Part (ii) is the "forgetting law" and the measured $\sim 250$ nats/step of the trained drawing hand; part
 (iii) is the measured 1.8 px at 4000 moves (no noise), $\sigma\sqrt{n}$ drift under poison, and the flat 6 px with a
-glance every 50 moves. Note that in the Householder update $x\mapsto x-\beta\,u\,u^{\!\top}x$ the map is not
+glance every 50 moves. Note that in the Householder update $x\mapsto x-\beta\,u\,u^{\top}x$ the map is not
 orthogonal unless $\beta\in\{0,2\}$: $\det = 1-\beta = \cos\theta$, so the "transport" of that architecture is
 itself a contraction along $u$ and contributes $\log|\cos\theta|$ to $\sigma$. The exact-transport claim applies to
 the rotation planes, not to the Householder erasure.

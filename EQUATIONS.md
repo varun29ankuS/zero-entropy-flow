@@ -4,7 +4,7 @@
 
 On the periodic box $\mathbb{T}^d=[0,2\pi)^d$, for a velocity field $u(x,t)\in\mathbb{R}^d$:
 
-$$\boxed{\;\partial_t u \;=\; -\,P\!\left[(u\cdot\nabla)u\right] \;+\; \nu\,\Delta u\;}, \qquad \nabla\!\cdot u = 0\ \ (d\ge 2),$$
+$$\boxed{ \partial_t u  =  -\,P\left[(u\cdot\nabla)u\right]  +  \nu\,\Delta u }, \qquad \nabla\cdot u = 0\ \ (d\ge 2),$$
 
 with $P = I - \nabla\Delta^{-1}\nabla\cdot$ the Leray projector, $\hat P_k = I - k k^{\top}/|k|^2$ in Fourier space. It removes the
 pressure gradient; pressure is the Lagrange multiplier enforcing $\nabla\cdot u=0$, not an unknown.

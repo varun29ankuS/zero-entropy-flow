@@ -34,14 +34,14 @@ stretching; whether that growth stays finite for all time is the open question.
 
 Write the equation as **conservative transport + dissipation**:
 
-$$\partial_t \mathbf{u} = \underbrace{\mathcal{T}(\mathbf{u})}_{\text{conserves } E} \;+\; \underbrace{\nu\,\Delta\mathbf{u}}_{\text{dissipates}} .$$
+$$\partial_t \mathbf{u} = \underbrace{\mathcal{T}(\mathbf{u})}_{\text{conserves } E}  +  \underbrace{\nu\,\Delta\mathbf{u}}_{\text{dissipates}} .$$
 
 The transport term is discretised so that the semi-discrete system conserves energy **exactly**: in Fourier space each
 linear mode advances by an exact rotation (a unitary factor $e^{-i k c\,\Delta t}$, which is an isometry), and the
 nonlinearity is written in skew-symmetric form so that $\langle \mathbf{u}, \mathcal{T}(\mathbf{u})\rangle = 0$
 identically. For Burgers:
 
-$$u\,u_x \;=\; \tfrac{1}{3}\Big(u\,u_x + (u^2)_x\Big) ,$$
+$$u\,u_x  =  \tfrac{1}{3}\Big(u\,u_x + (u^2)_x\Big) ,$$
 
 which conserves $\langle u^2\rangle$ term by term on the dealiased grid (2/3 rule). Viscosity enters as an exact
 integrating factor $e^{-\nu k^2 \Delta t}$ per mode; time stepping of the nonlinear term is RK4.
@@ -49,7 +49,7 @@ integrating factor $e^{-\nu k^2 \Delta t}$ per mode; time stepping of the nonlin
 For any integrator define the **numerical entropy production rate** as the drift of the energy the equation says must
 be conserved, per unit time:
 
-$$\sigma_{\text{num}} \;=\; -\frac{1}{t}\,\log\frac{E(t)}{E(0)}\Big|_{\nu=0} .$$
+$$\sigma_{\text{num}}  =  -\frac{1}{t}\,\log\frac{E(t)}{E(0)}\Big|_{\nu=0} .$$
 
 For an exact isometric scheme $\sigma_{\text{num}} = 0$ up to round-off; for a dissipative scheme (upwind
 differencing) $\sigma_{\text{num}} > 0$, and that spurious dissipation acts like an extra viscosity that damps precisely
