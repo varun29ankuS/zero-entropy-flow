@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | frequency_matching | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | frequency_matching | memory_paths3d | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -154,6 +154,13 @@ jobs:
           python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_1d.txt
           DIM=2 N=256 NU=1e-4 T=3 python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_2d.txt
           DIM=2 N=256 NU=1e-4 python -u wave_particle.py 2>/dev/null | tee results/wave_particle_2d.txt
+      - name: memory_paths3d
+        if: ${{ github.event.inputs.which == 'memory_paths3d' }}
+        run: |
+          for ppc in 2 3; do N=32 PPC=$ppc NU=0 T=1.5 DT=0.01 python -u memory_paths3d.py 2>/dev/null | tee results/memory3d_32_ppc${ppc}_nu0.txt; done
+          N=32 PPC=3 NU=2e-3 T=1.5 DT=0.01 python -u memory_paths3d.py 2>/dev/null | tee results/memory3d_32_ppc3_nu2e-3.txt
+          N=48 PPC=2 NU=0 T=1.5 DT=0.0075 python -u memory_paths3d.py 2>/dev/null | tee results/memory3d_48_ppc2_nu0.txt
+          N=48 PPC=2 NU=2e-3 T=1.5 DT=0.0075 python -u memory_paths3d.py 2>/dev/null | tee results/memory3d_48_ppc2_nu2e-3.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
