@@ -168,8 +168,8 @@ jobs:
       - name: minimal_datum
         if: ${{ github.event.inputs.which == 'minimal_datum' }}
         run: |
-          OBJ=minimal DTARGET=0.10 N=32 T=1.0 ITERS=60 NVERS=64,96,128 TAG=minimal32 python -u adversarial_ic.py 2>/dev/null | tee results/minimal_datum_32.txt
-          OBJ=minimal DTARGET=0.10 N=48 T=1.0 ITERS=40 NVERS=96,128 TAG=minimal48 python -u adversarial_ic.py 2>/dev/null | tee results/minimal_datum_48.txt
+          OBJ=minimal TAILF=1e-4 N=32 T=1.0 ITERS=60 NVERS=64,96,128 TAG=minimal32 python -u adversarial_ic.py 2>/dev/null | tee results/minimal_datum_32.txt
+          OBJ=minimal TAILF=1e-4 N=48 T=1.0 ITERS=40 NVERS=96,128 TAG=minimal48 python -u adversarial_ic.py 2>/dev/null | tee results/minimal_datum_48.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

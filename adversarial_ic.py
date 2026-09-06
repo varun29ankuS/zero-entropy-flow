@@ -30,7 +30,7 @@ HELMODE = os.environ.get("HELMODE", "penalty")   # penalty | project  (project: 
 DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-strip width delta(T) below DMIN on the search grid (stay resolved)
 DW = float(os.environ.get("DW", 20.0))
 CKPT = int(os.environ.get("CKPT", 1))
-DTARGET = float(os.environ.get("DTARGET", 0.10))  # OBJ=minimal: require delta(T) <= DTARGET on the search grid (the cascade must reach the cutoff)
+TAILF = float(os.environ.get("TAILF", 1e-4))     # OBJ=minimal: require energy fraction in the top sixth of retained modes >= TAILF at T (floor-proof cascade criterion)
 MINW = float(os.environ.get("MINW", 50.0))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
 dev = "cpu"
 
@@ -257,9 +257,10 @@ for it in range(ITERS):
         # critical norm is the objective. The verifier reports the norm and whether the cascade is real at higher N.
         kmag = torch.sqrt(K2)
         h12 = torch.sqrt(sum((kmag * (Ui.abs() ** 2)).sum() for Ui in U0) / N**6)
-        d = delta_torch(UT)
+        eT = sum(UTi.abs() ** 2 for UTi in UT)
+        tail = eT[(kmag >= 5 * NB_T / 6) & (kmag < NB_T)].sum() / eT.sum()          # top sixth of retained modes: the cutoff itself; scale-invariant, no round-off exploit
         growth = 1.0 / h12                                   # reported as "objective": larger = smaller critical norm
-        loss = h12 + MINW * torch.relu(d - DTARGET) ** 2
+        loss = h12 + MINW * torch.relu(math.log(TAILF) - torch.log(tail + 1e-300)) ** 2
     elif OBJ == "ckn":
         # concentrate the dissipation: minimise the spatial concentration exponent at T (sheet 2, tube 1, point 0)
         alpha_s = conc_exponent(UT)
@@ -369,7 +370,9 @@ def verify(u_phys_list, N2, T, label):
     print("  %-14s at %d^3:  Z(T)/Z0 = %.3f   E(T)/E0 = %.6f   delta(T) = %.4f  (2dx = %.4f)   alpha_s = %.2f%s" % (label, N2, Zf(U) / Z0v, Ef(U) / E0v, delta, 2 * 2 * _np.pi / N2, alpha_s, "" if delta > 2 * 2 * _np.pi / N2 else "   <-- unreliable"), flush=True)
     if OBJ == "minimal":
         h12v = _np.sqrt(sum((kmag * _np.abs(Ui) ** 2).sum() for Ui in U0_) / N2**6)
-        print("      critical norm |u0|_{H^1/2} = %.4f; cascade reached the cutoff at %d^3: %s" % (h12v, N2, "yes (delta < 2dx)" if delta < 2 * 2 * _np.pi / N2 else "no (delta = %.3f > 2dx = %.3f)" % (delta, 2 * 2 * _np.pi / N2)), flush=True)
+        eT = sum(_np.abs(Ui) ** 2 for Ui in U)
+        tailv = eT[(kmag >= 5 * nb / 6) & (kmag < nb)].sum() / eT.sum()
+        print("      critical norm |u0|_{H^1/2} = %.4f; tail energy fraction at %d^3 = %.2e (cascade reached this grid's cutoff: %s)" % (h12v, N2, tailv, "yes" if tailv >= TAILF else "no"), flush=True)
         return 1.0 / h12v, delta
     return (3.0 - alpha_s) if OBJ == "ckn" else Zf(U) / Z0v, delta
 
