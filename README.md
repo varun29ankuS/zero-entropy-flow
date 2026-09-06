@@ -581,6 +581,43 @@ collapse to a point would need the compression concentrated as well (lambda_b >=
 the adversary's field least of all. Provisional: the reversed leg starts from the least-resolved state, so most of
 its rows are past the clock; the ordering is the claim, not the sizes.
 
+## Water's memory as an algorithm: Navier-Stokes from Cauchy's memory and jitter
+
+Cauchy (1815): vorticity is the initial vorticity remembered along particle paths. Constantin and Iyer (2008):
+Navier-Stokes is the same memory read along Brownian-jittered paths and averaged - viscosity is the jitter, not a
+separate term. `memory_paths.py` runs it in 2-D (Chorin's random vortex method): particles carry w0, move with the
+flow plus sqrt(2 nu) dW, are deposited to the grid, and the velocity comes from the deposited vorticity by
+Biot-Savart. No viscous term is ever applied. Against the spectral instrument, enstrophy at t = 2:
+
+```
+                              spectral NS     particles + jitter (2 / 4 / 8 per cell)     no-noise control
+nu = 2e-3, 128^2              0.938           0.939 / 0.933 / 0.932                        0.991
+nu = 2e-3, 256^2              0.956           0.956                                        0.999
+nu = 1e-2, 128^2              0.766           0.770                                        0.991
+nu = 0                        1.000           0.991                                        0.991
+field error vs spectral, 128^2:  9.1% -> 4.5% -> 2.4% as particles per cell double (1/sqrt N, Monte Carlo)
+```
+
+The viscous decay rate is reproduced to 0.5-1% at two viscosities by jitter alone; the no-noise particles keep their
+memory (the 0.99 is deposition smoothing at t = 0, identical at nu = 0). `wave_particle.py` adds the exact 1-D
+version: the spectral (wave) solution evaluated at the particle positions agrees with the memory the particles carry
+to 7e-15 while the wave is resolved, and the discrepancy then grows by seven orders of magnitude exactly as the
+analyticity strip collapses toward the grid - the two descriptions are one flow, and the difference between them is
+the observer's. Two more phase facts from the same script: the same amplitude spectrum shocks anywhere between
+t = 0.16 and 0.38 depending on its phases (2000 random phase sets, factor 2.37); and in 2-D a developed turbulent field
+with every phase randomised - identical spectrum, energy and enstrophy - has its palinstrophy production cut by a
+factor of 250 (ratio 0.004), then regrows its phase correlations within a quarter time unit and cascades at the
+original rate. The energy is in the amplitudes; the cascade is interference.
+
+## The blow-up type, in the frame the theorems use
+
+The combined CKN / Seregin-Sverak / KNSS program zooms into a would-be singularity and asks for its type: max|w| ~
+(t* - t)^-gamma with gamma >= 1 (the BKM gate; Type I is gamma = 1), faster (Type II), or exponential (no
+singularity). `strip_tracker.py` now fits both inside the reliable window. Kida-Pelz at 96^3: a power law with
+gamma = 0.21, far below the gate. The searcher's field at 96^3 and 128^3: exponential growth of max|w| at a rate of
+about 1.6 per time unit fits at least as well as any power law, and the local growth rate falls toward the end of
+the 128^3 window (1.74 -> 0.91). Exponential thinning is what a strained sheet does; it is not a singularity type.
+
 ## Keep the state, track the dissipation: the CKN concentration exponent
 
 Navier-Stokes carries its state by an exact transport and leaks energy only through nu |grad u|^2, whose time
