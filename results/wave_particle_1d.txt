@@ -1,0 +1,11 @@
+T1  1-D Burgers, t* = 0.2564: the wave solution (spectral, 341 modes) evaluated at the particle positions X(a,t) = a + t u0(a)
+    versus the memory the particles carry, u0(a). Exact for the continuum; on a grid they agree until the wave passes the observer.
+      t/t*    rel L2 error     strip delta     2dx = 0.0123
+      0.30     4.09e-15         0.0101   <-- below 2dx: the wave has passed the observer
+      0.50     7.03e-15         0.0886
+      0.70     1.56e-08         0.0391
+      0.80     6.04e-06         0.0226
+      0.90     6.14e-04         0.0106   <-- below 2dx: the wave has passed the observer
+      0.95     4.05e-03         0.0062   <-- below 2dx: the wave has passed the observer
+    -> the two descriptions are one flow; the discrepancy is the observer's, and it appears exactly when the clock says so
+T2  same amplitude spectrum, 2000 random phase sets: shock time t* min 0.1607  median 0.2411  max 0.3807  (max/min = 2.37)  -> PASS: the phases decide the singularity time

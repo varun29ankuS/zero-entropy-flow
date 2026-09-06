@@ -153,6 +153,7 @@ jobs:
         run: |
           python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_1d.txt
           DIM=2 N=256 NU=1e-4 T=3 python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_2d.txt
+          DIM=2 N=256 NU=1e-4 python -u wave_particle.py 2>/dev/null | tee results/wave_particle_2d.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
