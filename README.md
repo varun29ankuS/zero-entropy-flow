@@ -654,6 +654,26 @@ time goes to zero, it shocks) and why the analyticity-strip clock works (its dec
 propagation rate). It gives three instruments and a mechanism for a criterion from 1984; it does not give a new
 inequality, and this page does not claim one.
 
+## Must the local move the global? The pressure held quiet
+
+The searcher's fields kept the global (traceless) share of the pressure Hessian flat at 0.50 while their enstrophy
+tripled, where the classical flows' share rises. Conjecture, registered before the run: the global part of the
+pressure cannot stay quiet while stretching grows without bound. Test (`OBJ=quiet`, `results/quiet_pressure_*.txt`):
+maximise enstrophy growth over one time unit with the global share at T capped.
+
+```
+cap on the global pressure share     growth reached (32^3 search)     share used     at 96^3
+<= 0.5                               4.23x                            0.484          7.7x  (unresolved, as fast fields are)
+<= 0.4                               2.39x                            0.409          3.1x  (unresolved)
+<= 0.3                               1.09x                            0.434          1.13x (resolved; Taylor-Green level)
+```
+
+Forbid the pressure's global part from answering and the growth dies: half of it at 0.4, all of it at 0.3, where
+the searcher gave up growing rather than quiet the pressure and still could not reach the cap. The "flat 0.50" was
+not the pressure staying quiet; it was the pressure already carrying as much as fast growth requires. The local
+cannot stretch without the global responding. A curve on a 32^3 search grid over one time unit: a conjecture with
+evidence, not a theorem - but it is about the pressure, which is the term Tao's theorem says a proof must use.
+
 ## The constant that is really a function
 
 Navier-Stokes assumes friction -nu Laplacian u with nu a constant. Make it a function and regularity is a theorem:
