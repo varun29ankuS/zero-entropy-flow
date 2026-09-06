@@ -127,6 +127,27 @@ else:
             r2 = r2 * np.abs(real) / np.maximum(np.abs(r2), 1e-300)
             out.append(abs(prod(r2) / pr))
         print("      %3d       %.3f                  %.3f" % (kc, out[0], out[1]), flush=True)
+    # T5: the coherence race - scramble the phases above k_c and measure the time for the cross-cut cascade to recover to
+    # half its intact value. REGISTERED conjecture: phase coherence propagates through scale at a bounded rate, so the
+    # regrowth time does not shrink to zero as k_c grows. A singularity would need coherence to reach k = infinity in
+    # finite time, i.e. regrowth times shrinking to zero at small scales.
+    print("T5  coherence regrowth time after scrambling the phases above k_c (time for production to recover to 50% of the intact flow's)")
+    print("      k_c     production ratio at t=0+ / 0.05 / 0.10 / 0.20 / 0.40      t_half")
+    for kc in (4, 8, 16, 32, 64):
+        mask = KM > kc
+        r2 = real * np.where(mask, phase, 1.0)
+        r2 = 0.5 * (r2 + np.conj(np.roll(np.flip(r2, (0, 1)), 1, (0, 1))))
+        r2 = r2 * np.abs(real) / np.maximum(np.abs(r2), 1e-300)
+        wq, wr = r2.copy(), real.copy()
+        t, ratios, thalf = 0.0, [abs(prod(wq) / prod(wr))], None
+        for tt in (0.05, 0.10, 0.20, 0.40):
+            while t < tt - 1e-9:
+                wq = step(wq, NU); wr = step(wr, NU); t += dt
+                rr = abs(prod(wq) / prod(wr))
+                if thalf is None and rr >= 0.5:
+                    thalf = t
+            ratios.append(abs(prod(wq) / prod(wr)))
+        print("      %3d     %s      %s" % (kc, " / ".join("%.3f" % r for r in ratios), ("%.3f" % thalf) if thalf else "> 0.40"), flush=True)
     # then let both run on for dt = 0.5 and 1.0: the randomised field re-develops correlations
     print("   dt     real: Z/Z0   P/P0      randomised: Z/Z0   P/P0     production ratio (randomised/real)")
     wr, wq = real.copy(), rand.copy(); Zr0, Zq0, Pr0, Pq0 = Z(wr), Z(wq), P(wr), P(wq); t = 0.0
