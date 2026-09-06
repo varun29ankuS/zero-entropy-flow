@@ -1,0 +1,56 @@
+lyapunov search: N=24^3  nu=0.002  T=0.60  Z0=0.375  B=4.0  rounds=3  train steps/round=300  adversary iters=15  candidates (heads) = 6  [M = Z exp(min_i Phi_i)]
+training states: 54 from 6 flows   (3s)
+
+== round 0 ==
+  train   0   mean relu(dM/dt / M)^2 = 6.739e-03   (4s)
+  train 100   mean relu(dM/dt / M)^2 = 0.000e+00   (87s)
+  train 200   mean relu(dM/dt / M)^2 = 0.000e+00   (176s)
+  train 299   mean relu(dM/dt / M)^2 = 0.000e+00   (257s)
+  training states        worst relative dM/dt = -1.0960e-03  (abc+10% at t=0.60)   mean positive part 0.00e+00
+  held-out flows         worst relative dM/dt = -7.0014e-02  (random-9 at t=0.60)   mean positive part 0.00e+00
+  adversary  0   worst relative dM/dt along its trajectory = -4.1144e-02   (265s)
+  adversary  5   worst relative dM/dt along its trajectory = +2.6018e-01   (276s)
+  adversary 10   worst relative dM/dt along its trajectory = +3.7767e-01   (288s)
+  adversary 14   worst relative dM/dt along its trajectory = +4.6820e-01   (297s)
+  adversary round 0: best violation +4.6820e-01; its 9 states added to training
+
+== round 1 ==
+  train   0   mean relu(dM/dt / M)^2 = 4.025e-02   (298s)
+  train 100   mean relu(dM/dt / M)^2 = 0.000e+00   (377s)
+  train 200   mean relu(dM/dt / M)^2 = 0.000e+00   (455s)
+  train 299   mean relu(dM/dt / M)^2 = 0.000e+00   (543s)
+  training states        worst relative dM/dt = -6.8770e-03  (taylor-green at t=0.42)   mean positive part 0.00e+00
+  held-out flows         worst relative dM/dt = +7.4043e-02  (kida-pelz at t=0.60)   mean positive part 9.72e-03
+  adversary  0   worst relative dM/dt along its trajectory = -1.9886e-01   (551s)
+  adversary  5   worst relative dM/dt along its trajectory = +6.6167e-01   (563s)
+  adversary 10   worst relative dM/dt along its trajectory = +1.1656e+00   (574s)
+  adversary 14   worst relative dM/dt along its trajectory = +1.3716e+00   (584s)
+  adversary round 1: best violation +1.3716e+00; its 9 states added to training
+
+== round 2 ==
+  train   0   mean relu(dM/dt / M)^2 = 0.000e+00   (585s)
+  train 100   mean relu(dM/dt / M)^2 = 0.000e+00   (664s)
+  train 200   mean relu(dM/dt / M)^2 = 0.000e+00   (742s)
+  train 299   mean relu(dM/dt / M)^2 = 0.000e+00   (819s)
+  training states        worst relative dM/dt = +2.3226e-02  (adversary-1 at t=0.60)   mean positive part 5.74e-04
+  held-out flows         worst relative dM/dt = +2.0953e-02  (kida-pelz at t=0.50)   mean positive part 1.16e-03
+  adversary  0   worst relative dM/dt along its trajectory = -1.0923e-01   (828s)
+  adversary  5   worst relative dM/dt along its trajectory = +2.6883e-01   (839s)
+  adversary 10   worst relative dM/dt along its trajectory = +5.3123e-01   (851s)
+  adversary 14   worst relative dM/dt along its trajectory = +6.5609e-01   (861s)
+  adversary round 2: best violation +6.5609e-01; its 9 states added to training
+
+== final ==
+  all training states    worst relative dM/dt = +6.7259e-01  (adversary-2 at t=0.60)   mean positive part 4.02e-02
+  held-out flows         worst relative dM/dt = +2.0953e-02  (kida-pelz at t=0.50)   mean positive part 1.16e-03
+feature sensitivity of the learned Phi (|dPhi/df . f| summed over the field, held-out states):
+   |w|^2 / 2Z                   5.039e-01
+   stretch xi.S.xi / sqrt Z     1.698e-01
+   |grad xi| / k_rms            1.564e-01
+   |S|^2 / Z                    1.263e-01
+   |u|^2 / 2E                   1.172e-01
+   xi.S^2.xi / |S|^2            7.466e-02
+   det S / Z^1.5                2.772e-02
+   (xi.S.xi)^2 / |S|^2          1.054e-02
+
+REGISTERED  last adversary violation +6.561e-01, held-out worst +2.095e-02, tolerance 1e-03 -> FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases

@@ -455,8 +455,16 @@ counterexample - and the adversary finds, every round, a new smooth low-k field 
 unit time. No trend toward closure in three rounds. The candidate leans on exactly the Constantin-Fefferman
 quantities (local enstrophy density, stretching rate along the vorticity, strain magnitude), which is where a proof
 would have to live; the search says that within this class - bounded, local, first-derivative features, one
-time unit - the adversary always has a move. A four-round and a 32^3 run are on CI. This is feedback, not
-imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
+time unit - the adversary always has a move. A society of six candidates with M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998: each candidate
+only has to decrease where it is the one in force, and a switch can only lower M) does no better - adversary +0.47,
++1.37, +0.66 - and is worse out of sample (Kida-Pelz now violates, +0.07). So the adversary's move is not a region no
+candidate covers; from any M in this class it finds a smooth field along which M grows. The class is the problem: every
+feature is local in the vorticity and strain at a point, and the quantity that decides how the stretching will
+*change* is the pressure Hessian, a nonlocal singular integral of the whole field - the restricted-Euler dynamics
+without it blows up in finite time (Vieillefosse 1982; Cantwell 1992), and it is precisely the specific singular
+integral Tao's averaging destroys. The next feature set is the pressure Hessian along the vorticity and its
+alignment with the strain (`results/lyapunov_24_heads6_local.txt`; runs with `PHESS=1` follow). This is feedback,
+not imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
 a human would need to see before trying to.
 
 ## Tao's wall, in pictures: an energy-conserving equation that provably blows up
