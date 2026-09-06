@@ -713,6 +713,20 @@ not a convolution. So phase-volume conservation sits on Tao's side of the wall a
 equation has and the averaged one lacks remains the short list Tao averaged away: locality in physical space,
 particle paths, and the geometry of stretching. A proof has to be made of those.
 
+## The minimal blow-up datum: an objective the searcher taught us not to pose
+
+Rusin and Sverak (2011) showed that if any critical-space datum blows up, one of minimal critical norm does.
+`OBJ=minimal` tried to hunt it: minimise |u0|_{H^1/2} subject to the flow reaching the grid's cutoff by T. Three
+versions, three exploits by the searcher, all caught by the verifier (`results/minimal_datum_*.txt`): the first
+shrank the amplitude until the strip fit read the round-off floor as delta = 0; the second was trivially met because
+the "tail" band overlapped the initial data; the third - energy fraction 1e-4 in the top sixth of the modes - was met
+by a tiny field whose weak third-order interactions leak a trace into that band (32^3: norm 0.071; 48^3: 0.330,
+"rising with resolution" as predicted, for the wrong reason; both completely smooth at 64-128^3, delta 0.2-0.75).
+The result is the lesson: every finite-resolution criterion for "this datum becomes singular" has a cheap
+non-singular satisfier, and a gradient searcher finds it. The minimal blow-up datum is defined by loss of
+regularity, which is exactly what no finite grid certifies; a numerical version needs a criterion that is the open
+question itself. This is CKN's untestability at finite resolution, in the searcher's mouth. Closed, recorded.
+
 ## A boundary of the method, from the recent literature
 
 Wang, Lai, Gomez-Serrano and Buckmaster (arXiv 2509.14185, 2025; 2511.22819) found new families of *unstable*
