@@ -67,6 +67,42 @@ if DIM == 1:
         ts.append(-1.0 / du.min())
     ts = np.array(ts)
     print("T2  same amplitude spectrum, 2000 random phase sets: shock time t* min %.4f  median %.4f  max %.4f  (max/min = %.2f)  -> %s" % (ts.min(), np.median(ts), ts.max(), ts.max() / ts.min(), "PASS: the phases decide the singularity time" if ts.max() / ts.min() > 2 else "FAIL"))
+    # T5-1D (positive control): Burgers blows up by theorem, so coherence MUST reach k = infinity in finite time.
+    # Scramble the phases above k_c at a fraction f of t* and time the recovery of the slope production -int u_x^3 to
+    # half the intact flow's; the closer to t*, the faster the regrowth must be (rate ~ 1/(t* - t), unbounded).
+    print("T5-1D  Burgers, phases scrambled above k_c at t = f t*: regrowth time to 50% of the intact production  (prediction: shrinks as f -> 1)")
+    print("        f       k_c = 8      16       32       64")
+    ph0 = {m: 0.0 for m in amps}
+    u_init = field(ph0)
+    for f in (0.3, 0.5, 0.7, 0.85):
+        T0 = f * tstar
+        uh = np.fft.fft(u_init); t = 0.0
+        while t < T0 - 1e-12:
+            h = min(dt, T0 - t)
+            a = rhs(uh); b = rhs(uh + h / 2 * a); c = rhs(uh + h / 2 * b); d = rhs(uh + h * c)
+            uh = uh + h / 6 * (a + 2 * b + 2 * c + d); t += h
+        base = uh.copy()
+        prod1 = lambda vh: -np.mean(np.fft.ifft(1j * k * vh).real ** 3)
+        row = []
+        for kc in (8, 16, 32, 64):
+            ph = np.exp(2j * np.pi * rng.random(N))
+            sc = np.where(np.abs(k) > kc, ph, 1.0)
+            v = base * sc
+            v = 0.5 * (v + np.conj(v[(-np.arange(N)) % N]))
+            v = v * np.abs(base) / np.maximum(np.abs(v), 1e-300)
+            wq, wr = v.copy(), base.copy(); tt, thalf = T0, None
+            while tt < 0.95 * tstar and thalf is None:
+                for arr in ("q", "r"):
+                    x_ = wq if arr == "q" else wr
+                    a = rhs(x_); b = rhs(x_ + dt / 2 * a); c = rhs(x_ + dt / 2 * b); d = rhs(x_ + dt * c)
+                    x_ = x_ + dt / 6 * (a + 2 * b + 2 * c + d)
+                    if arr == "q": wq = x_
+                    else: wr = x_
+                tt += dt
+                if abs(prod1(wq) / prod1(wr)) >= 0.5:
+                    thalf = tt - T0
+            row.append(("%.4f" % thalf) if thalf else ">%.3f" % (0.95 * tstar - T0))
+        print("        %.2f    %s" % (f, "   ".join("%8s" % r for r in row)), flush=True)
 else:
     N = int(os.environ.get("N", 256)); NU = float(os.environ.get("NU", 1e-4)); dt = 1e-3
     fft, ifft = np.fft.fftn, np.fft.ifftn

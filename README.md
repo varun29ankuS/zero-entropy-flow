@@ -644,6 +644,16 @@ spectral run) is reproduced by the Brownian kick alone (1.5%). The error is set 
 not by the particle count (3.40% to 3.25% from 2 to 3 per cell, 3.4% to 1.5% from 32^3 to 48^3): the pass criterion
 "error falls with particles" is met only weakly, "falls with resolution" cleanly.
 
+**The coherence race, and where it lands.** Scramble the phases above k_c and time the recovery of the cross-scale
+cascade (`results/wave_particle_2d.txt`, T5): the time to rebuild half of the lost coherence is about 0.1 whether
+the cut is at k = 4, 8, 16 or 32 - a speed limit, set by the large-scale strain rate. Coherence propagates through
+scale at the strain rate. A singularity would need coherence to reach k = infinity in finite time, i.e. the strain
+rate's time integral to diverge: that is the Beale-Kato-Majda criterion (1984), verbatim. The wave view, made
+precise, is BKM in phase language - which also explains the 1-D control (Burgers' strain diverges, its coherence
+time goes to zero, it shocks) and why the analyticity-strip clock works (its decay rate is the coherence
+propagation rate). It gives three instruments and a mechanism for a criterion from 1984; it does not give a new
+inequality, and this page does not claim one.
+
 ## The blow-up type, in the frame the theorems use
 
 The combined CKN / Seregin-Sverak / KNSS program zooms into a would-be singularity and asks for its type: max|w| ~
