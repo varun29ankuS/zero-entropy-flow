@@ -1,0 +1,12 @@
+2-D, N=128^2, 262144 particles (16 per cell), nu=0, dt=0.005, T=2.0
+   t     spectral Z/Z0    particles Z/Z0 (noise)    no-noise control Z/Z0    rel L2 error w (noise)    rel L2 error (no noise)
+ 0.00   1.00000         0.99572                   0.99572                  0.0024                     0.0024   (0s)
+ 0.25   1.00000         0.99574                   0.99574                  0.0025                     0.0025   (15s)
+ 0.50   1.00000         0.99562                   0.99562                  0.0026                     0.0026   (29s)
+ 0.75   1.00000         0.99537                   0.99537                  0.0029                     0.0029   (43s)
+ 1.00   1.00000         0.99497                   0.99497                  0.0036                     0.0036   (57s)
+ 1.25   1.00000         0.99435                   0.99435                  0.0049                     0.0049   (72s)
+ 1.50   1.00000         0.99347                   0.99347                  0.0071                     0.0071   (87s)
+ 1.75   1.00000         0.99226                   0.99226                  0.0105                     0.0105   (101s)
+ 2.00   1.00000         0.99061                   0.99061                  0.0168                     0.0168   (116s)
+nu = 0: the particles never see a viscous term; whatever enstrophy they lose beyond the no-noise control is the memory being read through jitter
