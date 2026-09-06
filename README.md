@@ -462,8 +462,12 @@ candidate covers; from any M in this class it finds a smooth field along which M
 feature is local in the vorticity and strain at a point, and the quantity that decides how the stretching will
 *change* is the pressure Hessian, a nonlocal singular integral of the whole field - the restricted-Euler dynamics
 without it blows up in finite time (Vieillefosse 1982; Cantwell 1992), and it is precisely the specific singular
-integral Tao's averaging destroys. The next feature set is the pressure Hessian along the vorticity and its
-alignment with the strain (`results/lyapunov_24_heads6_local.txt`; runs with `PHESS=1` follow). This is feedback,
+integral Tao's averaging destroys. Runs on CI at 32^3 for eight rounds then showed the one encouraging series of the week - adversary violations
+falling from 1.0 to 0.03-0.09 with local features only - and the register was built for exactly this moment: the
+same candidate attacked afresh by a stronger adversary (four restarts, forty iterations; `results/lyapunov_32_p0_attack.txt`)
+is broken at +0.40, +0.35, +0.55. The fall was the fixed-budget searcher tiring, not the candidate hardening. With
+pressure-Hessian features the eight-round series plateaued at 0.3 and the attack gives +0.74-0.79. A candidate is
+only as good as the strongest adversary that has failed against it; none has. This is feedback,
 not imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
 a human would need to see before trying to.
 
