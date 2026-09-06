@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -115,6 +115,19 @@ jobs:
         run: |
           N=64 T=1.0 python -u pressure_share.py 2>/dev/null | tee results/pressure_share_beta_64.txt
           TAG=ci32_b1 BETA=1 PHESS=0 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_b1.txt
+      - name: sheet_conjecture
+        if: ${{ github.event.inputs.which == 'sheet_conjecture' }}
+        run: |
+          OBJ=ckn N=64 T=1.0 ITERS=40 NVERS=128 TAG=ckn64 CKN_RADII=2,3,4,6 python -u adversarial_ic.py 2>/dev/null | tee results/sheet_conjecture_64.txt
+      - name: strip_hi
+        if: ${{ github.event.inputs.which == 'strip_hi' }}
+        run: |
+          for n in 160 192; do IC=kp N=$n T=1.2 EVERY=0.025 python -u strip_tracker.py 2>/dev/null | tee results/strip_kp_$n.txt; done
+      - name: jacobi_reverse
+        if: ${{ github.event.inputs.which == 'jacobi_reverse' }}
+        run: |
+          for ic in kp found tg; do REVERSE=1 IC=$ic N=64 T=1.0 python -u jacobi_ladder.py 2>/dev/null | tee results/jacobi_reverse_${ic}_64.txt; done
+          for ic in kp found; do REVERSE=1 IC=$ic N=96 T=1.0 python -u jacobi_ladder.py 2>/dev/null | tee results/jacobi_reverse_${ic}_96.txt; done
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

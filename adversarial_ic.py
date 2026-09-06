@@ -101,6 +101,28 @@ def delta_torch(U):
     return -slope / 2.0
 
 
+CKN_RADII = [int(v) for v in os.environ.get("CKN_RADII", "2,3,4,6").split(",")]
+_IDX = torch.stack(torch.meshgrid(*([torch.arange(N)] * 3), indexing="ij"))
+
+
+def conc_exponent(U):
+    """spatial CKN exponent: D(r) = int_{B_r(x*)} |grad u|^2 dx ~ r^alpha_s around the vorticity maximum x* (uniform 3,
+    sheet 2, tube 1, point 0); the parabolic exponent of ckn_exponent.py adds 2 for smooth time dependence. The centre is
+    detached; D(r) is linear in |grad u|^2 so the slope is differentiable in the field."""
+    Ud = [Ui * DEAL for Ui in U]
+    g = sum(ifft(1j * K[i] * Ud[j]).real ** 2 for i in range(3) for j in range(3))
+    w2 = sum(ifft(1j * K[a] * Ud[b] - 1j * K[b] * Ud[a]).real ** 2 for a, b in ((1, 2), (2, 0), (0, 1)))
+    c = torch.tensor(np.unravel_index(int(w2.detach().argmax()), w2.shape))
+    d2 = sum(((_IDX[a] - c[a] + N // 2) % N - N // 2) ** 2 for a in range(3)).to(torch.float64)
+    Ds, rs = [], []
+    for r in CKN_RADII:
+        Ds.append((g * (d2 <= r * r).to(torch.float64)).sum() * (2 * math.pi / N) ** 3 + 1e-30)
+        rs.append(float(r))
+    lr = torch.log(torch.tensor(rs))
+    lD = torch.log(torch.stack(Ds))
+    return ((lr - lr.mean()) * (lD - lD.mean())).sum() / ((lr - lr.mean()) ** 2).sum()
+
+
 def field_from_params(P, Z0):
     """P: 3 real tensors [N,N,N] -> low-k, divergence-free, enstrophy-normalised spectral velocity"""
     U = [fft(Pi) * LOWK for Pi in P]
@@ -223,6 +245,11 @@ for it in range(ITERS):
         UTp = rollout(Up, T)
         growth = torch.sqrt(sum(((ifft(UTp[i] - UTb[i]).real) ** 2).mean() for i in range(3))) / (eps * torch.sqrt(sum((ifft(U0[i]).real ** 2).mean() for i in range(3))))
         loss = -torch.log(growth)
+    elif OBJ == "ckn":
+        # concentrate the dissipation: minimise the spatial concentration exponent at T (sheet 2, tube 1, point 0)
+        alpha_s = conc_exponent(UT)
+        growth = 3.0 - alpha_s                       # reported as "objective": 0 uniform, 1 sheet, 2 tube, 3 point
+        loss = alpha_s
     else:
         growth = enstrophy(UT) / Z0
         loss = -torch.log(growth)
@@ -313,8 +340,18 @@ def verify(u_phys_list, N2, T, label):
     ks = _np.arange(1, nb)
     sel = (ks >= nb // 2) & (spec > 0)
     delta = -_np.polyfit(ks[sel], _np.log(spec[sel]), 1)[0] / 2 if sel.sum() >= 4 else float("nan")
-    print("  %-14s at %d^3:  Z(T)/Z0 = %.3f   E(T)/E0 = %.6f   delta(T) = %.4f  (2dx = %.4f)%s" % (label, N2, Zf(U) / Z0v, Ef(U) / E0v, delta, 2 * 2 * _np.pi / N2, "" if delta > 2 * 2 * _np.pi / N2 else "   <-- unreliable"), flush=True)
-    return Zf(U) / Z0v, delta
+    # spatial concentration exponent of |grad u|^2 around the vorticity maximum, radii scaled to the same physical size
+    Ud2 = [Ui * deal for Ui in U]
+    gg = sum(_np.fft.ifftn(1j * KK[i] * Ud2[j]).real ** 2 for i in range(3) for j in range(3))
+    ww = sum(_np.fft.ifftn(1j * KK[a] * Ud2[b] - 1j * KK[b] * Ud2[a]).real ** 2 for a, b in ((1, 2), (2, 0), (0, 1)))
+    cc = _np.unravel_index(int(ww.argmax()), ww.shape)
+    ii = _np.indices((N2, N2, N2))
+    dd2 = sum(((ii[a] - cc[a] + N2 // 2) % N2 - N2 // 2) ** 2 for a in range(3)).astype(float)
+    rr = [r * N2 / N for r in CKN_RADII]
+    DD = _np.array([gg[dd2 <= r * r].sum() for r in rr]) + 1e-30
+    alpha_s = _np.polyfit(_np.log(rr), _np.log(DD), 1)[0]
+    print("  %-14s at %d^3:  Z(T)/Z0 = %.3f   E(T)/E0 = %.6f   delta(T) = %.4f  (2dx = %.4f)   alpha_s = %.2f%s" % (label, N2, Zf(U) / Z0v, Ef(U) / E0v, delta, 2 * 2 * _np.pi / N2, alpha_s, "" if delta > 2 * 2 * _np.pi / N2 else "   <-- unreliable"), flush=True)
+    return (3.0 - alpha_s) if OBJ == "ckn" else Zf(U) / Z0v, delta
 
 
 NVERS = [int(v) for v in os.environ.get("NVERS", str(NVER)).split(",")]     # e.g. NVERS=128,192: every candidate at the first, then only FOUND and Taylor-Green at the rest
@@ -332,6 +369,6 @@ for iv, NV in enumerate(NVERS):
     classical_ok = {kname: v[0] for kname, v in results.items() if kname != "FOUND" and ok[kname]}
     best_classical = max(classical_ok.values()) if classical_ok else float("nan")
     reliable = ok["FOUND"] and bool(classical_ok)
-    print("\nREGISTERED  found Z(T)/Z0 = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % (
+    print("\nREGISTERED  found %s = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % ("concentration 3-alpha_s" if OBJ == "ckn" else "Z(T)/Z0",
         results["FOUND"][0], ">" if ok["FOUND"] else "<", best_classical, NV,
         "PASS" if reliable and results["FOUND"][0] > best_classical else ("FAIL: outside the reliable window" if not reliable else "FAIL")), flush=True)
