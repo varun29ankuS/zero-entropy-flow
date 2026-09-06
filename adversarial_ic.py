@@ -197,9 +197,7 @@ with torch.no_grad():
 
 # --------------------------------------------- gradient ascent on the initial field ---------------------------------------------
 torch.manual_seed(1)
-P = [(0.3 if OBJ == "minimal" else 1.0) * torch.randn(N, N, N, requires_grad=True) for _ in range(3)]
-if OBJ == "minimal":
-    P = [p.detach().requires_grad_(True) for p in P]
+P = [((0.3 if OBJ == "minimal" else 1.0) * torch.randn(N, N, N)).requires_grad_(True) for _ in range(3)]
 
 
 def hel_of(P):
