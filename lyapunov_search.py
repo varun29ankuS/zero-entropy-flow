@@ -35,6 +35,7 @@ B = float(os.environ.get("B", 4.0))
 TOL = float(os.environ.get("TOL", 1e-3))
 PHESS = int(os.environ.get("PHESS", 0))          # PHESS=1: add three pressure-Hessian features (nonlocal: -lap p = du_i/dx_j du_j/dx_i solved spectrally)
 GLOBAL = int(os.environ.get("GLOBAL", 0))        # GLOBAL=1: broadcast global scalars (the state of the cascade) to every point: global decides the law, local applies it
+BETA = int(os.environ.get("BETA", 0))            # BETA=1: signed two-point direction features beta = 1 - xi(x).xi(x+h) in [0,2] (antiparallel = 2), h = 1 and 2 cells
 HEADS = int(os.environ.get("HEADS", 1))
 ATTACK = os.environ.get("ATTACK", "")            # ATTACK=path.pt: load a trained candidate, skip training, attack it with RESTARTS x ADV_ITERS adversaries
 RESTARTS = int(os.environ.get("RESTARTS", 4))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
@@ -112,7 +113,7 @@ def energy(U):
 
 
 FEATURES = ["stretch xi.S.xi / sqrt Z", "|S|^2 / Z", "det S / Z^1.5", "xi.S^2.xi / |S|^2", "|grad xi| / k_rms",
-            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"] + (["xi.P.xi / Z", "|P|^2 / Z^2", "tr(P S) / (|P| |S|)"] if PHESS else []) +            (["G: log Z", "G: helicity / 2 sqrt(EZ)", "G: log k_rms", "G: palinstrophy / Z^2", "G: max|w| / sqrt Z", "G: strip delta"] if GLOBAL else [])
+            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"] + (["xi.P.xi / Z", "|P|^2 / Z^2", "tr(P S) / (|P| |S|)"] if PHESS else []) +            (["G: log Z", "G: helicity / 2 sqrt(EZ)", "G: log k_rms", "G: palinstrophy / Z^2", "G: max|w| / sqrt Z", "G: strip delta"] if GLOBAL else []) +            (["beta(h=1) = 1 - xi.xi'", "beta(h=2)", "max_h beta(h=1) over 6 nbrs", "|Dxi/Dt|^2 / |S|^2 (direction erasure rate)"] if BETA else [])
 NF = len(FEATURES)
 
 
@@ -152,6 +153,21 @@ def features(U):
         p2 = torch.einsum("...ij,...ij->...", Pm, Pm) + 1e-12 * Z**2
         trPS = torch.einsum("...ij,...ij->...", Pm, S)
         feats += [xiPxi / Z, p2 / Z**2, trPS / torch.sqrt(p2 * s2)]
+    if BETA:
+        bets = []
+        for sh in (1, 2):
+            b = 0.0
+            bmax = None
+            for ax in range(3):
+                for sgn in (1, -1):
+                    dot = sum(xi[..., c] * torch.roll(xi[..., c], sgn * sh, dims=ax) for c in range(3))
+                    bb = 1 - dot
+                    b = b + bb / 6
+                    bmax = bb if bmax is None else torch.maximum(bmax, bb)
+            bets.append(b)
+            if sh == 1:
+                bmax1 = bmax
+        feats += [bets[0], bets[1], bmax1, (xiS2xi - alpha**2) / s2]
     if GLOBAL:
         H = sum((ui * wi).mean() for ui, wi in zip(u, w))
         pal = 0.5 * sum((ifft(1j * K[d] * fft(wi)).real ** 2).mean() for wi in w for d in range(3))
@@ -233,7 +249,7 @@ def random_ic(seed):
 
 
 EVERY = T / 8
-print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s%s%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else "", "  + pressure-Hessian features" if PHESS else "", "  + global scalars" if GLOBAL else ""), flush=True)
+print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s%s%s%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else "", "  + pressure-Hessian features" if PHESS else "", "  + global scalars" if GLOBAL else "", "  + signed beta features" if BETA else ""), flush=True)
 cands = {k: normalise(v) for k, v in classical().items()}
 train_ics = {"random-%d" % s: random_ic(s) for s in range(4)}
 train_ics["taylor-green"] = cands["taylor-green"]
@@ -339,4 +355,4 @@ for name, s in sorted(zip(FEATURES, sens.tolist()), key=lambda z: -z[1]):
     print("   %-28s %.3e" % (name, s))
 print("\nREGISTERED  last adversary violation %+.3e, held-out worst %+.3e, tolerance %.0e -> %s" % (
     w_adv, w_held, TOL, "PASS: no violation found (a candidate, not a theorem)" if max(w_adv, w_held) < TOL else "FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases"))
-torch.save(g.state_dict(), "results/lyapunov_g_%s.pt" % os.environ.get("TAG", "h%d_p%d_g%d" % (HEADS, PHESS, GLOBAL)))
+torch.save(g.state_dict(), "results/lyapunov_g_%s.pt" % os.environ.get("TAG", "h%d_p%d_g%d_b%d" % (HEADS, PHESS, GLOBAL, BETA)))

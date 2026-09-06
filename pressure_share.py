@@ -5,7 +5,10 @@ blows up in finite time; the global part is what prevents it. Along each flow th
     share   = <|P_dev|^2> / <|P|^2>             the global share of the pressure Hessian
     back    = <xi . P_dev . xi> / <xi . S^2 . xi>  the global Hessian's push along the vorticity, against the local self-stretching
     corr    = correlation of (xi.P_dev.xi) with (xi.S.xi)^2 over the high set: does the global term oppose the strongest local stretching?
-for the classical flows and for the fast field found by the adversarial searcher (results/found/*.npz).
+and the SIGNED two-point orientation beta = 1 - xi(x).xi(x+h) in [0, 2] (h = 2 cells) with the fraction of the high set
+whose neighbour is antiparallel (beta > 1): the CF coherence squares the cosine and cannot see antiparallel lines,
+which are the geometry of sheets and of the classic singularity candidates (Kerr 1993).
+For the classical flows and for the fast field found by the adversarial searcher (results/found/*.npz).
 usage: N=64 T=1.0 python pressure_share.py"""
 import os, glob, time, numpy as np
 
@@ -65,10 +68,20 @@ def diag(U):
     S2 = np.einsum("...ij,...jk->...ik", S, S)
     xiS2xi = np.einsum("...i,...ij,...j->...", xi, S2, xi)
     alpha = np.einsum("...i,...ij,...j->...", xi, S, xi)
+    # signed two-point orientation beta = 1 - xi(x).xi(x+h), h = 2 cells: antiparallel neighbours -> 2 (sheets, cancellation)
+    beta = 0.0
+    anti = np.zeros_like(wmag, dtype=bool)
+    for ax in range(3):
+        for sgn in (1, -1):
+            dot = sum(xi[..., c] * np.roll(xi[..., c], sgn * 2, axis=ax) for c in range(3))
+            beta = beta + (1 - dot) / 6
+            anti |= (1 - dot) > 1.0
+    beta_mean = beta[high].mean()
+    anti_frac = anti[high].mean()
     back = xiPxi[high].mean() / (xiS2xi[high].mean() + 1e-30)
     corr = np.corrcoef(xiPxi[high], (alpha**2)[high])[0, 1]
     Z = 0.5 * np.mean(wmag**2)
-    return share, back, corr, Z
+    return share, back, corr, Z, beta_mean, anti_frac
 
 
 flows = {}
@@ -96,7 +109,7 @@ for path in sorted(glob.glob("results/found/*.npz")):
 # common initial enstrophy, as in the searches
 Z0 = 0.375
 print("N=%d^3, nu=0, all flows at Z0=%.3f; high-vorticity set |w| > 0.5 max" % (N, Z0))
-print("%-28s %5s   %8s   %8s   %7s   %7s" % ("flow", "t", "Z(t)/Z0", "share", "back", "corr"))
+print("%-28s %5s   %8s   %8s   %7s   %7s   %9s   %9s" % ("flow", "t", "Z(t)/Z0", "share", "back", "corr", "beta(h=2)", "anti frac"))
 for name, U in flows.items():
     Zi = 0.5 * np.mean(sum(ifft(1j * K[a] * U[b] - 1j * K[b] * U[a]).real ** 2 for a, b in ((1, 2), (2, 0), (0, 1))))
     U = [Ui * np.sqrt(Z0 / Zi) for Ui in U]
@@ -104,8 +117,8 @@ for name, U in flows.items():
     t0 = time.time()
     while t <= T + 1e-9:
         if t >= mark - 1e-9:
-            share, back, corr, Z = diag(U)
-            print("%-28s %5.2f   %8.3f   %8.3f   %+7.3f   %+7.3f" % (name, t, Z / Z0, share, back, corr), flush=True)
+            share, back, corr, Z, bm, af = diag(U)
+            print("%-28s %5.2f   %8.3f   %8.3f   %+7.3f   %+7.3f   %9.3f   %9.3f" % (name, t, Z / Z0, share, back, corr, bm, af), flush=True)
             mark += 0.25
             if t >= T - 1e-9:
                 break
