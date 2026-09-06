@@ -95,8 +95,8 @@ jobs:
       - name: lyapunov
         if: ${{ github.event.inputs.which == 'lyapunov' }}
         run: |
-          N=24 NU=2e-3 T=0.6 ROUNDS=4 TRAIN=300 ADV_ITERS=15 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_24.txt
-          N=32 NU=1e-3 T=0.6 ROUNDS=3 TRAIN=200 ADV_ITERS=10 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32.txt
+          TAG=ci32_p0 PHESS=0 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_p0.txt
+          TAG=ci32_p1 PHESS=1 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_p1.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

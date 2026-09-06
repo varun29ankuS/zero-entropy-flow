@@ -320,4 +320,4 @@ for name, s in sorted(zip(FEATURES, sens.tolist()), key=lambda z: -z[1]):
     print("   %-28s %.3e" % (name, s))
 print("\nREGISTERED  last adversary violation %+.3e, held-out worst %+.3e, tolerance %.0e -> %s" % (
     w_adv, w_held, TOL, "PASS: no violation found (a candidate, not a theorem)" if max(w_adv, w_held) < TOL else "FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases"))
-torch.save(g.state_dict(), "results/lyapunov_g_h%d_p%d.pt" % (HEADS, PHESS))
+torch.save(g.state_dict(), "results/lyapunov_g_%s.pt" % os.environ.get("TAG", "h%d_p%d" % (HEADS, PHESS)))
