@@ -517,6 +517,29 @@ grow with the stretching. Read with the Lyapunov result above, the two say the s
 local functional cannot see the term that decides the future, and the fields that defeat it are the ones where
 that term is weakest.
 
+## The signed angle: what the squared coherence cannot see
+
+Every alignment quantity in the literature and on this page so far is squared - the Constantin-Fefferman coherence
+is 1 - (xi.xi')^2 - which folds antiparallel onto parallel: two vortex lines pointing opposite ways register as
+perfectly coherent. That is right for CF's depletion argument (the Biot-Savart kernel depends on |sin|) and blind for
+a diagnostic, because antiparallel neighbouring vorticity is the geometry of sheets and of the classic singularity
+candidates (Kerr 1993; Hou-Li 2006). `pressure_share.py` now also reports the signed two-point angle
+beta = 1 - xi(x).xi(x+h) in [0, 2] and the fraction of the strong-vorticity set whose neighbour two cells away is
+antiparallel (beta > 1), at 64^3:
+
+```
+                     mean beta(h=2)  t=0 / 0.5 / 1.0     antiparallel fraction  t=0 / 0.5 / 1.0     Z(1)/Z0
+Taylor-Green         0.004 / 0.006 / 0.012                0.000 / 0.000 / 0.000                       1.11
+Kida-Pelz            0.009 / 0.014 / 0.039                0.000 / 0.000 / 0.000                       1.10
+searcher's field     0.052 / 0.148 / 0.542                0.000 / 0.184 / 0.906                       3.12
+```
+
+By t = 1, ninety-one percent of the strongest vorticity in the searcher's field has an antiparallel neighbour: it is
+built almost entirely of antiparallel pairs, while the classical flows have none at all - and the squared coherence
+reported all three at the same 0.13. This is the sharpest single picture of how the adversary wins, and it names
+the geometry: antiparallel sheets. Read with the concentration exponent (alpha ~ 4, flat) it says the pairs thin
+without sharpening, which is what the projection does to them.
+
 ## Keep the state, track the dissipation: the CKN concentration exponent
 
 Navier-Stokes carries its state by an exact transport and leaks energy only through nu |grad u|^2, whose time
