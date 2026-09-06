@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | frequency_matching | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -148,6 +148,11 @@ jobs:
         run: |
           for ic in kp found; do IC=$ic N=96 T=1.2 EVERY=0.025 python -u strip_tracker.py 2>/dev/null | tee results/type_${ic}_96.txt; done
           IC=found N=128 T=1.2 EVERY=0.025 python -u strip_tracker.py 2>/dev/null | tee results/type_found_128.txt
+      - name: frequency_matching
+        if: ${{ github.event.inputs.which == 'frequency_matching' }}
+        run: |
+          python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_1d.txt
+          DIM=2 N=256 NU=1e-4 T=3 python -u frequency_matching.py 2>/dev/null | tee results/frequency_matching_2d.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

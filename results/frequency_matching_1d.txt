@@ -1,0 +1,6 @@
+1-D Burgers, u0 = A[sin(k x) + sin(q x + phi)], equal energy; exact shock time t* = -1/min u0'
+pair                             t* best phase   t* worst phase   max slope ratio worst/best
+commensurate (5,10)              0.0970          0.0667           1.455
+incommensurate (5,7 ~ sqrt2)     0.0860          0.0833           1.031
+single scale k=5                 0.1414
+worst-case shock time, commensurate vs incommensurate: the registered prediction is 'equal within the box approximation'
