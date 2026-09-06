@@ -100,7 +100,7 @@ average of pointwise vorticity/strain features, an adversary finds a violating t
 at 24^3: adversary violations +0.40, +2.40, +0.71 (relative dM/dt) with no closing trend; held-out classical flows
 never violate. An eight-round 32^3 series that fell to 0.03-0.09 was re-attacked with a stronger adversary and broken at +0.40 to
 +0.55 (`results/lyapunov_32_p0_attack.txt`): fixed-budget adversaries understate violations, so every future
-candidate is judged by `ATTACK` mode, not by its own training adversary. Refuted by: a candidate that survives an
+candidate is judged by `ATTACK` mode, not by its own training adversary. A twenty-round candidate broke at +1.03 under a 5 x 60 attack. Refuted by: a candidate that survives an
 ATTACK run with violations below 1e-3 (which would yield a candidate inequality, not a theorem).
 
 **C16. The fastest-growing field found concentrates dissipation like sheets, not like a singularity.** CKN exponent

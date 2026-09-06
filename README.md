@@ -481,8 +481,11 @@ falling from 1.0 to 0.03-0.09 with local features only - and the register was bu
 same candidate attacked afresh by a stronger adversary (four restarts, forty iterations; `results/lyapunov_32_p0_attack.txt`)
 is broken at +0.40, +0.35, +0.55. The fall was the fixed-budget searcher tiring, not the candidate hardening. With
 pressure-Hessian features the eight-round series plateaued at 0.3 and the attack gives +0.74-0.79. With the signed-beta features the eight-round series reached 0.01, the best seen; attacked, it breaks at +0.42
-(`results/lyapunov_32_b1_attack.txt`). A candidate is only as good as the strongest adversary that has failed
-against it; none has. This is feedback,
+(`results/lyapunov_32_b1_attack.txt`). A twenty-round candidate with a 25-iteration training adversary fell to 0.01-0.04 over its last five rounds
+and, attacked with five restarts of sixty iterations, breaks at +1.03 (`results/lyapunov_32_r20_attack.txt`). Three
+candidates, three falling series, three breaks. A candidate is only as good as the strongest adversary that has
+failed against it; none has, and the class - bounded local functionals of the present vorticity and strain field, at
+this resolution and window - is closed by this register: the fixed-budget searcher tires before the candidate holds. This is feedback,
 not imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
 a human would need to see before trying to.
 
