@@ -237,7 +237,7 @@ if OBJ == "helicity" and HELMODE == "project":
     ok0 = hel_project(P, iters=200)
     print("initial projection onto H/Hmax = %.2f: %s (reached %.4f)" % (HEL, "ok" if ok0 else "NOT REACHED", hel_of(P)), flush=True)
 opt = torch.optim.Adam(P, lr=LR)
-best = (0.0, None)
+best = (-1e30, None)
 t0 = time.time()
 for it in range(ITERS):
     U0 = field_from_params(P, Z0)
@@ -282,13 +282,17 @@ for it in range(ITERS):
     if OBJ == "helicity" and HELMODE == "project":
         hel_project(P)
     g = growth.item()
-    if g > best[0] and (OBJ != "helicity" or HELMODE != "project" or abs(hel_of(P) - HEL) < 1e-3):
-        best = (g, [p.detach().clone() for p in P])
+    if OBJ == "minimal":
+        score = -loss.item()                                 # the constraint-satisfying minimum of the norm
+    else:
+        score = g
+    if score > best[0] and (OBJ != "helicity" or HELMODE != "project" or abs(hel_of(P) - HEL) < 1e-3):
+        best = (score, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
         print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), time.time() - t0), flush=True)
 if best[1] is None:
     best = (growth.item(), [p.detach().clone() for p in P])
-print("best amplification on the search grid: %.3f" % best[0])
+print("best on the search grid: %s = %.4f" % ("critical norm |u0|_{H^1/2} (constraint met)" if OBJ == "minimal" else "amplification", (-best[0] if OBJ == "minimal" else best[0])))
 with torch.no_grad():
     Ubest = field_from_params(best[1], Z0)
     os.makedirs("results/found", exist_ok=True)
@@ -392,6 +396,9 @@ for iv, NV in enumerate(NVERS):
     classical_ok = {kname: v[0] for kname, v in results.items() if kname != "FOUND" and ok[kname]}
     best_classical = max(classical_ok.values()) if classical_ok else float("nan")
     reliable = ok["FOUND"] and bool(classical_ok)
+    if OBJ == "minimal":
+        print("\nREGISTERED  minimal-norm cascading datum from the %d^3 search: |u0|_{H^1/2} = %.4f; its cascade reaches the %d^3 cutoff: %s   (registered prediction: this norm rises with the search resolution)" % (N, 1.0 / results["FOUND"][0], NV, "YES" if results["FOUND"][1] < 2 * 2 * math.pi / NV else "NO (delta %.3f > 2dx %.3f)" % (results["FOUND"][1], 2 * 2 * math.pi / NV)), flush=True)
+        continue
     print("\nREGISTERED  found %s = %.3f (delta %s 2dx) vs best RELIABLE classical %.3f at %d^3 -> %s" % ("concentration 3-alpha_s" if OBJ == "ckn" else "Z(T)/Z0",
         results["FOUND"][0], ">" if ok["FOUND"] else "<", best_classical, NV,
         "PASS" if reliable and results["FOUND"][0] > best_classical else ("FAIL: outside the reliable window" if not reliable else "FAIL")), flush=True)
