@@ -1,0 +1,8 @@
+2-D, N=256^2, nu=0.0001: developed field at t=2 versus the same amplitudes with random phases   (72s)
+            E(rel)      Z(rel)      P(rel)      palinstrophy production at t=0+ (nonlinear)
+real        1.00000     1.00000     1.00000     +2.9884e+03
+randomised  1.00000     1.00000     1.00000     +1.2677e+01     ratio 0.004  -> PASS: no interference, no cascade
+   dt     real: Z/Z0   P/P0      randomised: Z/Z0   P/P0     production ratio (randomised/real)
+  0.25    0.98825   1.2119      0.98939   1.0654     0.968
+  0.50    0.97437   1.3980      0.97668   1.3351     1.202
+  1.00    0.94196   1.6531      0.94328   1.7744     1.107
