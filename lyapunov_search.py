@@ -33,6 +33,7 @@ TRAIN = int(os.environ.get("TRAIN", 300))
 ADV_ITERS = int(os.environ.get("ADV_ITERS", 15))
 B = float(os.environ.get("B", 4.0))
 TOL = float(os.environ.get("TOL", 1e-3))
+PHESS = int(os.environ.get("PHESS", 0))          # PHESS=1: add three pressure-Hessian features (nonlocal: -lap p = du_i/dx_j du_j/dx_i solved spectrally)
 HEADS = int(os.environ.get("HEADS", 1))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
                                                  # each candidate only has to decrease where it is the one in force; a switch can only lower M
 KMAX_IC = 3
@@ -107,7 +108,8 @@ def energy(U):
 
 
 FEATURES = ["stretch xi.S.xi / sqrt Z", "|S|^2 / Z", "det S / Z^1.5", "xi.S^2.xi / |S|^2", "|grad xi| / k_rms",
-            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"]
+            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"] + (["xi.P.xi / Z", "|P|^2 / Z^2", "tr(P S) / (|P| |S|)"] if PHESS else [])
+NF = len(FEATURES)
 
 
 def features(U):
@@ -134,8 +136,19 @@ def features(U):
         for d in range(3):
             gx = gx + ifft(1j * K[d] * xh).real ** 2
     krms = torch.sqrt(Z / (E + 1e-30))
-    f = torch.stack([alpha / sZ, s2 / Z, detS / (Z * sZ), xiS2xi / s2, torch.sqrt(gx + 1e-30) / krms,
-                     wmag**2 / (2 * Z), sum(ui**2 for ui in u) / (2 * E), alpha**2 / s2], 0)
+    feats = [alpha / sZ, s2 / Z, detS / (Z * sZ), xiS2xi / s2, torch.sqrt(gx + 1e-30) / krms,
+             wmag**2 / (2 * Z), sum(ui**2 for ui in u) / (2 * E), alpha**2 / s2]
+    if PHESS:
+        # pressure Hessian P_ij = d_i d_j p with -lap p = d_i u_j d_j u_i  (exact on the grid, nonlocal in u)
+        src = fft(sum(G[i][j] * G[j][i] for i in range(3) for j in range(3)))
+        ph = src / K2S                           # p_hat = src_hat / k^2  (mean pressure irrelevant)
+        ph = ph * DEAL
+        Pm = torch.stack([torch.stack([ifft(-K[i] * K[j] * ph).real for j in range(3)], -1) for i in range(3)], -1)
+        xiPxi = torch.einsum("...i,...ij,...j->...", xi, Pm, xi)
+        p2 = torch.einsum("...ij,...ij->...", Pm, Pm) + 1e-12 * Z**2
+        trPS = torch.einsum("...ij,...ij->...", Pm, S)
+        feats += [xiPxi / Z, p2 / Z**2, trPS / torch.sqrt(p2 * s2)]
+    f = torch.stack(feats, 0)
     return f, wmag**2 / (wmag**2).sum(), Z
 
 
@@ -148,7 +161,7 @@ class G(torch.nn.Module):
         return B * torch.sigmoid(self.net(f.permute(1, 2, 3, 0)))        # [N,N,N,heads]
 
 
-g = G(heads=HEADS)
+g = G(nf=NF, heads=HEADS)
 opt = torch.optim.Adam(g.parameters(), lr=3e-3)
 
 
@@ -202,7 +215,7 @@ def random_ic(seed):
 
 
 EVERY = T / 8
-print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else ""), flush=True)
+print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else "", "  + pressure-Hessian features" if PHESS else ""), flush=True)
 cands = {k: normalise(v) for k, v in classical().items()}
 train_ics = {"random-%d" % s: random_ic(s) for s in range(4)}
 train_ics["taylor-green"] = cands["taylor-green"]
@@ -292,7 +305,7 @@ w_train = report(data, "all training states")
 w_held = report(trajectories(heldout), "held-out flows")
 w_adv = best[0]
 # what does the candidate lean on? sensitivity of Phi to each feature over the held-out states
-sens = torch.zeros(8)
+sens = torch.zeros(NF)
 cnt = 0
 for name, t, S in trajectories(heldout):
     f, wgt, Z = features(S)
@@ -307,4 +320,4 @@ for name, s in sorted(zip(FEATURES, sens.tolist()), key=lambda z: -z[1]):
     print("   %-28s %.3e" % (name, s))
 print("\nREGISTERED  last adversary violation %+.3e, held-out worst %+.3e, tolerance %.0e -> %s" % (
     w_adv, w_held, TOL, "PASS: no violation found (a candidate, not a theorem)" if max(w_adv, w_held) < TOL else "FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases"))
-torch.save(g.state_dict(), "results/lyapunov_g_h%d.pt" % HEADS)
+torch.save(g.state_dict(), "results/lyapunov_g_h%d_p%d.pt" % (HEADS, PHESS))
