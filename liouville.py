@@ -34,16 +34,27 @@ def project(F):
     return [F[i] - K[i] * kd for i in range(DIM)]
 
 
+# a member of Tao's averaged class: B~(u,u) = M B(Mu, Mu) with M a symmetric Fourier multiplier (random, radial here).
+# It keeps <B~(u,u), u> = <B(Mu,Mu), Mu> = 0, the scaling, and the convolution structure; it is not Navier-Stokes.
+_g = torch.Generator().manual_seed(1)
+_rad = torch.sqrt(K2).round().long()
+_prof = 0.3 + torch.rand(int(_rad.max().item()) + 1, generator=_g)
+TAO_M = _prof[_rad]
+TAO_M[(0,) * DIM] = 0.0
+
+
 def transport(u, form):
     """u: DIM real-space fields -> DIM real-space tendencies (nu = 0 part)"""
     Ud = project([fft(ui) * DEAL for ui in u])      # phase space = retained solenoidal modes; F = F o P
+    if form == "tao-class":
+        Ud = [Ui * TAO_M for Ui in Ud]
     ur = [ifft(Ui).real for Ui in Ud]
     out = []
     for i in range(DIM):
         adv = sum(ur[j] * ifft(1j * K[j] * Ud[i]).real for j in range(DIM))
         div = sum(ifft(1j * K[j] * fft(ur[j] * ur[i])).real for j in range(DIM))
-        if form == "skew":
-            out.append(-0.5 * fft(adv + div) * DEAL)
+        if form in ("skew", "tao-class"):
+            out.append(-0.5 * fft(adv + div) * DEAL * (TAO_M if form == "tao-class" else 1.0))
         elif form == "advective":
             out.append(-fft(adv) * DEAL)
         else:
@@ -85,6 +96,6 @@ ndof = int(DEAL.sum().item()) * (DIM - 1)
 print("DIM=%d  N=%d  nu=%g  retained solenoidal dof ~ %d  |F| = %.3f  (exact trace over %d coordinates)" % (DIM, N, NU, ndof, scale, DIM * N**DIM))
 print("expected viscous contraction  -nu (DIM-1) sum_k k^2 = %.4f" % (-NU * (DIM - 1) * (K2 * DEAL).sum().item()))
 t0 = time.time()
-for form in ("skew", "advective", "divergence"):
+for form in ("skew", "advective", "divergence", "tao-class"):
     m, jmax = divergence(u, form, PROBES)
     print("  %-11s  div F = tr(dF/dU) = %+.3e    (largest Jacobian entry %.2f; relative %.1e)   (%.0fs)" % (form, m, jmax, abs(m) / (jmax * ndof), time.time() - t0), flush=True)

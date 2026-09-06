@@ -451,10 +451,13 @@ Three things this shows. Energy is conserved to 3e-8 while the enstrophy goes as
 zero numerical entropy production is a property of the *instrument*, not evidence about the *equation*. The decay
 rate of delta is the discriminator that separates the two cases by five orders of magnitude, so when it falls for
 Kida-Pelz that is a statement, not noise. And the dyadic model does not satisfy Liouville (div F = -sum k_{j+1}
-a_{j+1}, state-dependent, printed on every row), while the true truncated Euler system does exactly: the phase-volume
-theorem is one of the structural properties the true equation has and the blow-up models lack - along with locality
-in physical space, particle paths, and the geometry of stretching, which are the properties Tao had to average away.
-A proof has to be made of those.
+a_{j+1}, state-dependent, printed on every row), while the true truncated Euler system does exactly. That is *not* a
+property that separates the true equation from Tao's class: a multiplier-averaged nonlinearity M B(Mu, Mu), a member
+of Tao's averaged family, conserves phase volume to 1e-17 as well (`liouville.py`, form `tao-class`;
+`results/liouville_taoclass.txt`), because Liouville follows from the convolution structure and the dyadic model is
+not a convolution. So phase-volume conservation sits on Tao's side of the wall along with energy. What the true
+equation has and the averaged one lacks remains the short list Tao averaged away: locality in physical space,
+particle paths, and the geometry of stretching. A proof has to be made of those.
 
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
