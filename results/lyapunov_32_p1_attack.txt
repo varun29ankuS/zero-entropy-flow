@@ -1,0 +1,63 @@
+ATTACK mode: loaded results/lyapunov_g_ci32_p1.pt; 4 restarts x 40 adversary iterations, no training
+lyapunov search: N=32^3  nu=0.001  T=0.60  Z0=0.375  B=4.0  rounds=3  train steps/round=0  adversary iters=40  candidates (heads) = 1  + pressure-Hessian features
+training states: 54 from 6 flows   (4s)
+
+== round 0 ==
+  training states        worst relative dM/dt = +2.0310e-02  (taylor-green at t=0.60)   mean positive part 8.01e-04
+  held-out flows         worst relative dM/dt = -2.8310e-02  (kida-pelz at t=0.60)   mean positive part 0.00e+00
+  adversary  0   worst relative dM/dt along its trajectory = -6.0663e-02   (14s)
+  adversary  5   worst relative dM/dt along its trajectory = +2.6145e-01   (30s)
+  adversary 10   worst relative dM/dt along its trajectory = +4.5164e-01   (45s)
+  adversary 15   worst relative dM/dt along its trajectory = +5.4868e-01   (60s)
+  adversary 20   worst relative dM/dt along its trajectory = +5.6842e-01   (75s)
+  adversary 25   worst relative dM/dt along its trajectory = +6.1290e-01   (91s)
+  adversary 30   worst relative dM/dt along its trajectory = +6.9708e-01   (107s)
+  adversary 35   worst relative dM/dt along its trajectory = +7.3331e-01   (122s)
+  adversary 39   worst relative dM/dt along its trajectory = +7.4243e-01   (135s)
+  adversary round 0: best violation +7.4351e-01; its 9 states added to training
+
+== round 1 ==
+  training states        worst relative dM/dt = +7.3331e-01  (adversary-0 at t=0.56)   mean positive part 4.67e-02
+  held-out flows         worst relative dM/dt = -2.8310e-02  (kida-pelz at t=0.60)   mean positive part 0.00e+00
+  adversary  0   worst relative dM/dt along its trajectory = -5.3339e-02   (146s)
+  adversary  5   worst relative dM/dt along its trajectory = +1.7340e-01   (161s)
+  adversary 10   worst relative dM/dt along its trajectory = +2.7164e-01   (177s)
+  adversary 15   worst relative dM/dt along its trajectory = +3.7883e-01   (192s)
+  adversary 20   worst relative dM/dt along its trajectory = +5.0114e-01   (208s)
+  adversary 25   worst relative dM/dt along its trajectory = +6.2021e-01   (224s)
+  adversary 30   worst relative dM/dt along its trajectory = +6.4149e-01   (241s)
+  adversary 35   worst relative dM/dt along its trajectory = +6.8989e-01   (258s)
+  adversary 39   worst relative dM/dt along its trajectory = +7.8794e-01   (271s)
+  adversary round 1: best violation +7.8794e-01; its 9 states added to training
+
+== round 2 ==
+  training states        worst relative dM/dt = +7.3331e-01  (adversary-0 at t=0.56)   mean positive part 9.25e-02
+  held-out flows         worst relative dM/dt = -2.8310e-02  (kida-pelz at t=0.60)   mean positive part 0.00e+00
+  adversary  0   worst relative dM/dt along its trajectory = -6.9046e-02   (284s)
+  adversary  5   worst relative dM/dt along its trajectory = +1.6330e-01   (299s)
+  adversary 10   worst relative dM/dt along its trajectory = +2.2370e-01   (314s)
+  adversary 15   worst relative dM/dt along its trajectory = +2.7530e-01   (329s)
+  adversary 20   worst relative dM/dt along its trajectory = +3.3663e-01   (344s)
+  adversary 25   worst relative dM/dt along its trajectory = +4.5991e-01   (359s)
+  adversary 30   worst relative dM/dt along its trajectory = +6.2731e-01   (375s)
+  adversary 35   worst relative dM/dt along its trajectory = +6.3759e-01   (392s)
+  adversary 39   worst relative dM/dt along its trajectory = +7.9353e-01   (406s)
+  adversary round 2: best violation +7.9353e-01; its 9 states added to training
+
+== final ==
+  all training states    worst relative dM/dt = +8.1690e-01  (adversary-2 at t=0.24)   mean positive part 1.37e-01
+  held-out flows         worst relative dM/dt = -2.8310e-02  (kida-pelz at t=0.60)   mean positive part 0.00e+00
+feature sensitivity of the learned Phi (|dPhi/df . f| summed over the field, held-out states):
+   xi.S^2.xi / |S|^2            3.608e-01
+   stretch xi.S.xi / sqrt Z     9.488e-02
+   xi.P.xi / Z                  8.490e-02
+   |grad xi| / k_rms            6.200e-02
+   |w|^2 / 2Z                   6.054e-02
+   (xi.S.xi)^2 / |S|^2          4.310e-02
+   |P|^2 / Z^2                  4.154e-02
+   |u|^2 / 2E                   2.583e-02
+   det S / Z^1.5                2.157e-02
+   |S|^2 / Z                    1.689e-02
+   tr(P S) / (|P| |S|)          7.533e-03
+
+REGISTERED  last adversary violation +7.935e-01, held-out worst -2.831e-02, tolerance 1e-03 -> FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases
