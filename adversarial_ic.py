@@ -29,7 +29,9 @@ HELW = float(os.environ.get("HELW", 50.0))       # penalty weight
 HELMODE = os.environ.get("HELMODE", "penalty")   # penalty | project  (project: Newton-project P onto H/Hmax = HEL after every step, a hard constraint)
 DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-strip width delta(T) below DMIN on the search grid (stay resolved)
 DW = float(os.environ.get("DW", 20.0))
-CKPT = int(os.environ.get("CKPT", 1))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
+CKPT = int(os.environ.get("CKPT", 1))
+DTARGET = float(os.environ.get("DTARGET", 0.10))  # OBJ=minimal: require delta(T) <= DTARGET on the search grid (the cascade must reach the cutoff)
+MINW = float(os.environ.get("MINW", 50.0))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
 dev = "cpu"
 
 # ------------------------------------------ torch solver (differentiable) ------------------------------------------
@@ -127,6 +129,8 @@ def field_from_params(P, Z0):
     """P: 3 real tensors [N,N,N] -> low-k, divergence-free, enstrophy-normalised spectral velocity"""
     U = [fft(Pi) * LOWK for Pi in P]
     U = project(U)
+    if OBJ == "minimal":
+        return U                                             # amplitude free: the norm itself is the objective
     Z = enstrophy(U)
     return [Ui * torch.sqrt(Z0 / Z) for Ui in U]
 
@@ -176,7 +180,9 @@ with torch.no_grad():
 
 # --------------------------------------------- gradient ascent on the initial field ---------------------------------------------
 torch.manual_seed(1)
-P = [torch.randn(N, N, N, requires_grad=True) for _ in range(3)]
+P = [(0.3 if OBJ == "minimal" else 1.0) * torch.randn(N, N, N, requires_grad=True) for _ in range(3)]
+if OBJ == "minimal":
+    P = [p.detach().requires_grad_(True) for p in P]
 
 
 def hel_of(P):
@@ -245,6 +251,15 @@ for it in range(ITERS):
         UTp = rollout(Up, T)
         growth = torch.sqrt(sum(((ifft(UTp[i] - UTb[i]).real) ** 2).mean() for i in range(3))) / (eps * torch.sqrt(sum((ifft(U0[i]).real ** 2).mean() for i in range(3))))
         loss = -torch.log(growth)
+    elif OBJ == "minimal":
+        # the minimal blow-up datum (Rusin-Sverak 2011): the smallest critical norm |u0|_{H^1/2} whose flow still cascades
+        # to the cutoff by T (delta(T) <= DTARGET). Fixed Z0 normalisation is dropped here: Z0 sets the scale, the
+        # critical norm is the objective. The verifier reports the norm and whether the cascade is real at higher N.
+        kmag = torch.sqrt(K2)
+        h12 = torch.sqrt(sum((kmag * (Ui.abs() ** 2)).sum() for Ui in U0) / N**6)
+        d = delta_torch(UT)
+        growth = 1.0 / h12                                   # reported as "objective": larger = smaller critical norm
+        loss = h12 + MINW * torch.relu(d - DTARGET) ** 2
     elif OBJ == "ckn":
         # concentrate the dissipation: minimise the spatial concentration exponent at T (sheet 2, tube 1, point 0)
         alpha_s = conc_exponent(UT)
@@ -305,6 +320,7 @@ def verify(u_phys_list, N2, T, label):
         U.append(big)
     kd = sum(KK[i] * U[i] for i in range(3)) / k2s
     U = [U[i] - KK[i] * kd for i in range(3)]
+    U0_ = [Ui.copy() for Ui in U]
 
     def transport(U):
         Ud = [Ui * deal for Ui in U]
@@ -351,6 +367,10 @@ def verify(u_phys_list, N2, T, label):
     DD = _np.array([gg[dd2 <= r * r].sum() for r in rr]) + 1e-30
     alpha_s = _np.polyfit(_np.log(rr), _np.log(DD), 1)[0]
     print("  %-14s at %d^3:  Z(T)/Z0 = %.3f   E(T)/E0 = %.6f   delta(T) = %.4f  (2dx = %.4f)   alpha_s = %.2f%s" % (label, N2, Zf(U) / Z0v, Ef(U) / E0v, delta, 2 * 2 * _np.pi / N2, alpha_s, "" if delta > 2 * 2 * _np.pi / N2 else "   <-- unreliable"), flush=True)
+    if OBJ == "minimal":
+        h12v = _np.sqrt(sum((kmag * _np.abs(Ui) ** 2).sum() for Ui in U0_) / N2**6)
+        print("      critical norm |u0|_{H^1/2} = %.4f; cascade reached the cutoff at %d^3: %s" % (h12v, N2, "yes (delta < 2dx)" if delta < 2 * 2 * _np.pi / N2 else "no (delta = %.3f > 2dx = %.3f)" % (delta, 2 * 2 * _np.pi / N2)), flush=True)
+        return 1.0 / h12v, delta
     return (3.0 - alpha_s) if OBJ == "ckn" else Zf(U) / Z0v, delta
 
 
@@ -362,7 +382,7 @@ for iv, NV in enumerate(NVERS):
         for name, U in list(cands.items()) + [("FOUND", Ubest)]:
             if iv > 0 and name not in ("taylor-green", "FOUND"):
                 continue
-            Un = [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
+            Un = U if (OBJ == "minimal" and name == "FOUND") else [Ui * math.sqrt(Z0 / enstrophy(U).item()) for Ui in U]
             phys = [ifft(Ui).real.numpy() for Ui in Un]
             results[name] = verify(phys, NV, T, name)
     ok = {kname: v[1] > 2 * 2 * math.pi / NV for kname, v in results.items()}
