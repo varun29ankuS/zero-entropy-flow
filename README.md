@@ -257,7 +257,7 @@ Gradient ascent through the differentiable solver on the enstrophy amplification
 | enstrophy, Taylor-Green amplitude, corrected verdict | 4.96x | 7.89x at 96^3 (delta 0.050), 8.70x at 128^3 (delta 0.040) | 1.112x | outside the window at both |
 | enstrophy, leashed: delta(T) >= 0.30 on the 32^3 search grid | 4.44x, delta 0.27 | 8.28x at 128^3, delta 0.042 | 1.112x | outside the window |
 | enstrophy, leashed: delta(T) >= 0.45 on the 32^3 search grid | 3.82x, delta 0.41 | 5.85x at 128^3, delta 0.047 | 1.112x | outside the window |
-| enstrophy, leashed on a 64^3 search grid (checkpointed autograd) | 3.09x, delta 0.26 | 3.175x at 128^3, delta 0.071 vs 0.098 | 1.112x | outside the window, narrowly; 192^3 running |
+| enstrophy, leashed on a 64^3 search grid (checkpointed autograd) | 3.09x, delta 0.26 | 3.175x at 128^3 (delta 0.071 vs 0.098), 3.182x at 192^3 (delta 0.055 vs 0.065) | 1.112x | outside the window at both |
 | helicity held at 0 (hard constraint, corrected bound) | 4.54x | 7.38x at 96^3, delta 0.047 | 1.112x | outside the window |
 | helicity held at 0.25 max | 4.68x | 7.11x at 96^3, delta 0.065 | 1.112x | outside the window |
 | helicity held at 0.50 max | 4.47x | 6.35x at 96^3, delta 0.069 | 1.112x | outside the window |
@@ -274,7 +274,11 @@ the coarse grid's truncation blocks the cascade the field triggers, so the field
 resolution. The leash has to be measured where the cascade lives. On a 64^3 search grid (gradient checkpointing, 2.2 GB)
 the amplification is nearly converged between grids (3.09 at 64^3, 3.175 at 128^3) and the strip at 128^3 is 0.071
 against a threshold of 0.098: a three-fold amplifier from smooth |k| <= 4 data that is almost, not yet, resolved.
-The field is saved (`results/found/`) and is being re-run at 192^3, where the threshold is 0.065. Topology, with the
+At 192^3 the amplification is converged (3.182) but the strip is 0.055 against 0.065: delta keeps *falling*
+with resolution (0.26 at 64^3, 0.071 at 128^3, 0.055 at 192^3) as each finer grid sees more of a flattening tail.
+Registered FAIL. The separation is the finding: the enstrophy amplification of this field is a robust number, and its
+small scales are not resolved at any grid tried. The field is committed (`results/found/leashed64_dmin030.npz`, 64^3
+float32, 3 MB) for anyone with a bigger box. Topology, with the
 helicity held fixed by a hard constraint (Newton projection onto the level set after every step, `HELMODE=project`):
 on the 32^3 truncated system the maximal amplification over one time unit is *flat* up to relative helicity 0.5
 (4.54, 4.68, 4.47) and then collapses (3.11 at 0.75, 1.27 at 0.9). Helicity inhibits the cascade, as Moffatt's
