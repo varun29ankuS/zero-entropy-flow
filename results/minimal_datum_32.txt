@@ -1,0 +1,46 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective minimal
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.968   Z(T)/Z0 = 1.012
+  iter   0   objective = 7.521   E0 = 0.0020   H/Hmax = -0.030   delta(T) on search grid = 0.748   (3s)
+  iter   5   objective = 8.878   E0 = 0.0012   H/Hmax = +0.002   delta(T) on search grid = 0.695   (13s)
+  iter  10   objective = 2.412   E0 = 0.0150   H/Hmax = +0.015   delta(T) on search grid = 0.307   (23s)
+  iter  15   objective = 1.697   E0 = 0.0302   H/Hmax = +0.023   delta(T) on search grid = 0.213   (33s)
+  iter  20   objective = 1.437   E0 = 0.0421   H/Hmax = +0.027   delta(T) on search grid = 0.171   (43s)
+  iter  25   objective = 1.313   E0 = 0.0505   H/Hmax = +0.029   delta(T) on search grid = 0.150   (53s)
+  iter  30   objective = 1.245   E0 = 0.0562   H/Hmax = +0.031   delta(T) on search grid = 0.138   (63s)
+  iter  35   objective = 1.207   E0 = 0.0598   H/Hmax = +0.032   delta(T) on search grid = 0.131   (72s)
+  iter  40   objective = 1.184   E0 = 0.0622   H/Hmax = +0.032   delta(T) on search grid = 0.127   (82s)
+  iter  45   objective = 1.170   E0 = 0.0636   H/Hmax = +0.032   delta(T) on search grid = 0.125   (92s)
+  iter  50   objective = 1.162   E0 = 0.0645   H/Hmax = +0.032   delta(T) on search grid = 0.123   (102s)
+  iter  55   objective = 1.158   E0 = 0.0650   H/Hmax = +0.032   delta(T) on search grid = 0.123   (112s)
+  iter  59   objective = 1.156   E0 = 0.0653   H/Hmax = +0.032   delta(T) on search grid = 0.122   (120s)
+best on the search grid: critical norm |u0|_{H^1/2} (constraint met) = 0.0487
+
+verification at 64^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 64^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.6343  (2dx = 0.1963)   alpha_s = 2.62
+      critical norm |u0|_{H^1/2} = 0.6580; tail energy fraction at 64^3 = 3.70e-12 (cascade reached this grid's cutoff: no)
+  kida-pelz      at 64^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.4579  (2dx = 0.1963)   alpha_s = 2.45
+      critical norm |u0|_{H^1/2} = 0.4755; tail energy fraction at 64^3 = 1.69e-07 (cascade reached this grid's cutoff: no)
+  abc+10%        at 64^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.7398  (2dx = 0.1963)   alpha_s = 2.70
+      critical norm |u0|_{H^1/2} = 0.8515; tail energy fraction at 64^3 = 1.42e-13 (cascade reached this grid's cutoff: no)
+  FOUND          at 64^3:  Z(T)/Z0 = 1.004   E(T)/E0 = 1.000000   delta(T) = 0.7472  (2dx = 0.1963)   alpha_s = 2.32
+      critical norm |u0|_{H^1/2} = 0.0709; tail energy fraction at 64^3 = 5.61e-10 (cascade reached this grid's cutoff: no)
+
+REGISTERED  minimal-norm cascading datum from the 32^3 search: |u0|_{H^1/2} = 0.0709; its cascade reaches the 64^3 cutoff: NO (delta 0.747 > 2dx 0.196)   (registered prediction: this norm rises with the search resolution)
+
+verification at 96^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 96^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5570  (2dx = 0.1309)   alpha_s = 2.58
+      critical norm |u0|_{H^1/2} = 0.6580; tail energy fraction at 96^3 = 1.37e-16 (cascade reached this grid's cutoff: no)
+  FOUND          at 96^3:  Z(T)/Z0 = 1.004   E(T)/E0 = 1.000000   delta(T) = 0.6820  (2dx = 0.1309)   alpha_s = 2.30
+      critical norm |u0|_{H^1/2} = 0.0709; tail energy fraction at 96^3 = 2.33e-15 (cascade reached this grid's cutoff: no)
+
+REGISTERED  minimal-norm cascading datum from the 32^3 search: |u0|_{H^1/2} = 0.0709; its cascade reaches the 96^3 cutoff: NO (delta 0.682 > 2dx 0.131)   (registered prediction: this norm rises with the search resolution)
+
+verification at 128^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 128^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5290  (2dx = 0.0982)   alpha_s = 2.61
+      critical norm |u0|_{H^1/2} = 0.6580; tail energy fraction at 128^3 = 2.24e-20 (cascade reached this grid's cutoff: no)
+  FOUND          at 128^3:  Z(T)/Z0 = 1.004   E(T)/E0 = 1.000000   delta(T) = 0.6441  (2dx = 0.0982)   alpha_s = 2.32
+      critical norm |u0|_{H^1/2} = 0.0709; tail energy fraction at 128^3 = 5.44e-20 (cascade reached this grid's cutoff: no)
+
+REGISTERED  minimal-norm cascading datum from the 32^3 search: |u0|_{H^1/2} = 0.0709; its cascade reaches the 128^3 cutoff: NO (delta 0.644 > 2dx 0.098)   (registered prediction: this norm rises with the search resolution)
