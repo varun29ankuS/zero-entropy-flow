@@ -513,6 +513,30 @@ grow with the stretching. Read with the Lyapunov result above, the two say the s
 local functional cannot see the term that decides the future, and the fields that defeat it are the ones where
 that term is weakest.
 
+## Keep the state, track the dissipation: the CKN concentration exponent
+
+Navier-Stokes carries its state by an exact transport and leaks energy only through nu |grad u|^2, whose time
+integral is bounded a priori by E(0). Caffarelli, Kohn and Nirenberg (1982) turned that into the strongest partial
+result there is: a point is regular unless the dissipation in the parabolic cylinder of radius r around it is at
+least eps r, so the singular set has parabolic dimension at most one. `ckn_exponent.py` measures how the dissipation
+actually concentrates around the strongest vortex along a flow, D(r) ~ r^alpha over a ladder of r (uniform smooth
+dissipation: alpha = 5; a sheet: 4; a tube: 3; CKN-critical: 1), reporting a radius only once the cylinder fits
+inside the elapsed time. 64^3, nu = 1e-3, same initial enstrophy:
+
+```
+                     fit alpha (r = 2-6 cells)     smallest resolved pair (3 -> 4 cells)    over t = 0.4 .. 1.0
+Taylor-Green         5.4                           4.4                                      flat, Z x 1.1
+searcher's field     4.5 - 4.6                     3.6 - 3.8                                flat, Z x 2.8, max|w| x 3
+```
+
+The adversary's field concentrates its dissipation like sheets, a full exponent below Taylor-Green at the smallest
+resolved scale, and the exponent does not fall while the enstrophy nearly triples: three and a half exponents from
+the critical value and not moving toward it. This is the sixth view of the same flow (strip, direction coherence,
+projection, pressure share, helicity, and now dissipation concentration), and they say one thing between them: the
+searcher makes enstrophy grow by building sheets in the helicity-free regime where the global part of the pressure
+stays weak, and the projection keeps the sheets from sharpening into anything a singularity needs. The exponent is
+also the first search objective that points at the theorem itself: minimise alpha rather than maximise enstrophy.
+
 ## Tao's wall, in pictures: an energy-conserving equation that provably blows up
 
 Theorem 4 (Tao 2016) says that the exact structure this repository verifies - energy conservation, the scaling, the

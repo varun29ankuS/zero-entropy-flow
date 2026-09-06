@@ -101,6 +101,11 @@ at 24^3: adversary violations +0.40, +2.40, +0.71 (relative dM/dt) with no closi
 never violate. Refuted by: a run in which the adversary's best violation falls below 1e-3 for two consecutive
 rounds (which would yield a candidate inequality, not a theorem). Test: `python lyapunov_search.py`.
 
+**C16. The fastest-growing field found concentrates dissipation like sheets, not like a singularity.** CKN exponent
+alpha = 4.5-4.6 (3.6-3.8 at the smallest resolved pair) at 64^3, flat over the window while Z x 2.8; Taylor-Green
+5.4 (4.4). Refuted by: alpha falling toward 1 with time or with resolution for any field found by the searcher.
+Test: `IC=found N=64 NU=1e-3 python ckn_exponent.py`.
+
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
 
