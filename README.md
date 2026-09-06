@@ -428,6 +428,37 @@ singularity is moving away from the real axis at a slowing rate, exactly as the 
 predicts, and that a claim of a singularity from either flow would have to come from beyond where this instrument
 can see.
 
+## Searching for the missing functional, with an adversary in the loop
+
+Hypothesis H needs a functional M(u) >= Z that never increases along Navier-Stokes trajectories. Theorem 4 says it
+must be built from what Tao averaged away - local structure in physical space - so `lyapunov_search.py` looks for
+one there: M = Z exp(Phi), Phi an enstrophy-weighted average of a small network over eight dimensionless pointwise
+features of the vorticity and strain fields (stretching rate along the vorticity, strain magnitude and determinant,
+direction roughness |grad xi|, local enstrophy and energy density, two alignment measures). No grid quantity enters,
+so the trivial truncated-system bound is unavailable. dM/dt is the exact Lie derivative by autograd. After each
+training round the differentiable solver searches initial data for the trajectory along which M grows fastest, and
+those states join the training set. Registered verdict: PASS only if the final adversary and the held-out classical
+flows show no violation above 1e-3.
+
+```
+24^3, nu = 2e-3, T = 0.6, Z0 = 0.375, three rounds (results/lyapunov_24_local.txt)
+round   training worst   held-out worst (Kida-Pelz, random)   adversary's best violation (relative dM/dt)
+  0        -0.020           -0.081                              +0.40
+  1        -0.051           -0.283                              +2.40
+  2        -0.039           -0.076                              +0.71
+feature sensitivity of the learned Phi:  |w|^2/2Z 1.08,  xi.S.xi/sqrt Z 0.33,  |S|^2/Z 0.22,  |grad xi|/k_rms 0.09, ...
+REGISTERED -> FAIL
+```
+
+Reading: the learner finds, every round, a local M that decreases along every classical flow and every previous
+counterexample - and the adversary finds, every round, a new smooth low-k field along which it grows at 40-240% per
+unit time. No trend toward closure in three rounds. The candidate leans on exactly the Constantin-Fefferman
+quantities (local enstrophy density, stretching rate along the vorticity, strain magnitude), which is where a proof
+would have to live; the search says that within this class - bounded, local, first-derivative features, one
+time unit - the adversary always has a move. A four-round and a 32^3 run are on CI. This is feedback, not
+imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
+a human would need to see before trying to.
+
 ## Tao's wall, in pictures: an energy-conserving equation that provably blows up
 
 Theorem 4 (Tao 2016) says that the exact structure this repository verifies - energy conservation, the scaling, the

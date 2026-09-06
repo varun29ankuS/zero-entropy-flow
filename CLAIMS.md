@@ -95,6 +95,12 @@ reliable window and delta reaches zero at t* = 0.5585 with energy conserved to 3
 64/96/128^3 it falls by half. Refuted by: a resolution at which the Kida-Pelz decay rate rises, or a choice of the
 fit range that makes the dyadic rate flat. Test: `python dyadic.py`, `IC=kp N=128 python strip_tracker.py`.
 
+**C15 (negative). Within the class of bounded local functionals M = Z exp(Phi), Phi a learned enstrophy-weighted
+average of pointwise vorticity/strain features, an adversary finds a violating trajectory every round.** Three rounds
+at 24^3: adversary violations +0.40, +2.40, +0.71 (relative dM/dt) with no closing trend; held-out classical flows
+never violate. Refuted by: a run in which the adversary's best violation falls below 1e-3 for two consecutive
+rounds (which would yield a candidate inequality, not a theorem). Test: `python lyapunov_search.py`.
+
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
 
