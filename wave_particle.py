@@ -112,6 +112,21 @@ else:
     pr, pq = prod(real), prod(rand)
     print("real        %.5f     %.5f     %.5f     %+.4e" % (1, 1, 1, pr))
     print("randomised  %.5f     %.5f     %.5f     %+.4e     ratio %.3f  -> %s" % (Eq / Er, Z(rand) / Z(real), P(rand) / P(real), pq, abs(pq / pr), "PASS: no interference, no cascade" if abs(pq / pr) < 0.2 else "FAIL"))
+    # T4: scale-resolved interference - randomise only the phases ABOVE a cutoff k_c (or only BELOW it) and measure
+    # the palinstrophy production that survives: where in scale does the cascade's coherence live?
+    KM = np.sqrt(k2)
+    print("T4  phases randomised only above k_c (large scales kept) / only below k_c (small scales kept): surviving production ratio")
+    print("      k_c     above k_c randomised    below k_c randomised")
+    for kc in (4, 8, 16, 32, 64):
+        out = []
+        for mode in ("above", "below"):
+            mask = (KM > kc) if mode == "above" else (KM <= kc)
+            ph2 = np.where(mask, phase, 1.0)
+            r2 = real * ph2
+            r2 = 0.5 * (r2 + np.conj(np.roll(np.flip(r2, (0, 1)), 1, (0, 1))))
+            r2 = r2 * np.abs(real) / np.maximum(np.abs(r2), 1e-300)
+            out.append(abs(prod(r2) / pr))
+        print("      %3d       %.3f                  %.3f" % (kc, out[0], out[1]), flush=True)
     # then let both run on for dt = 0.5 and 1.0: the randomised field re-develops correlations
     print("   dt     real: Z/Z0   P/P0      randomised: Z/Z0   P/P0     production ratio (randomised/real)")
     wr, wq = real.copy(), rand.copy(); Zr0, Zq0, Pr0, Pq0 = Z(wr), Z(wq), P(wr), P(wq); t = 0.0
