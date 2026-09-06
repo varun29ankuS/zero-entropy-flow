@@ -31,7 +31,9 @@ DMIN = float(os.environ.get("DMIN", 0.0))        # if > 0: penalise analyticity-
 DW = float(os.environ.get("DW", 20.0))
 CKPT = int(os.environ.get("CKPT", 1))
 TAILF = float(os.environ.get("TAILF", 1e-4))     # OBJ=minimal: require energy fraction in the top sixth of retained modes >= TAILF at T (floor-proof cascade criterion)
-MINW = float(os.environ.get("MINW", 50.0))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
+MINW = float(os.environ.get("MINW", 50.0))
+SMAX = float(os.environ.get("SMAX", 0.4))         # OBJ=quiet: cap on the global (traceless) share of the pressure Hessian on the high-vorticity set at T
+SW = float(os.environ.get("SW", 200.0))            # gradient checkpointing per step (memory ~ N^3 x steps instead of x stages x steps)
 dev = "cpu"
 
 # ------------------------------------------ torch solver (differentiable) ------------------------------------------
@@ -123,6 +125,21 @@ def conc_exponent(U):
     lr = torch.log(torch.tensor(rs))
     lD = torch.log(torch.stack(Ds))
     return ((lr - lr.mean()) * (lD - lD.mean())).sum() / ((lr - lr.mean()) ** 2).sum()
+
+
+def pressure_share(U):
+    """global share of the pressure Hessian, <|P_dev|^2>/<|P|^2> on the high-vorticity set (|w| > 0.5 max), differentiable"""
+    Ud = [Ui * DEAL for Ui in U]
+    G = [[ifft(1j * K[i] * Ud[j]).real for j in range(3)] for i in range(3)]
+    src = fft(sum(G[i][j] * G[j][i] for i in range(3) for j in range(3)))
+    ph = src / K2S * DEAL
+    Pm = [[ifft(-K[i] * K[j] * ph).real for j in range(3)] for i in range(3)]
+    trP = Pm[0][0] + Pm[1][1] + Pm[2][2]
+    p2 = sum(Pm[i][j] ** 2 for i in range(3) for j in range(3))
+    dev2 = p2 - trP ** 2 / 3.0
+    w2 = sum(ifft(1j * K[a] * Ud[b] - 1j * K[b] * Ud[a]).real ** 2 for a, b in ((1, 2), (2, 0), (0, 1)))
+    high = (w2 > 0.25 * w2.max()).to(torch.float64).detach()
+    return (dev2 * high).sum() / ((p2 * high).sum() + 1e-30)
 
 
 def field_from_params(P, Z0):
@@ -251,6 +268,11 @@ for it in range(ITERS):
         UTp = rollout(Up, T)
         growth = torch.sqrt(sum(((ifft(UTp[i] - UTb[i]).real) ** 2).mean() for i in range(3))) / (eps * torch.sqrt(sum((ifft(U0[i]).real ** 2).mean() for i in range(3))))
         loss = -torch.log(growth)
+    elif OBJ == "quiet":
+        # local must move the global? maximise enstrophy growth while the global share of the pressure Hessian stays <= SMAX
+        growth = enstrophy(UT) / Z0
+        share = pressure_share(UT)
+        loss = -torch.log(growth) + SW * torch.relu(share - SMAX) ** 2
     elif OBJ == "minimal":
         # the minimal blow-up datum (Rusin-Sverak 2011): the smallest critical norm |u0|_{H^1/2} whose flow still cascades
         # to the cutoff by T (delta(T) <= DTARGET). Fixed Z0 normalisation is dropped here: Z0 sets the scale, the
@@ -289,7 +311,7 @@ for it in range(ITERS):
     if score > best[0] and (OBJ != "helicity" or HELMODE != "project" or abs(hel_of(P) - HEL) < 1e-3):
         best = (score, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
-        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), time.time() - t0), flush=True)
+        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f%s   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), ("   pressure global share = %.3f" % pressure_share(UT).item()) if OBJ == "quiet" else "", time.time() - t0), flush=True)
 if best[1] is None:
     best = (growth.item(), [p.detach().clone() for p in P])
 print("best on the search grid: %s = %.4f" % ("critical norm |u0|_{H^1/2} (constraint met)" if OBJ == "minimal" else "amplification", (-best[0] if OBJ == "minimal" else best[0])))
