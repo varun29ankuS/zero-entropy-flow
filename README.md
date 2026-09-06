@@ -609,6 +609,20 @@ with every phase randomised - identical spectrum, energy and enstrophy - has its
 factor of 250 (ratio 0.004), then regrows its phase correlations within a quarter time unit and cascades at the
 original rate. The energy is in the amplitudes; the cascade is interference.
 
+## Frequency matching: does incommensurability protect a flow?
+
+Quasicrystals form because atoms hold two incommensurate lengths no periodic arrangement can satisfy at once. Does
+data whose two scales cannot lock cascade more slowly or shock later? `frequency_matching.py`, registered prediction
+"no": Conway's local-isomorphism property means every local configuration recurs, so the worst case is not avoided,
+only relocated. 1-D Burgers, exact, equal energy: the harmonic pair (5, 10) has shock time 0.097 at its best phase and
+0.067 at its worst (spread 1.46x); the incommensurate pair (5, 7 ~ sqrt 2) has 0.086 and 0.083 (spread 1.03x). Both
+reach the fully aligned slope k + q somewhere; the incommensurate pair reaches it *whatever the phase*. Aperiodic
+completeness is the reason it cannot be a shield: it guarantees the worst configuration is present. In 2-D the
+question turned out not to be cleanly posable with two modes: a first design (5,10) versus (5,7) was confounded by
+wavenumber content and is withdrawn; the fair design - two waves of identical |k| at 90, 53 and 37 degrees - gave
+nine identical runs with no cascade at all, because w = k^2 psi makes any such field an exact steady state of 2-D
+Euler (equal-magnitude waves do not interfere in 2-D). Recorded as a null with its reason.
+
 ## The blow-up type, in the frame the theorems use
 
 The combined CKN / Seregin-Sverak / KNSS program zooms into a would-be singularity and asks for its type: max|w| ~
