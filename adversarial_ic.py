@@ -142,6 +142,25 @@ def pressure_share(U):
     return (dev2 * high).sum() / ((p2 * high).sum() + 1e-30)
 
 
+def pressure_sign(U):
+    """<xi . P_dev . xi> / <xi . S^2 . xi> on the high-vorticity set: negative = the global pressure Hessian pushes WITH the
+    stretching along the vorticity (helps), positive = against (fights). Reported, not optimised."""
+    Ud = [Ui * DEAL for Ui in U]
+    G = [[ifft(1j * K[i] * Ud[j]).real for j in range(3)] for i in range(3)]
+    S = [[0.5 * (G[i][j] + G[j][i]) for j in range(3)] for i in range(3)]
+    src = fft(sum(G[i][j] * G[j][i] for i in range(3) for j in range(3)))
+    ph = src / K2S * DEAL
+    Pm = [[ifft(-K[i] * K[j] * ph).real for j in range(3)] for i in range(3)]
+    trP = Pm[0][0] + Pm[1][1] + Pm[2][2]
+    w = [G[1][2] - G[2][1], G[2][0] - G[0][2], G[0][1] - G[1][0]]
+    wmag = torch.sqrt(sum(wi**2 for wi in w) + 1e-30)
+    xi = [wi / wmag for wi in w]
+    xiPxi = sum(xi[i] * (Pm[i][j] - (trP / 3 if i == j else 0)) * xi[j] for i in range(3) for j in range(3))
+    xiS2xi = sum(xi[i] * S[i][k] * S[k][j] * xi[j] for i in range(3) for j in range(3) for k in range(3))
+    high = wmag > 0.5 * wmag.max()
+    return (xiPxi[high].mean() / (xiS2xi[high].mean() + 1e-30)).item()
+
+
 def field_from_params(P, Z0):
     """P: 3 real tensors [N,N,N] -> low-k, divergence-free, enstrophy-normalised spectral velocity"""
     U = [fft(Pi) * LOWK for Pi in P]
@@ -309,7 +328,7 @@ for it in range(ITERS):
     if score > best[0] and (OBJ != "helicity" or HELMODE != "project" or abs(hel_of(P) - HEL) < 1e-3):
         best = (score, [p.detach().clone() for p in P])
     if it % 5 == 0 or it == ITERS - 1:
-        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f%s   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), ("   pressure global share = %.3f" % pressure_share(UT).item()) if OBJ == "quiet" else "", time.time() - t0), flush=True)
+        print("  iter %3d   objective = %.3f   E0 = %.4f   H/Hmax = %+.3f   delta(T) on search grid = %.3f%s   (%.0fs)" % (it, g, energy(U0).item(), (helicity(U0) / (2 * torch.sqrt(energy(U0) * Z0))).item(), delta_torch(UT).item() if OBJ != "jacobi" else float("nan"), ("   pressure global share = %.3f   sign <xi.Pdev.xi>/<xi.S2.xi> = %+.3f" % (pressure_share(UT).item(), pressure_sign([u.detach() for u in UT]))) if OBJ == "quiet" else "", time.time() - t0), flush=True)
 if best[1] is None:
     best = (growth.item(), [p.detach().clone() for p in P])
 print("best on the search grid: %s = %.4f" % ("critical norm |u0|_{H^1/2} (constraint met)" if OBJ == "minimal" else "amplification", (-best[0] if OBJ == "minimal" else best[0])))

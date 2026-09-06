@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | frequency_matching | memory_paths3d | interference | minimal_datum | quiet_pressure | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | blowup_type | frequency_matching | memory_paths3d | interference | minimal_datum | quiet_pressure | quiet_pressure2 | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -174,6 +174,11 @@ jobs:
         if: ${{ github.event.inputs.which == 'quiet_pressure' }}
         run: |
           for smax in 0.5 0.4 0.3; do OBJ=quiet SMAX=$smax N=32 T=1.0 ITERS=60 NVERS=64,96 TAG=quiet_$smax python -u adversarial_ic.py 2>/dev/null | tee results/quiet_pressure_$smax.txt; done
+      - name: quiet_pressure2
+        if: ${{ github.event.inputs.which == 'quiet_pressure2' }}
+        run: |
+          for smax in 0.5 0.45 0.4 0.35 0.3; do OBJ=quiet SMAX=$smax N=48 T=1.0 ITERS=40 NVERS=96 TAG=quiet48_$smax python -u adversarial_ic.py 2>/dev/null | tee results/quiet48_pressure_$smax.txt; done
+          for T in 0.5 1.5; do for smax in 0.5 0.4 0.3; do OBJ=quiet SMAX=$smax N=32 T=$T ITERS=60 NVERS=64 TAG=quiet32_T${T}_$smax python -u adversarial_ic.py 2>/dev/null | tee results/quiet32_T${T}_pressure_$smax.txt; done; done
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
