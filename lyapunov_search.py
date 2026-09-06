@@ -34,6 +34,7 @@ ADV_ITERS = int(os.environ.get("ADV_ITERS", 15))
 B = float(os.environ.get("B", 4.0))
 TOL = float(os.environ.get("TOL", 1e-3))
 PHESS = int(os.environ.get("PHESS", 0))          # PHESS=1: add three pressure-Hessian features (nonlocal: -lap p = du_i/dx_j du_j/dx_i solved spectrally)
+GLOBAL = int(os.environ.get("GLOBAL", 0))        # GLOBAL=1: broadcast global scalars (the state of the cascade) to every point: global decides the law, local applies it
 HEADS = int(os.environ.get("HEADS", 1))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
                                                  # each candidate only has to decrease where it is the one in force; a switch can only lower M
 KMAX_IC = 3
@@ -46,6 +47,7 @@ K2S = K2.clone()
 K2S[0, 0, 0] = 1.0
 DEAL = ((KX.abs() < N / 3) & (KY.abs() < N / 3) & (KZ.abs() < N / 3)).to(torch.float64)
 LOWK = ((K2 <= KMAX_IC**2) & (K2 > 0)).to(torch.float64)
+KMAG_T = torch.sqrt(K2)
 x = torch.linspace(0, 2 * math.pi, N + 1)[:-1]
 X, Y, Z_ = torch.meshgrid(x, x, x, indexing="ij")
 
@@ -108,7 +110,7 @@ def energy(U):
 
 
 FEATURES = ["stretch xi.S.xi / sqrt Z", "|S|^2 / Z", "det S / Z^1.5", "xi.S^2.xi / |S|^2", "|grad xi| / k_rms",
-            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"] + (["xi.P.xi / Z", "|P|^2 / Z^2", "tr(P S) / (|P| |S|)"] if PHESS else [])
+            "|w|^2 / 2Z", "|u|^2 / 2E", "(xi.S.xi)^2 / |S|^2"] + (["xi.P.xi / Z", "|P|^2 / Z^2", "tr(P S) / (|P| |S|)"] if PHESS else []) +            (["G: log Z", "G: helicity / 2 sqrt(EZ)", "G: log k_rms", "G: palinstrophy / Z^2", "G: max|w| / sqrt Z", "G: strip delta"] if GLOBAL else [])
 NF = len(FEATURES)
 
 
@@ -148,6 +150,17 @@ def features(U):
         p2 = torch.einsum("...ij,...ij->...", Pm, Pm) + 1e-12 * Z**2
         trPS = torch.einsum("...ij,...ij->...", Pm, S)
         feats += [xiPxi / Z, p2 / Z**2, trPS / torch.sqrt(p2 * s2)]
+    if GLOBAL:
+        H = sum((ui * wi).mean() for ui, wi in zip(u, w))
+        pal = 0.5 * sum((ifft(1j * K[d] * fft(wi)).real ** 2).mean() for wi in w for d in range(3))
+        spec_e = 0.5 * sum(Ui.abs() ** 2 for Ui in Ud) / N**6
+        nb = int(N / 3)
+        ks = torch.arange(nb // 2, nb, dtype=torch.float64)
+        shell = torch.stack([spec_e[(KMAG_T >= n - 0.5) & (KMAG_T < n + 0.5)].sum() for n in ks])
+        y = torch.log(shell + 1e-30)
+        slope = ((ks - ks.mean()) * (y - y.mean())).sum() / ((ks - ks.mean()) ** 2).sum()
+        glob = [torch.log(Z), H / (2 * torch.sqrt(E * Z) + 1e-30), 0.5 * torch.log(Z / (E + 1e-30)), pal / Z**2, wmag.max() / sZ, -slope / 2]
+        feats += [gq.expand_as(wmag) for gq in glob]
     f = torch.stack(feats, 0)
     return f, wmag**2 / (wmag**2).sum(), Z
 
@@ -215,7 +228,7 @@ def random_ic(seed):
 
 
 EVERY = T / 8
-print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else "", "  + pressure-Hessian features" if PHESS else ""), flush=True)
+print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s%s%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else "", "  + pressure-Hessian features" if PHESS else "", "  + global scalars" if GLOBAL else ""), flush=True)
 cands = {k: normalise(v) for k, v in classical().items()}
 train_ics = {"random-%d" % s: random_ic(s) for s in range(4)}
 train_ics["taylor-green"] = cands["taylor-green"]
@@ -320,4 +333,4 @@ for name, s in sorted(zip(FEATURES, sens.tolist()), key=lambda z: -z[1]):
     print("   %-28s %.3e" % (name, s))
 print("\nREGISTERED  last adversary violation %+.3e, held-out worst %+.3e, tolerance %.0e -> %s" % (
     w_adv, w_held, TOL, "PASS: no violation found (a candidate, not a theorem)" if max(w_adv, w_held) < TOL else "FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases"))
-torch.save(g.state_dict(), "results/lyapunov_g_%s.pt" % os.environ.get("TAG", "h%d_p%d" % (HEADS, PHESS)))
+torch.save(g.state_dict(), "results/lyapunov_g_%s.pt" % os.environ.get("TAG", "h%d_p%d_g%d" % (HEADS, PHESS, GLOBAL)))
