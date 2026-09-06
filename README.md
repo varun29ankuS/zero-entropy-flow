@@ -416,6 +416,20 @@ Kida-Pelz        96   0.15 - 0.80       0.44            0.46          0.92      
 Kida-Pelz       128   0.15 - 0.85       0.42            0.45          0.91        1.14           4.1 -> 1.9              exponential
 ```
 
+Extended to 160^3 and 192^3 (`strip_hi`): tau = 0.41 and 0.375 (second half 0.50, 0.58), decay rate flat at 2.0,
+linear t* retreating to 1.24 and 1.34. Five resolutions agree. The front-arrival test - the time at which the
+cascade reaches the grid's reliability line 2dx = 4pi/N, which converges to t* for a real singularity (the dyadic
+model below) and grows without bound otherwise:
+
+```
+   N^3     96      128     160     192       slope per ln N     prediction for 256^3
+   t_arr   0.830   0.880   0.920   0.950     0.17, 0.18, 0.17   0.999
+```
+
+Logarithmic growth with a constant slope over four resolutions: no saturation. (The slope is below tau, so a single
+exponential delta is too simple a model of the tail; the free-prefactor fit is unstable even with 32 shells and is
+not used.)
+
 Kida-Pelz is the case the literature argued about (Boratav and Pelz 1994 for a singularity; Hou and Li 2006, 2008
 against). Here the exponential time constant is converged across 64/96/128^3 (0.40, 0.44, 0.42; second half
 0.44, 0.46, 0.45), the local decay rate falls by half inside every window instead of rising, and the linear
@@ -587,6 +601,11 @@ projection, pressure share, helicity, and now dissipation concentration), and th
 searcher makes enstrophy grow by building sheets in the helicity-free regime where the global part of the pressure
 stays weak, and the projection keeps the sheets from sharpening into anything a singularity needs. The exponent is
 also the first search objective that points at the theorem itself: minimise alpha rather than maximise enstrophy.
+Done (`OBJ=ckn`, 64^3 search, 128^3 verification, `results/sheet_conjecture_64.txt`): rewarded for concentration the
+searcher builds something sharper than a sheet - spatial exponent alpha_s = 1.25 on the search grid, 1.36 at 128^3
+(a tube; uniform is 3, a sheet 2) - with only 1.8x enstrophy growth, and it is unresolved at 128^3 (delta 0.078 vs
+0.098), registered FAIL. So growth buys sheets and concentration buys tubes, and neither is resolved. The sheet
+conjecture stands for the enstrophy objective; the stronger claim, that nothing sharper can be built, is refuted.
 
 ## Tao's wall, in pictures: an energy-conserving equation that provably blows up
 
