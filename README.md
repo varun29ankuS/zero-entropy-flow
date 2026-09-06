@@ -428,6 +428,34 @@ singularity is moving away from the real axis at a slowing rate, exactly as the 
 predicts, and that a claim of a singularity from either flow would have to come from beyond where this instrument
 can see.
 
+## Tao's wall, in pictures: an energy-conserving equation that provably blows up
+
+Theorem 4 (Tao 2016) says that the exact structure this repository verifies - energy conservation, the scaling, the
+quadratic skew nonlinearity - is not enough to rule out a singularity, because an equation with exactly that
+structure blows up. The simplest such equation is the dyadic shell model of Katz and Pavlovic (2005), and its
+inviscid blow-up is a theorem (Katz-Pavlovic 2005; Kiselev-Zlatos 2005). `dyadic.py` runs it through the same
+instrument: RK4 with exact viscous integrating factor, energy drift reported, the analyticity width delta(t)
+fitted from the shell spectrum with a reliability rule, and the same two decay laws fitted inside the window that
+`strip_tracker.py` fits for Kida-Pelz.
+
+![The dyadic model and Kida-Pelz Euler through the same diagnostic](figures/taos_wall.png)
+
+```
+                              energy drift    delta(t)                      decay rate across window     verdict
+dyadic, nu = 0, 34 shells     3e-8            straight to 0 at t* = 0.5585   7.8 -> 1.4e6  (x 178000)     singularity (theorem)
+dyadic, nu = 1e-6 / 1e-4      (dissipates)    front stalls at shell 12 / 7   turns negative               no singularity
+Kida-Pelz Euler 64/96/128^3   1e-8            exponential, tau 0.42          4.1 -> 1.9  (falls by half)  no singularity indicated
+```
+
+Three things this shows. Energy is conserved to 3e-8 while the enstrophy goes as (t* - t)^-1.7 to the truncation:
+zero numerical entropy production is a property of the *instrument*, not evidence about the *equation*. The decay
+rate of delta is the discriminator that separates the two cases by five orders of magnitude, so when it falls for
+Kida-Pelz that is a statement, not noise. And the dyadic model does not satisfy Liouville (div F = -sum k_{j+1}
+a_{j+1}, state-dependent, printed on every row), while the true truncated Euler system does exactly: the phase-volume
+theorem is one of the structural properties the true equation has and the blow-up models lack - along with locality
+in physical space, particle paths, and the geometry of stretching, which are the properties Tao had to average away.
+A proof has to be made of those.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by

@@ -1,0 +1,23 @@
+dyadic model, J=34 shells (k_max = 2^33), nu=0, CFL 0.050; reliability rule delta > 4/k_max = 4.7e-10
+   t        E/E0 - 1        Z = sum k^2 a^2     front shell   delta(t)     div F (Liouville check)
+ 0.01667   +2.95e-09       2.1053e+00          1        nan     -1.136e+00
+ 0.06136   +1.08e-08       2.4537e+00          1        1.136e+00     -1.533e+00
+ 0.10109   +1.70e-08       2.8765e+00          1        8.697e-01     -1.932e+00
+ 0.16152   +2.34e-08       3.8276e+00          1        6.109e-01     -2.661e+00
+ 0.20736   +2.64e-08       4.9234e+00          1        4.700e-01     -3.358e+00
+ 0.25052   +2.92e-08       6.4504e+00          2        3.641e-01     -4.185e+00
+ 0.30396   +3.15e-08       9.5543e+00          2        2.570e-01     -5.572e+00
+ 0.35065   +3.24e-08       1.4476e+01          3        1.810e-01     -7.348e+00
+ 0.40448   +3.27e-08       2.6654e+01          3        1.100e-01     -1.071e+01
+ 0.45297   +3.24e-08       5.7093e+01          4        6.011e-02     -1.667e+01
+ 0.50038   +3.18e-08       1.8596e+02          6        2.382e-02     -3.195e+01
+ 0.55008   +3.11e-08       6.3365e+03          9        1.548e-03     -2.006e+02
+ 0.56048   +3.09e-08       1.0467e+12         31        8.586e-10     -2.634e+06   <-- front at the truncation: stop (delta > 4/k_max)
+energy drift over the run: 3.1e-08   (0.1s)
+reliable window: t in [0.3357, 0.5605] (365 samples)
+exponential fit  delta = 1.11e+15 exp(-t/0.0118)   relative rms residual 4.3172
+linear fit       delta = 0.714 (0.5565 - t)     relative rms residual 0.7056   -> t* = 0.5565
+second half only: exponential tau = 0.0062;  linear t* = 0.5585
+local decay rate -d log(delta)/dt at start / middle / end of window: 7.844 / 3525.937 / 1398781.828  (rising = approaching a singularity)
+enstrophy growth Z ~ (t* - t)^-1.73 with t* = 0.5585 from the linear fit
+VERDICT: the decay rate of delta rises 178332x across the window (exponential decay would keep it constant): singularity at t* = 0.5585 (second-half linear fit) - a theorem for the inviscid model

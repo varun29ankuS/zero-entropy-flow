@@ -89,6 +89,12 @@ beats Taylor-Green (1.266 vs 1.112); the others cascade to the cutoff and are ou
 (The first version of this claim, from a penalty method with a sqrt 2 error in the bound, read 1.21 / 1.10 / 1.01
 at 0 / 0.71 / 0.99; the penalty was failing to explore. Both are kept in the README table.)
 
+**C14. The strip diagnostic separates a proven singularity from Kida-Pelz by the trend of its decay rate.** On the
+inviscid dyadic model (blow-up is a theorem) the local decay rate -d log(delta)/dt rises 1.8e5-fold inside the
+reliable window and delta reaches zero at t* = 0.5585 with energy conserved to 3e-8; on Kida-Pelz Euler at
+64/96/128^3 it falls by half. Refuted by: a resolution at which the Kida-Pelz decay rate rises, or a choice of the
+fit range that makes the dyadic rate flat. Test: `python dyadic.py`, `IC=kp N=128 python strip_tracker.py`.
+
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
 

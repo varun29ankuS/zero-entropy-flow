@@ -6,3 +6,4 @@ __pycache__/
 .claude/
 adversarial_ic_*.npz
 !results/found/*.npz
+dyadic_run.npz
