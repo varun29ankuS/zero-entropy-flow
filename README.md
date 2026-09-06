@@ -641,6 +641,22 @@ not a convolution. So phase-volume conservation sits on Tao's side of the wall a
 equation has and the averaged one lacks remains the short list Tao averaged away: locality in physical space,
 particle paths, and the geometry of stretching. A proof has to be made of those.
 
+## A boundary of the method, from the recent literature
+
+Wang, Lai, Gomez-Serrano and Buckmaster (arXiv 2509.14185, 2025; 2511.22819) found new families of *unstable*
+self-similar singularities for Boussinesq, IPM and Euler with boundary by searching profile space directly with
+physics-informed networks, and state the hypothesis that unstable singularities are the route for boundary-free
+Euler and Navier-Stokes. An unstable singularity lives on a measure-zero set of initial data. A gradient search from
+generic smooth data - which is what `adversarial_ic.py` is - cannot find one by construction; it finds the fastest
+*growth*, and what it found is sheets and tubes. Every "no singularity indicated" on this page is a statement about
+the flows run and the windows resolved, never about the existence of unstable singularities, which this instrument
+does not look for. Barker (arXiv 2510.20757, 2025-26) gives quantitative bounds near a potential blow-up for Hou's
+approximately axisymmetric Navier-Stokes candidate that are explicitly amenable to numerical testing; that candidate
+lives in a cylinder with a boundary, outside this periodic box, and is the natural next target for an instrument
+built like this one. Shahmurov (arXiv 2604.09949, 2026) proves for axisymmetric model equations that the sign of the
+elliptic response decides blow-up - the physical sign is global, the reversed sign blows up - which is the analytic
+face of the projection experiment above.
+
 ## What this is and is not
 - It is a measurement of an **instrument property**: no artefact dissipation. Numerical searches for self-similar
   blow-up (Hou; Gomez-Serrano, Buckmaster et al. 2022; and later neural-network-assisted searches) are limited by
