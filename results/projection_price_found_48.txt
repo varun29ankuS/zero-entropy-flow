@@ -1,0 +1,25 @@
+found field: results/found\leashed64_dmin030.npz
+IC=found  N=48^3  nu=0  Z0=0.375   2dx = 0.2618
+Burgers (unprojected) exact shock time from the initial gradient: t* = -1/lambda_min(grad u0) = 0.4219
+   t      Euler: E/E0     delta     rate      max|grad u|   |   Burgers: E/E0     delta     rate      max|grad u|   exact A0(I+A0 t)^-1
+ 0.00   1.00000000   -0.0836*     nan     4.983   |   1.00000000   -0.0836*     nan     4.983     4.983
+C:\Users\Varun Sharma\OneDrive\Desktop\zero-entropy-flow\projection_price.py:127: RuntimeWarning: invalid value encountered in log
+  rE = -np.log(dE / dprevE) / 0.1 if dprevE else float("nan")
+C:\Users\Varun Sharma\OneDrive\Desktop\zero-entropy-flow\projection_price.py:128: RuntimeWarning: invalid value encountered in log
+  rB = (-np.log(dB / dprevB) / 0.1 if dprevB else float("nan")) if not stopB else float("nan")
+ 0.10   0.99999997   0.7636      nan     5.477   |   1.00042621   0.6347      nan     5.182     5.243
+ 0.20   0.99999994   0.5823     2.71     5.898   |   1.00170678   0.4114     4.34     5.449     5.415
+ 0.30   0.99999991   0.4817     1.90     6.182   |   1.00390828   0.2883     3.55     6.579     7.725
+ 0.40   0.99999986   0.4189     1.40     6.839   |   1.00765308   0.2138*    2.99     8.691    30.307
+        Burgers strip below 2dx at t = 0.40; exact shock time 0.4219 (the clock stops 95% of the way there)
+ 0.50   0.99999979   0.3756     1.09     7.973   |   stopped at the grid limit (shock)
+ 0.60   0.99999967   0.3408     0.97     8.692   |   stopped at the grid limit (shock)
+ 0.70   0.99999945   0.3056     1.09     9.241   |   stopped at the grid limit (shock)
+ 0.80   0.99999908   0.2613*    1.56    11.446   |   stopped at the grid limit (shock)
+ 0.90   0.99999848   0.2057*    2.39    13.768   |   stopped at the grid limit (shock)
+ 1.00   0.99999789   0.1494*    3.20    15.729   |   stopped at the grid limit (shock)
+ 1.10   0.99999715   0.1065*    3.38    16.912   |   stopped at the grid limit (shock)
+ 1.20   0.99999640   0.0841*    2.36    16.994   |   stopped at the grid limit (shock)
+ 1.30   0.99999547   0.0784*    0.70    16.889   |   stopped at the grid limit (shock)
+ 1.40   0.99999393   0.0779*    0.06    16.345   |   stopped at the grid limit (shock)
+(116s)   * = delta below 2dx, not reliable

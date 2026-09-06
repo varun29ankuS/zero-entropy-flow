@@ -467,6 +467,52 @@ alignment with the strain (`results/lyapunov_24_heads6_local.txt`; runs with `PH
 not imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
 a human would need to see before trying to.
 
+## The price of the projection: what the global does for the local
+
+The nonlinearity of Navier-Stokes, (u.grad)u, is purely local. Euler is that operator followed by the Leray
+projection onto divergence-free fields, and the pressure *is* the projection: it is the only nonlocal thing in the
+equation, decided by a Poisson equation over the whole box. Drop the projection and the equation is 3-D Burgers,
+which blows up in finite time by a theorem (along characteristics the gradient obeys DA/Dt = -A^2, so
+A(t) = A0 (I + A0 t)^-1 exactly and the first shock is at t* = -1/min lambda(A0)). `projection_price.py` runs both
+from the same initial field with the same instrument (results at 48^3, all flows at the same initial enstrophy):
+
+```
+                            Euler (projected)                        Burgers (unprojected, local)
+flow            exact t*    strip decay rate, t=0.2 -> 0.8           strip decay rate      clock stops at    max|grad u| vs exact A0(I+A0 t)^-1
+Taylor-Green    1.000       2.71 -> 1.21  (falling)                  2.77 -> 3.59 (rising)  80% of t*        1.999 / 2.000, 2.490 / 2.500 until the grid fails
+Kida-Pelz       1.277       1.95 -> 0.86  (falling)                  2.65 -> 1.68           71% of t*        1.001 / 1.003, 1.261 / 1.290
+searcher's field 0.422      2.71 -> 1.40  (falling, Z x3)            4.34 -> 2.99           95% of t*        5.449 / 5.415
+```
+
+The unprojected run reproduces the exact characteristics solution to four digits until the grid fails, and its
+clock stops at 71-95% of the exact shock time: a sixth closed-form check, in 3-D, on a blow-up. With the projection
+on, from the same data, the strip's decay rate falls instead of rising in every case. Nothing else differs. Two
+further readings. Energy: Euler conserves it *because* of the projection (the unprojected energy drifts by the
+physical amount 1/2 int |u|^2 div u, up to 0.8% here); the conservation this repository verifies to 1e-14 is a
+consequence of the nonlocal term, not independent of it. And the search: even the adversary's fastest field, whose
+unprojected copy shocks at t = 0.42, is held by the projection to a three-fold enstrophy growth with a falling
+decay rate.
+
+How much of the pressure Hessian is global? Its trace is local (lap p = |w|^2/2 - |S|^2, decided at the point);
+the traceless part is decided by the whole field. Restricted Euler keeps only the local part and blows up
+(Vieillefosse 1982; Cantwell 1992). `pressure_share.py` measures the global share <|P_dev|^2>/<|P|^2> on the
+high-vorticity set:
+
+```
+                    t = 0     0.25    0.5     0.75    1.0       Z(1)/Z0
+Taylor-Green        0.39      0.41    0.49    0.58    0.67      1.11
+Kida-Pelz           0.34      0.34    0.38    0.48    0.57      1.10
+ABC (steady)        0.725     0.725   0.725   0.725   0.725     1.00
+searcher's field    0.52      0.47    0.47    0.49    0.50      3.04
+```
+
+In the classical flows the global share of the pressure Hessian *rises* as the sheets form: the whole box
+increasingly informs each point. In the adversary's field it stays flat at one half while the enstrophy triples.
+That is a measurement of how the searcher wins: it finds data along which the global part of the pressure does not
+grow with the stretching. Read with the Lyapunov result above, the two say the same thing from opposite sides: a
+local functional cannot see the term that decides the future, and the fields that defeat it are the ones where
+that term is weakest.
+
 ## Tao's wall, in pictures: an energy-conserving equation that provably blows up
 
 Theorem 4 (Tao 2016) says that the exact structure this repository verifies - energy conservation, the scaling, the

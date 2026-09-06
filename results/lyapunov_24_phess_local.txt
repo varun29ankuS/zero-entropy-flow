@@ -1,0 +1,5 @@
+lyapunov search: N=24^3  nu=0.002  T=0.60  Z0=0.375  B=4.0  rounds=3  train steps/round=300  adversary iters=15  candidates (heads) = 1  + pressure-Hessian features
+training states: 54 from 6 flows   (4s)
+
+== round 0 ==
+  train   0   mean relu(dM/dt / M)^2 = 4.246e-03   (5s)
