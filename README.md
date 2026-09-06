@@ -607,7 +607,11 @@ the observer's. Two more phase facts from the same script: the same amplitude sp
 t = 0.16 and 0.38 depending on its phases (2000 random phase sets, factor 2.37); and in 2-D a developed turbulent field
 with every phase randomised - identical spectrum, energy and enstrophy - has its palinstrophy production cut by a
 factor of 250 (ratio 0.004), then regrows its phase correlations within a quarter time unit and cascades at the
-original rate. The energy is in the amplitudes; the cascade is interference.
+original rate. The energy is in the amplitudes; the cascade is interference. And the interference is *between* scales
+(`results/wave_particle_2d.txt`, T4): scramble the phases only above a cutoff k_c and only below it, and the two
+halves together retain 9% (k_c = 8), 20% (16), 40% (32) of the cascade - the rest was in phase relations spanning
+the cut. Keeping the large scales alone coherent leaves 0.8%; the small alone, 30%. The cascade is not in the
+large scales or the small; it is the agreement between them, tightest around k = 8-16.
 
 ## Frequency matching: does incommensurability protect a flow?
 
