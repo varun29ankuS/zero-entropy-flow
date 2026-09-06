@@ -654,6 +654,29 @@ time goes to zero, it shocks) and why the analyticity-strip clock works (its dec
 propagation rate). It gives three instruments and a mechanism for a criterion from 1984; it does not give a new
 inequality, and this page does not claim one.
 
+## The constant that is really a function
+
+Navier-Stokes assumes friction -nu Laplacian u with nu a constant. Make it a function and regularity is a theorem:
+Lions (1969) for (-Laplacian)^alpha with alpha >= 5/4 (Tao 2009: 5/4 minus a log); Ladyzhenskaya (1967) for a
+viscosity rising with the strain rate. Real water does both (kinetic regime below the molecular relaxation scale;
+temperature dependence). The constant-nu Laplacian is the one open case. `friction_function.py` runs the searcher's
+antiparallel-sheet field under each (48^3, nu = 2e-3, t = 1):
+
+```
+friction                                       Z(1)/Z0    max|w|(1)    strip delta(1)
+none (Euler)                                   3.04       23.6         0.149
+constant nu, Laplacian (Navier-Stokes)         2.47       20.7         0.177
+hyperviscosity alpha = 1.10                    2.47       20.7         0.179
+hyperviscosity alpha = 1.25 (Lions, regular)   2.46       20.6         0.182
+Ladyzhenskaya nu(|grad u|) (regular)           2.03       18.0         0.213
+```
+
+Friction as a function of the local strain bites at once - it acts on the sheet itself and cuts its growth by a
+third. Friction as a function of scale is invisible here: alpha = 1.25 is provably regular and alpha = 1 is the open
+case, and at this resolution and window they cannot be told apart, because the extra damping lives at scales the
+sheet has not reached. That is the shape of the wall from the side the theorems name: the tie between stretching
+and constant-nu friction is a statement about the limit, which no finite window shows.
+
 ## The blow-up type, in the frame the theorems use
 
 The combined CKN / Seregin-Sverak / KNSS program zooms into a would-be singularity and asks for its type: max|w| ~

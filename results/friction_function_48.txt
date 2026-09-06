@@ -1,0 +1,7 @@
+found field: results/found/leashed64_dmin030.npz
+IC=found at Z0=0.375, N=48^3, T=1.0, nu=0.002; 2dx = 0.2618; initial max|grad u| = 4.98
+A  Navier-Stokes, constant nu, Laplacian   t=0.00 Z/Z0 1.000 max|w|   7.13 delta -0.084   t=0.25 Z/Z0 1.175 max|w|  10.36 delta 0.531   t=0.50 Z/Z0 1.535 max|w|  13.76 delta 0.385   t=0.75 Z/Z0 2.002 max|w|  18.14 delta 0.302   t=1.00 Z/Z0 2.467 max|w|  20.74 delta 0.177   (39s)
+C  hyperviscosity alpha = 1.10 (nu_a matched at k=8) t=0.00 Z/Z0 1.000 max|w|   7.13 delta -0.084   t=0.25 Z/Z0 1.177 max|w|  10.37 delta 0.532   t=0.50 Z/Z0 1.541 max|w|  13.76 delta 0.386   t=0.75 Z/Z0 2.008 max|w|  18.15 delta 0.303   t=1.00 Z/Z0 2.466 max|w|  20.69 delta 0.179   (41s)
+B  hyperviscosity alpha = 1.25 (nu_a matched at k=8) t=0.00 Z/Z0 1.000 max|w|   7.13 delta -0.084   t=0.25 Z/Z0 1.180 max|w|  10.38 delta 0.533   t=0.50 Z/Z0 1.547 max|w|  13.75 delta 0.388   t=0.75 Z/Z0 2.014 max|w|  18.15 delta 0.306   t=1.00 Z/Z0 2.460 max|w|  20.57 delta 0.182   (28s)
+D  Ladyzhenskaya nu0(1 + c|grad u|^1/2), c=0.448 t=0.00 Z/Z0 1.000 max|w|   7.13 delta -0.084   t=0.25 Z/Z0 1.154 max|w|  10.10 delta 0.547   t=0.50 Z/Z0 1.453 max|w|  12.90 delta 0.400   t=0.75 Z/Z0 1.781 max|w|  16.52 delta 0.323   t=1.00 Z/Z0 2.025 max|w|  17.95 delta 0.213   (54s)
+E  Euler (no friction), for reference      t=0.00 Z/Z0 1.000 max|w|   7.13 delta -0.084   t=0.25 Z/Z0 1.200 max|w|  10.53 delta 0.525   t=0.50 Z/Z0 1.632 max|w|  14.35 delta 0.376   t=0.75 Z/Z0 2.266 max|w|  19.51 delta 0.285   t=1.00 Z/Z0 3.040 max|w|  23.61 delta 0.149   (42s)
