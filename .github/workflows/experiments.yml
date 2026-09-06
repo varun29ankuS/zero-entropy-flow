@@ -189,7 +189,7 @@ jobs:
           git config user.email "actions@github.com"
           git add results figures
           git diff --cached --quiet || git commit -m "results: $(date -u +%Y-%m-%dT%H:%MZ) run ${{ github.run_id }}"
-          git pull --rebase origin master && git push
+          git pull --rebase -X theirs origin master && git push
       - uses: actions/upload-artifact@v4
         with:
           name: results-${{ github.run_id }}

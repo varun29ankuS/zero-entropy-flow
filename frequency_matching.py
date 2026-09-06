@@ -67,12 +67,17 @@ else:
         sel = (ks >= NB // 2) & (spec > 1e-300)
         return -np.polyfit(ks[sel], np.log(spec[sel]), 1)[0] / 2 if sel.sum() > 4 else np.nan
 
-    print("2-D, N=%d^2, nu=%g, w0 = A[sin(kx)cos(ky) + sin(qx+phi)cos(qy)] at equal energy; palinstrophy P/P0 and strip delta" % (N, NU))
-    print("%-30s  phi     E/E0(T)    Z/Z0(1) Z/Z0(2) Z/Z0(3)    P/P0(1)  P/P0(2)  P/P0(3)    delta(1)  delta(2)  delta(3)")
+    # FAIR 2-D design: two wavevectors of IDENTICAL magnitude |k| = 5 at different angles, so energy, enstrophy and
+    # palinstrophy are identical at t = 0 and only the phase geometry differs. 90 degrees: (5,0)+(0,5), the harmonic
+    # lattice pair; 53.13 degrees: (5,0)+(3,4); 36.87 degrees: (5,0)+(4,3). (An earlier version compared (5,10) with
+    # (5,7): different wavenumber content, so its faster commensurate cascade was confounded and is withdrawn.)
+    PAIRS2 = {"90 deg (5,0)+(0,5)": (0, 5), "53 deg (5,0)+(3,4)": (3, 4), "37 deg (5,0)+(4,3)": (4, 3)}
+    print("2-D, N=%d^2, nu=%g, w0 = A[sin(5x) + sin(ax + by + phi)], |k| = 5 for both; Z/Z0, P/P0 and strip delta" % (N, NU))
+    print("%-24s  phi     E/E0(T)    Z/Z0(1) Z/Z0(2) Z/Z0(3)    P/P0(1)  P/P0(2)  P/P0(3)    delta(1)  delta(2)  delta(3)")
     t0 = time.time()
-    for name, q in PAIRS.items():
+    for name, (a_, b_) in PAIRS2.items():
         for phi in (0.0, np.pi / 3, 2 * np.pi / 3):
-            w = np.sin(K0 * X) * np.cos(K0 * Y) + np.sin(q * X + phi) * np.cos(q * Y)
+            w = np.sin(K0 * X) + np.sin(a_ * X + b_ * Y + phi)
             wh = fft(w) * deal
             u, v = vel(wh); wh *= 1 / np.sqrt(np.mean(u * u + v * v))
             u, v = vel(wh); E0 = 0.5 * np.mean(u * u + v * v); Z0 = 0.5 * np.mean(ifft(wh).real ** 2)
@@ -85,4 +90,4 @@ else:
                     Ps.append(0.5 * np.mean(ifft(1j * kx * wh).real ** 2 + ifft(1j * ky * wh).real ** 2) / P0)
                     Ds.append(strip(wh))
             u, v = vel(wh); E = 0.5 * np.mean(u * u + v * v)
-            print("%-30s  %.2f    %.5f    %s    %s    %s   (%.0fs)" % (name, phi, E / E0, " ".join("%.3f" % z for z in Zs), " ".join("%8.3f" % p for p in Ps), " ".join("%.3f" % d for d in Ds), time.time() - t0), flush=True)
+            print("%-24s  %.2f    %.5f    %s    %s    %s   (%.0fs)" % (name, phi, E / E0, " ".join("%.3f" % z for z in Zs), " ".join("%8.3f" % p for p in Ps), " ".join("%.3f" % d for d in Ds), time.time() - t0), flush=True)
