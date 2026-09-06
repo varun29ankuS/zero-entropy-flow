@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | lyapunov_beta | sheet_conjecture | strip_hi | jacobi_reverse | lyapunov_attack_beta | memory_paths | lyapunov_attack_r20 | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -139,6 +139,10 @@ jobs:
           N=256 NU=2e-3 PPC=4 T=2 DT=2.5e-3 python -u memory_paths.py 2>/dev/null | tee results/memory_paths_256_ppc4.txt
           N=128 NU=0 PPC=4 T=2 DT=5e-3 python -u memory_paths.py 2>/dev/null | tee results/memory_paths_128_nu0.txt
           N=128 NU=1e-2 PPC=4 T=2 DT=5e-3 python -u memory_paths.py 2>/dev/null | tee results/memory_paths_128_nu1e-2.txt
+      - name: lyapunov_attack_r20
+        if: ${{ github.event.inputs.which == 'lyapunov_attack_r20' }}
+        run: |
+          ATTACK=results/lyapunov_g_ci32_p0_r20.pt N=32 NU=1e-3 T=0.6 ADV_ITERS=60 RESTARTS=5 TRAIN=0 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r20_attack.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
