@@ -627,6 +627,23 @@ wavenumber content and is withdrawn; the fair design - two waves of identical |k
 nine identical runs with no cascade at all, because w = k^2 psi makes any such field an exact steady state of 2-D
 Euler (equal-magnitude waves do not interfere in 2-D). Recorded as a null with its reason.
 
+In 3-D the memory carries a vector that the deformation stretches - Cauchy's formula proper, D w/Dt = (w.grad)u along
+the path - and stretching is the whole 3-D problem. `memory_paths3d.py` runs it on Taylor-Green (results
+`memory3d_*.txt`), enstrophy at t = 1 relative to each method's own start:
+
+```
+                      spectral        particles (Cauchy + jitter, no viscous term)     field error
+32^3  nu = 0          1.1118          1.1029 (2/cell)  1.1023 (3/cell)                 3.4%
+48^3  nu = 0          1.1130          1.1092                                           1.5%
+32^3  nu = 2e-3       1.0960          1.0875                                           3.3%
+48^3  nu = 2e-3       1.0971          1.0942                                           1.9%
+```
+
+The enstrophy growth by vortex stretching is reproduced to 0.3% at 48^3, and the viscous reduction of it (1.6% in the
+spectral run) is reproduced by the Brownian kick alone (1.5%). The error is set by the trilinear read and deposit,
+not by the particle count (3.40% to 3.25% from 2 to 3 per cell, 3.4% to 1.5% from 32^3 to 48^3): the pass criterion
+"error falls with particles" is met only weakly, "falls with resolution" cleanly.
+
 ## The blow-up type, in the frame the theorems use
 
 The combined CKN / Seregin-Sverak / KNSS program zooms into a would-be singularity and asks for its type: max|w| ~
