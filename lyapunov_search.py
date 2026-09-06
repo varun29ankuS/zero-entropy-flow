@@ -33,6 +33,8 @@ TRAIN = int(os.environ.get("TRAIN", 300))
 ADV_ITERS = int(os.environ.get("ADV_ITERS", 15))
 B = float(os.environ.get("B", 4.0))
 TOL = float(os.environ.get("TOL", 1e-3))
+HEADS = int(os.environ.get("HEADS", 1))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
+                                                 # each candidate only has to decrease where it is the one in force; a switch can only lower M
 KMAX_IC = 3
 fft, ifft = torch.fft.fftn, torch.fft.ifftn
 k1 = torch.fft.fftfreq(N, d=1.0 / N) * 1.0
@@ -138,21 +140,22 @@ def features(U):
 
 
 class G(torch.nn.Module):
-    def __init__(self, nf=8, h=32):
+    def __init__(self, nf=8, h=32, heads=1):
         super().__init__()
-        self.net = torch.nn.Sequential(torch.nn.Linear(nf, h), torch.nn.Tanh(), torch.nn.Linear(h, h), torch.nn.Tanh(), torch.nn.Linear(h, 1))
+        self.net = torch.nn.Sequential(torch.nn.Linear(nf, h), torch.nn.Tanh(), torch.nn.Linear(h, h), torch.nn.Tanh(), torch.nn.Linear(h, heads))
 
     def forward(self, f):
-        return B * torch.sigmoid(self.net(f.permute(1, 2, 3, 0)).squeeze(-1))
+        return B * torch.sigmoid(self.net(f.permute(1, 2, 3, 0)))        # [N,N,N,heads]
 
 
-g = G()
+g = G(heads=HEADS)
 opt = torch.optim.Adam(g.parameters(), lr=3e-3)
 
 
 def M_of(U):
     f, wgt, Z = features(U)
-    Phi = (wgt * g(f)).sum()
+    Phis = (wgt[..., None] * g(f)).sum(dim=(0, 1, 2))                      # one Phi per candidate
+    Phi = Phis.min()                                                       # the candidate in force
     return Z * torch.exp(Phi), Phi, Z
 
 
@@ -199,7 +202,7 @@ def random_ic(seed):
 
 
 EVERY = T / 8
-print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS), flush=True)
+print("lyapunov search: N=%d^3  nu=%g  T=%.2f  Z0=%.3f  B=%.1f  rounds=%d  train steps/round=%d  adversary iters=%d  candidates (heads) = %d%s" % (N, NU, T, Z0, B, ROUNDS, TRAIN, ADV_ITERS, HEADS, "  [M = Z exp(min_i Phi_i)]" if HEADS > 1 else ""), flush=True)
 cands = {k: normalise(v) for k, v in classical().items()}
 train_ics = {"random-%d" % s: random_ic(s) for s in range(4)}
 train_ics["taylor-green"] = cands["taylor-green"]
@@ -294,7 +297,7 @@ cnt = 0
 for name, t, S in trajectories(heldout):
     f, wgt, Z = features(S)
     f = f.detach().requires_grad_(True)
-    Phi = (wgt * g(f)).sum()
+    Phi = (wgt[..., None] * g(f)).sum(dim=(0, 1, 2)).min()
     gr = torch.autograd.grad(Phi, f)[0]
     sens += (gr * f.detach()).abs().sum(dim=(1, 2, 3))
     cnt += 1
@@ -304,4 +307,4 @@ for name, s in sorted(zip(FEATURES, sens.tolist()), key=lambda z: -z[1]):
     print("   %-28s %.3e" % (name, s))
 print("\nREGISTERED  last adversary violation %+.3e, held-out worst %+.3e, tolerance %.0e -> %s" % (
     w_adv, w_held, TOL, "PASS: no violation found (a candidate, not a theorem)" if max(w_adv, w_held) < TOL else "FAIL: the adversary (or a held-out flow) still finds states where the candidate M increases"))
-torch.save(g.state_dict(), "results/lyapunov_g.pt")
+torch.save(g.state_dict(), "results/lyapunov_g_h%d.pt" % HEADS)
