@@ -1,0 +1,22 @@
+search grid 48^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective quiet
+  taylor-green   E0 0.1250   H/Hmax -0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.970   Z(T)/Z0 = 1.013
+  iter   0   objective = 1.123   E0 = 0.0182   H/Hmax = +0.025   delta(T) on search grid = 0.354   pressure global share = 0.398   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.756   (9s)
+  iter   5   objective = 1.113   E0 = 0.0181   H/Hmax = -0.026   delta(T) on search grid = 0.365   pressure global share = 0.416   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.501   (45s)
+  iter  10   objective = 1.108   E0 = 0.0195   H/Hmax = -0.030   delta(T) on search grid = 0.377   pressure global share = 0.398   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.310   (80s)
+  iter  15   objective = 1.104   E0 = 0.0204   H/Hmax = -0.005   delta(T) on search grid = 0.383   pressure global share = 0.437   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.138   (115s)
+  iter  20   objective = 1.102   E0 = 0.0212   H/Hmax = +0.011   delta(T) on search grid = 0.384   pressure global share = 0.415   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.134   (150s)
+  iter  25   objective = 1.101   E0 = 0.0218   H/Hmax = +0.009   delta(T) on search grid = 0.387   pressure global share = 0.415   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.071   (185s)
+  iter  30   objective = 1.099   E0 = 0.0226   H/Hmax = +0.008   delta(T) on search grid = 0.392   pressure global share = 0.405   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.067   (220s)
+  iter  35   objective = 1.098   E0 = 0.0234   H/Hmax = +0.009   delta(T) on search grid = 0.396   pressure global share = 0.412   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.041   (255s)
+  iter  39   objective = 1.098   E0 = 0.0241   H/Hmax = +0.013   delta(T) on search grid = 0.398   pressure global share = 0.420   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.001   (283s)
+best on the search grid: amplification = 1.1253
+
+verification at 96^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 96^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5570  (2dx = 0.1309)   alpha_s = 2.81
+  kida-pelz      at 96^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3740  (2dx = 0.1309)   alpha_s = 2.48
+  abc+10%        at 96^3:  Z(T)/Z0 = 1.013   E(T)/E0 = 1.000000   delta(T) = 0.6755  (2dx = 0.1309)   alpha_s = 2.80
+  FOUND          at 96^3:  Z(T)/Z0 = 1.122   E(T)/E0 = 1.000000   delta(T) = 0.2575  (2dx = 0.1309)   alpha_s = 2.18
+
+REGISTERED  found Z(T)/Z0 = 1.122 (delta > 2dx) vs best RELIABLE classical 1.112 at 96^3 -> PASS

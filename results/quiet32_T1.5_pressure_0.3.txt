@@ -1,0 +1,26 @@
+search grid 32^3, T = 1.50, low-k initial data |k| <= 4, common Z0 = 0.3750, objective quiet
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.272
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.250
+  abc+10%        E0 0.3578   H/Hmax +0.968   Z(T)/Z0 = 1.029
+  iter   0   objective = 1.272   E0 = 0.0183   H/Hmax = -0.090   delta(T) on search grid = 0.324   pressure global share = 0.406   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.949   (4s)
+  iter   5   objective = 1.254   E0 = 0.0184   H/Hmax = -0.011   delta(T) on search grid = 0.343   pressure global share = 0.313   sign <xi.Pdev.xi>/<xi.S2.xi> = -2.245   (19s)
+  iter  10   objective = 1.245   E0 = 0.0194   H/Hmax = +0.018   delta(T) on search grid = 0.351   pressure global share = 0.378   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.443   (35s)
+  iter  15   objective = 1.226   E0 = 0.0207   H/Hmax = +0.021   delta(T) on search grid = 0.358   pressure global share = 0.402   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.161   (50s)
+  iter  20   objective = 1.208   E0 = 0.0217   H/Hmax = +0.005   delta(T) on search grid = 0.362   pressure global share = 0.374   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.221   (65s)
+  iter  25   objective = 1.202   E0 = 0.0226   H/Hmax = -0.003   delta(T) on search grid = 0.363   pressure global share = 0.376   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.155   (80s)
+  iter  30   objective = 1.195   E0 = 0.0236   H/Hmax = -0.003   delta(T) on search grid = 0.367   pressure global share = 0.359   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.100   (95s)
+  iter  35   objective = 1.191   E0 = 0.0244   H/Hmax = +0.002   delta(T) on search grid = 0.369   pressure global share = 0.368   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.041   (110s)
+  iter  40   objective = 1.184   E0 = 0.0251   H/Hmax = +0.007   delta(T) on search grid = 0.373   pressure global share = 0.406   sign <xi.Pdev.xi>/<xi.S2.xi> = -0.968   (125s)
+  iter  45   objective = 1.180   E0 = 0.0257   H/Hmax = +0.003   delta(T) on search grid = 0.376   pressure global share = 0.412   sign <xi.Pdev.xi>/<xi.S2.xi> = -0.971   (141s)
+  iter  50   objective = 1.181   E0 = 0.0263   H/Hmax = -0.001   delta(T) on search grid = 0.378   pressure global share = 0.410   sign <xi.Pdev.xi>/<xi.S2.xi> = -0.959   (156s)
+  iter  55   objective = 1.183   E0 = 0.0268   H/Hmax = -0.015   delta(T) on search grid = 0.379   pressure global share = 0.397   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.041   (171s)
+  iter  59   objective = 1.186   E0 = 0.0272   H/Hmax = -0.027   delta(T) on search grid = 0.379   pressure global share = 0.350   sign <xi.Pdev.xi>/<xi.S2.xi> = -1.155   (183s)
+best on the search grid: amplification = 1.2723
+
+verification at 64^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 64^3:  Z(T)/Z0 = 1.272   E(T)/E0 = 1.000000   delta(T) = 0.3727  (2dx = 0.1963)   alpha_s = 2.72
+  kida-pelz      at 64^3:  Z(T)/Z0 = 1.251   E(T)/E0 = 1.000000   delta(T) = 0.3139  (2dx = 0.1963)   alpha_s = 2.72
+  abc+10%        at 64^3:  Z(T)/Z0 = 1.029   E(T)/E0 = 1.000000   delta(T) = 0.5033  (2dx = 0.1963)   alpha_s = 2.69
+  FOUND          at 64^3:  Z(T)/Z0 = 1.291   E(T)/E0 = 1.000000   delta(T) = 0.2292  (2dx = 0.1963)   alpha_s = 2.35
+
+REGISTERED  found Z(T)/Z0 = 1.291 (delta > 2dx) vs best RELIABLE classical 1.272 at 64^3 -> PASS
