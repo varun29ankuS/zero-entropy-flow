@@ -35,7 +35,9 @@ B = float(os.environ.get("B", 4.0))
 TOL = float(os.environ.get("TOL", 1e-3))
 PHESS = int(os.environ.get("PHESS", 0))          # PHESS=1: add three pressure-Hessian features (nonlocal: -lap p = du_i/dx_j du_j/dx_i solved spectrally)
 GLOBAL = int(os.environ.get("GLOBAL", 0))        # GLOBAL=1: broadcast global scalars (the state of the cascade) to every point: global decides the law, local applies it
-HEADS = int(os.environ.get("HEADS", 1))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
+HEADS = int(os.environ.get("HEADS", 1))
+ATTACK = os.environ.get("ATTACK", "")            # ATTACK=path.pt: load a trained candidate, skip training, attack it with RESTARTS x ADV_ITERS adversaries
+RESTARTS = int(os.environ.get("RESTARTS", 4))          # HEADS > 1: a society of candidates, M = Z exp(min_i Phi_i) (multiple Lyapunov functions, Branicky 1998):
                                                  # each candidate only has to decrease where it is the one in force; a switch can only lower M
 KMAX_IC = 3
 fft, ifft = torch.fft.fftn, torch.fft.ifftn
@@ -175,6 +177,9 @@ class G(torch.nn.Module):
 
 
 g = G(nf=NF, heads=HEADS)
+if ATTACK:
+    g.load_state_dict(torch.load(ATTACK))
+    print("ATTACK mode: loaded %s; %d restarts x %d adversary iterations, no training" % (ATTACK, RESTARTS, ADV_ITERS), flush=True)
 opt = torch.optim.Adam(g.parameters(), lr=3e-3)
 
 
@@ -280,6 +285,7 @@ for rnd in range(ROUNDS):
     report(data, "training states")
     report(trajectories(heldout), "held-out flows")
     # ---- adversary: initial data whose trajectory maximises the worst relative violation of the CURRENT M ----
+    torch.manual_seed(100 + rnd)
     P = [torch.randn(N, N, N, requires_grad=True) for _ in range(3)]
     aopt = torch.optim.Adam(P, lr=0.05)
     best = (-1e9, None)
