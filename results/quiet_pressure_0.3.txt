@@ -1,0 +1,32 @@
+search grid 32^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective quiet
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3578   H/Hmax +0.968   Z(T)/Z0 = 1.012
+  iter   0   objective = 1.126   E0 = 0.0183   H/Hmax = -0.090   delta(T) on search grid = 0.430   pressure global share = 0.401   (3s)
+  iter   5   objective = 1.111   E0 = 0.0183   H/Hmax = +0.024   delta(T) on search grid = 0.458   pressure global share = 0.368   (12s)
+  iter  10   objective = 1.106   E0 = 0.0199   H/Hmax = +0.046   delta(T) on search grid = 0.469   pressure global share = 0.370   (22s)
+  iter  15   objective = 1.104   E0 = 0.0211   H/Hmax = +0.046   delta(T) on search grid = 0.468   pressure global share = 0.436   (31s)
+  iter  20   objective = 1.100   E0 = 0.0220   H/Hmax = +0.025   delta(T) on search grid = 0.469   pressure global share = 0.390   (41s)
+  iter  25   objective = 1.100   E0 = 0.0230   H/Hmax = +0.013   delta(T) on search grid = 0.473   pressure global share = 0.416   (50s)
+  iter  30   objective = 1.100   E0 = 0.0238   H/Hmax = +0.013   delta(T) on search grid = 0.474   pressure global share = 0.432   (59s)
+  iter  35   objective = 1.095   E0 = 0.0246   H/Hmax = +0.012   delta(T) on search grid = 0.472   pressure global share = 0.449   (69s)
+  iter  40   objective = 1.093   E0 = 0.0254   H/Hmax = +0.011   delta(T) on search grid = 0.470   pressure global share = 0.405   (78s)
+  iter  45   objective = 1.094   E0 = 0.0260   H/Hmax = +0.006   delta(T) on search grid = 0.467   pressure global share = 0.431   (87s)
+  iter  50   objective = 1.094   E0 = 0.0265   H/Hmax = -0.006   delta(T) on search grid = 0.466   pressure global share = 0.418   (97s)
+  iter  55   objective = 1.094   E0 = 0.0270   H/Hmax = -0.012   delta(T) on search grid = 0.465   pressure global share = 0.420   (106s)
+  iter  59   objective = 1.094   E0 = 0.0274   H/Hmax = -0.011   delta(T) on search grid = 0.464   pressure global share = 0.434   (113s)
+best on the search grid: amplification = 1.1256
+
+verification at 64^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 64^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.6343  (2dx = 0.1963)   alpha_s = 2.62
+  kida-pelz      at 64^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.4579  (2dx = 0.1963)   alpha_s = 2.45
+  abc+10%        at 64^3:  Z(T)/Z0 = 1.012   E(T)/E0 = 1.000000   delta(T) = 0.7398  (2dx = 0.1963)   alpha_s = 2.70
+  FOUND          at 64^3:  Z(T)/Z0 = 1.126   E(T)/E0 = 1.000000   delta(T) = 0.3144  (2dx = 0.1963)   alpha_s = 2.25
+
+REGISTERED  found Z(T)/Z0 = 1.126 (delta > 2dx) vs best RELIABLE classical 1.112 at 64^3 -> PASS
+
+verification at 96^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 96^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5570  (2dx = 0.1309)   alpha_s = 2.58
+  FOUND          at 96^3:  Z(T)/Z0 = 1.126   E(T)/E0 = 1.000000   delta(T) = 0.2556  (2dx = 0.1309)   alpha_s = 2.21
+
+REGISTERED  found Z(T)/Z0 = 1.126 (delta > 2dx) vs best RELIABLE classical 1.112 at 96^3 -> PASS
