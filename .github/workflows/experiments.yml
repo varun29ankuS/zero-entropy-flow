@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -92,6 +92,11 @@ jobs:
         if: ${{ github.event.inputs.which == 'leashed64' }}
         run: |
           DMIN=0.30 N=64 T=1.0 ITERS=45 NVERS=128,192 TAG=leashed64_dmin030 python -u adversarial_ic.py 2>/dev/null | tee results/leashed64_dmin030_192.txt
+      - name: lyapunov
+        if: ${{ github.event.inputs.which == 'lyapunov' }}
+        run: |
+          N=24 NU=2e-3 T=0.6 ROUNDS=4 TRAIN=300 ADV_ITERS=15 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_24.txt
+          N=32 NU=1e-3 T=0.6 ROUNDS=3 TRAIN=200 ADV_ITERS=10 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |

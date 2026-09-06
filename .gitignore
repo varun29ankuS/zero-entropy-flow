@@ -7,3 +7,5 @@ __pycache__/
 adversarial_ic_*.npz
 !results/found/*.npz
 dyadic_run.npz
+*.pt
+!results/*.pt
