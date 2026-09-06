@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       which:
-        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
+        description: "which experiments to run: all | burgers | taylor_green | budgets | kolmogorov | ns_d | exact | spectra | midpoint | criteria3d | adversarial | overnight | leashed | leashed64 | lyapunov | lyapunov_attack | lyapunov_long | lyapunov_global | jacobi | helicity_ladder | strip | kp_ladder | mechanism3d | budgets3d | highres | kolmogorov_v2 | kolmogorov_v3"
         default: "all"
       n3:
         description: "3-D grid for the spectra job"
@@ -97,6 +97,19 @@ jobs:
         run: |
           TAG=ci32_p0 PHESS=0 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_p0.txt
           TAG=ci32_p1 PHESS=1 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_p1.txt
+      - name: lyapunov_attack
+        if: ${{ github.event.inputs.which == 'lyapunov_attack' }}
+        run: |
+          ATTACK=results/lyapunov_g_ci32_p0.pt N=32 NU=1e-3 T=0.6 ADV_ITERS=40 RESTARTS=4 TRAIN=0 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_p0_attack.txt
+          ATTACK=results/lyapunov_g_ci32_p1.pt PHESS=1 N=32 NU=1e-3 T=0.6 ADV_ITERS=40 RESTARTS=4 TRAIN=0 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_p1_attack.txt
+      - name: lyapunov_long
+        if: ${{ github.event.inputs.which == 'lyapunov_long' }}
+        run: |
+          TAG=ci32_p0_r20 PHESS=0 N=32 NU=1e-3 T=0.6 ROUNDS=20 TRAIN=200 ADV_ITERS=25 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r20_p0.txt
+      - name: lyapunov_global
+        if: ${{ github.event.inputs.which == 'lyapunov_global' }}
+        run: |
+          TAG=ci32_g1 GLOBAL=1 PHESS=0 N=32 NU=1e-3 T=0.6 ROUNDS=8 TRAIN=200 ADV_ITERS=12 python -u lyapunov_search.py 2>/dev/null | tee results/lyapunov_32_r8_g1.txt
       - name: kp_ladder
         if: ${{ github.event.inputs.which == 'kp_ladder' }}
         run: |
