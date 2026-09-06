@@ -1,0 +1,22 @@
+search grid 64^3, T = 1.00, low-k initial data |k| <= 4, common Z0 = 0.3750, objective ckn
+  taylor-green   E0 0.1250   H/Hmax +0.000   Z(T)/Z0 = 1.112
+  kida-pelz      E0 0.0341   H/Hmax -0.000   Z(T)/Z0 = 1.104
+  abc+10%        E0 0.3590   H/Hmax +0.971   Z(T)/Z0 = 1.014
+  iter   0   objective = 0.835   E0 = 0.0186   H/Hmax = +0.022   delta(T) on search grid = 0.314   (29s)
+  iter   5   objective = 1.553   E0 = 0.0142   H/Hmax = +0.104   delta(T) on search grid = 0.147   (160s)
+  iter  10   objective = 1.576   E0 = 0.0189   H/Hmax = +0.056   delta(T) on search grid = 0.136   (293s)
+  iter  15   objective = 1.621   E0 = 0.0221   H/Hmax = +0.014   delta(T) on search grid = 0.122   (445s)
+  iter  20   objective = 1.625   E0 = 0.0233   H/Hmax = +0.013   delta(T) on search grid = 0.116   (605s)
+  iter  25   objective = 1.694   E0 = 0.0249   H/Hmax = +0.044   delta(T) on search grid = 0.119   (776s)
+  iter  30   objective = 1.724   E0 = 0.0262   H/Hmax = +0.079   delta(T) on search grid = 0.111   (958s)
+  iter  35   objective = 1.741   E0 = 0.0265   H/Hmax = +0.090   delta(T) on search grid = 0.112   (1145s)
+  iter  39   objective = 1.751   E0 = 0.0261   H/Hmax = +0.098   delta(T) on search grid = 0.109   (1295s)
+best amplification on the search grid: 1.751
+
+verification at 128^3 with the numpy instrument (fields upsampled spectrally, same Z0):
+  taylor-green   at 128^3:  Z(T)/Z0 = 1.112   E(T)/E0 = 1.000000   delta(T) = 0.5290  (2dx = 0.0982)   alpha_s = 2.89
+  kida-pelz      at 128^3:  Z(T)/Z0 = 1.104   E(T)/E0 = 1.000000   delta(T) = 0.3305  (2dx = 0.0982)   alpha_s = 2.66
+  abc+10%        at 128^3:  Z(T)/Z0 = 1.014   E(T)/E0 = 1.000000   delta(T) = 0.6445  (2dx = 0.0982)   alpha_s = 2.88
+  FOUND          at 128^3:  Z(T)/Z0 = 1.832   E(T)/E0 = 1.000000   delta(T) = 0.0780  (2dx = 0.0982)   alpha_s = 1.36   <-- unreliable
+
+REGISTERED  found concentration 3-alpha_s = 1.642 (delta < 2dx) vs best RELIABLE classical 0.339 at 128^3 -> FAIL: outside the reliable window
