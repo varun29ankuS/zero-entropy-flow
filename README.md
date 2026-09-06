@@ -466,8 +466,9 @@ integral Tao's averaging destroys. Runs on CI at 32^3 for eight rounds then show
 falling from 1.0 to 0.03-0.09 with local features only - and the register was built for exactly this moment: the
 same candidate attacked afresh by a stronger adversary (four restarts, forty iterations; `results/lyapunov_32_p0_attack.txt`)
 is broken at +0.40, +0.35, +0.55. The fall was the fixed-budget searcher tiring, not the candidate hardening. With
-pressure-Hessian features the eight-round series plateaued at 0.3 and the attack gives +0.74-0.79. A candidate is
-only as good as the strongest adversary that has failed against it; none has. This is feedback,
+pressure-Hessian features the eight-round series plateaued at 0.3 and the attack gives +0.74-0.79. With the signed-beta features the eight-round series reached 0.01, the best seen; attacked, it breaks at +0.42
+(`results/lyapunov_32_b1_attack.txt`). A candidate is only as good as the strongest adversary that has failed
+against it; none has. This is feedback,
 not imitation, applied to the proof itself: the machine cannot produce a theorem, but it produces the counterexamples
 a human would need to see before trying to.
 
@@ -539,6 +540,29 @@ built almost entirely of antiparallel pairs, while the classical flows have none
 reported all three at the same 0.13. This is the sharpest single picture of how the adversary wins, and it names
 the geometry: antiparallel sheets. Read with the concentration exponent (alpha ~ 4, flat) it says the pairs thin
 without sharpening, which is what the projection does to them.
+
+## Water's memory: reversibility and the compression half
+
+Euler is time-reversible. `jacobi_ladder.py` with `REVERSE=1` runs a flow to T, flips the velocity, runs the same
+instrument back to 0 and reports the round-trip error - the amount the flow has forgotten, which for an exact
+inviscid flow is zero and for a truncated one is the information that passed below the cutoff - and the Jacobi
+exponent of the reversed leg, which is minus the most CONTRACTING exponent of the forward flow: the compression half
+that Liouville pairs with every stretch and that nobody measures.
+
+```
+                        round-trip error        forward stretching lambda_f (t=0.5-1.0)   reversed lambda_b (same window)   lambda_b - lambda_f
+Taylor-Green   64^3     1.5e-9                  0.083                                     0.016                             -0.07
+Kida-Pelz      96^3     2.0e-6                  1.27 (past the clock)                     0.57                              -0.70
+searcher's     96^3     5.0e-5                  0.76 (past the clock)                     0.04                              -0.72
+```
+
+The memory is perfect until the cascade carries information below the resolvable scale: five orders of magnitude
+separate the round-trip error of Taylor-Green from the searcher's field, in the order of their cascades - the
+truncated analogue of what viscosity does. And in every flow the strongest compression is far weaker than the
+strongest stretching: Liouville balances the books with one concentrated stretch and many diffuse squeezes. A
+collapse to a point would need the compression concentrated as well (lambda_b >= lambda_f); no flow here shows it,
+the adversary's field least of all. Provisional: the reversed leg starts from the least-resolved state, so most of
+its rows are past the clock; the ordering is the claim, not the sizes.
 
 ## Keep the state, track the dissipation: the CKN concentration exponent
 
