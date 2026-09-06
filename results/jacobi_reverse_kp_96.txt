@@ -1,0 +1,16 @@
+FORWARD  (IC=kp): Jacobi field, N=96^3, nu=0, eps=1e-05, 2dx = 0.1309
+   t     growth |du|/(eps|v|)   lambda (local, per unit t)   E/E0 (u)      E/E0 (u+eps v)   delta(t)
+ 0.00       1.0000              ---                     1.00000000    1.00000000      0.0192
+ 0.50       1.2288            +0.412                   1.00000000    1.00000000      0.2509   (128s)
+ 1.00       2.3198            +1.271                   0.99999996    0.99999996      0.1020  <-- delta < 2dx: NOT RELIABLE   (255s)
+REVERSED (from t=T back to 0): Jacobi field, N=96^3, nu=0, eps=1e-05, 2dx = 0.1309
+   t     growth |du|/(eps|v|)   lambda (local, per unit t)   E/E0 (u)      E/E0 (u+eps v)   delta(t)
+ 0.00       1.0000              ---                     1.00000000    1.00000000      0.1020
+ 0.50       1.3321            +0.573                   1.00000002    1.00000002      0.2508   (123s)
+ 1.00       1.8502            +0.657                   1.00000002    1.00000002      0.1067  <-- delta < 2dx: NOT RELIABLE   (251s)
+reversibility: |u_reversed(T) - (-u0)| / |u0| = 2.033e-06   (exact Euler would give 0; this is the instrument's round-trip error)
+compression half: lambda_b is minus the most CONTRACTING forward exponent over the same window (Liouville: the full spectrum sums to zero);
+the asymmetry lambda_b - lambda_f is compression in excess of stretching (0: a reversible stretch-compress pair, e.g. a sheet)
+   forward t   lambda_f      reversed window   lambda_b      lambda_b - lambda_f
+    0.50       +0.412        -0.00- 0.50       +0.657        +0.245   (past the clock)
+    1.00       +1.271         0.50- 1.00       +0.573        -0.697   (past the clock)
