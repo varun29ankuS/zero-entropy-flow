@@ -108,6 +108,13 @@ alpha = 4.5-4.6 (3.6-3.8 at the smallest resolved pair) at 64^3, flat over the w
 5.4 (4.4). Refuted by: alpha falling toward 1 with time or with resolution for any field found by the searcher.
 Test: `IC=found N=64 NU=1e-3 python ckn_exponent.py`.
 
+**C17. Fast enstrophy growth requires the global part of the pressure, and recruits it.** With the traceless share of
+the pressure Hessian on the high-vorticity set capped at T, the maximal amplification over a turnover falls from
+5.6x (cap 0.5) through 2.1x (0.4) to 1.1x (0.35) at 48^3, with the same knee and collapse at 32^3 and at T = 0.5 and
+1.5; the searcher cannot push the share below ~0.35-0.42; and the global Hessian's projection along the vorticity is
+negative (aids the stretching) in all eleven runs. Refuted by: a fast amplifier (> 3x) found with share < 0.35, or
+one whose global Hessian opposes the stretching. Test: `OBJ=quiet SMAX=0.35 N=48 python adversarial_ic.py`.
+
 **Not claimed.** Anything about the regularity of 3-D Navier-Stokes. `THEORY.md`, Theorem 4, records why the
 structure used here cannot decide it.
 

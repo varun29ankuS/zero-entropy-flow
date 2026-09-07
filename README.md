@@ -668,6 +668,24 @@ cap on the global pressure share     growth reached (32^3 search)     share used
 <= 0.3                               1.09x                            0.434          1.13x (resolved; Taylor-Green level)
 ```
 
+Robustness (`quiet_pressure2`, 48^3 search and 32^3 at T = 0.5 / 1.5), growth reached under each cap:
+
+```
+cap on global share    48^3 T=1    32^3 T=1    32^3 T=0.5    32^3 T=1.5     sign <xi.Pdev.xi>/<xi.S2.xi>
+<= 0.5                 5.64x       4.23x       2.30x         7.38x          negative in all eleven runs (-0.7 to -3.5)
+<= 0.45                4.18x        -           -             -
+<= 0.4                 2.14x       2.39x       1.19x         4.63x
+<= 0.35                1.11x        -           -             -
+<= 0.3                 1.10x       1.09x       1.03x         1.19x
+```
+
+Same knee at 0.4-0.45 and same collapse by 0.35 at both grids and all three windows; the searcher could not push
+the share below ~0.35-0.42 at all - capped, it gave up growth rather than quiet the pressure. And the sign: in every
+fast field the global part of the pressure Hessian acts *with* the stretching along the vorticity. The sheet
+recruits the box. Stated as a conjecture with a stable curve behind it: amplification beyond ~2x over a turnover
+requires the traceless pressure Hessian to carry at least ~0.42 of the total on the high-vorticity set and to act with
+the stretching; cap it at 0.35 and no amplification is reachable in this class of data.
+
 Forbid the pressure's global part from answering and the growth dies: half of it at 0.4, all of it at 0.3, where
 the searcher gave up growing rather than quiet the pressure and still could not reach the cap. The "flat 0.50" was
 not the pressure staying quiet; it was the pressure already carrying as much as fast growth requires. The local
